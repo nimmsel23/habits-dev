@@ -62,8 +62,8 @@ module.exports = defineConfig(({ mode }) => {
     resolve: {
       preserveSymlinks: true,
       alias: {
-        "@db":      require("path").resolve(__dirname, "./src/db.js"),
-        "@utils":   require("path").resolve(__dirname, "./src/lib/db/core.js"),
+        "@db":      require("path").resolve("/home/alpha/fitness-dev/src/db.firestore.js"),
+        "@utils":   require("path").resolve("/home/alpha/fitness-dev/src/db.firestore.js"),
         "@fuel":    require("path").resolve("/home/alpha/fuel-dev/src/client"),
         "@journal": require("path").resolve("/home/alpha/journal-dev/src"),
         "@constants": require("path").resolve("/home/alpha/fitness-dev/src/constants"),
