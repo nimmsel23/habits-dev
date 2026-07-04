@@ -16,7 +16,11 @@
     "build:cloud": "VITE_APP_MODE=client vite build --config vite.config.cjs",
     "deploy": "npm run build:cloud && firebase deploy --only hosting --project fitness-aos",
     "deploy:cloud": "npm run build:cloud && firebase deploy --only hosting --project fitness-aos",
-    "preview": "vite preview --config vite.config.cjs"
+    "preview": "vite preview --config vite.config.cjs",
+    "deploy:preview": "npm run build:cloud && firebase hosting:channel:deploy preview --expires 24h",
+    "deploy:prev": "npm run build:cloud && firebase hosting:channel:deploy preview --expires 24h",
+    "build:preview": "npm run build:cloud && firebase hosting:channel:deploy preview --expires 24h",
+    "build:prev": "npm run build:cloud && firebase hosting:channel:deploy preview --expires 24h"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.59.0",
