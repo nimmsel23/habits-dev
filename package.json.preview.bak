@@ -17,10 +17,10 @@
     "deploy": "npm run build:cloud && firebase deploy --only hosting --project fitness-aos",
     "deploy:cloud": "npm run build:cloud && firebase deploy --only hosting --project fitness-aos",
     "preview": "vite preview --config vite.config.cjs",
-    "deploy:preview": "npm run build:cloud && node scripts/deploy-preview.mjs",
-    "deploy:prev": "npm run deploy:preview",
-    "build:preview": "npm run deploy:preview",
-    "build:prev": "npm run deploy:preview"
+    "deploy:preview": "npm run build:cloud && firebase hosting:channel:deploy preview --expires 24h",
+    "deploy:prev": "npm run build:cloud && firebase hosting:channel:deploy preview --expires 24h",
+    "build:preview": "npm run build:cloud && firebase hosting:channel:deploy preview --expires 24h",
+    "build:prev": "npm run build:cloud && firebase hosting:channel:deploy preview --expires 24h"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.59.0",
