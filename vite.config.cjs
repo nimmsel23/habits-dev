@@ -1,10 +1,38 @@
 const { defineConfig, loadEnv } = require("vite");
 const react = require("@vitejs/plugin-react");
 const { VitePWA } = require("vite-plugin-pwa");
+const path = require("path");
+
+// Nachbar-Repos: die vitalos-Submodule-Checkouts (master = firebase-first,
+// modulare Firestore-Layer). Die Home-Worktrees sind dev-Playgrounds.
+const FITNESS = "/home/alpha/vitalos/fitness-dev";
+const FUEL = "/home/alpha/vitalos/fuel-dev";
 
 module.exports = defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const appMode = process.env.VITE_APP_MODE || env.VITE_APP_MODE || "coach";
+
+  // fitness-dev/src/firebase.js auf habits' eigene lib/firebase.js umleiten —
+  // genau eine initializeApp im Bundle (Muster: vitalos
+  // vitalos:subrepo-firebase-redirect). enforce:'pre' nötig, damit der Hook
+  // vor vite:resolve läuft.
+  const HABITS_FIREBASE = path.resolve(__dirname, "src/lib/firebase.js");
+  const SUBREPO_FIREBASE = new Set([
+    path.resolve(FITNESS, "src/firebase.js"),
+    path.resolve(FUEL, "src/client/lib/firebase.js"),
+  ]);
+  const firebaseRedirect = {
+    name: "habits:subrepo-firebase-redirect",
+    enforce: "pre",
+    resolveId(source, importer) {
+      if (!importer || !source.startsWith(".")) return null;
+      const resolved = path.resolve(path.dirname(importer.split("?")[0]), source);
+      if (SUBREPO_FIREBASE.has(resolved) || SUBREPO_FIREBASE.has(`${resolved}.js`)) {
+        return HABITS_FIREBASE;
+      }
+      return null;
+    },
+  };
 
   const outDir = appMode === "client" ? "./dist-firebase" : "./dist";
 
@@ -16,6 +44,7 @@ module.exports = defineConfig(({ mode }) => {
       "import.meta.env.VITE_APP_MODE": JSON.stringify(appMode),
     },
     plugins: [
+      firebaseRedirect,
       react(),
       VitePWA({
         base: "/",
@@ -62,13 +91,14 @@ module.exports = defineConfig(({ mode }) => {
     resolve: {
       preserveSymlinks: true,
       alias: {
-        "@db":      require("path").resolve("/home/alpha/fitness-dev/src/db.firestore.js"),
-        "@utils":   require("path").resolve("/home/alpha/fitness-dev/src/db.firestore.js"),
-        "@fuel":    require("path").resolve("/home/alpha/fuel-dev/src/client"),
-        "@journal": require("path").resolve("/home/alpha/journal-dev/src"),
-        "@constants": require("path").resolve("/home/alpha/fitness-dev/src/constants"),
-        "@fitness/components": require("path").resolve("/home/alpha/fitness-dev/src/components"),
-        "@api": require("path").resolve("/home/alpha/fuel-dev", appMode === "client" ? "src/client/lib/api.cloud.js" : "src/client/lib/api.local.js"),
+        "@db":      path.resolve(__dirname, "./src/db/index.js"),
+        "@utils":   path.resolve(__dirname, "./src/db/index.js"),
+        "@fitness-db": path.resolve(FITNESS, "src/lib/db"),
+        "@fuel":    path.resolve(FUEL, "src/client"),
+        "@journal": path.resolve("/home/alpha/journal-dev/src"),
+        "@constants": path.resolve(FITNESS, "src/constants"),
+        "@fitness/components": path.resolve(FITNESS, "src/components"),
+        "@api": path.resolve(FUEL, appMode === "client" ? "src/client/lib/api.cloud.js" : "src/client/lib/api.local.js"),
       },
       dedupe: ["react", "react-dom", "@tanstack/react-query"],
     },
