@@ -23,7 +23,7 @@ export default function HabitSidebar({
     (selectedHabitRecords.filter(r => rollingDates.includes(r.date) && r.completion === 'DONE').length / rollingDates.length) * 100 : 0;
 
   const IconComponent = ICON_COMPONENTS_MAP[selectedHabit.icon || 'Activity'];
-  const isDoneOnSidebarDate = selectedHabit.records.some(r => r.date === selectedSidebarDate && r.completion === 'DONE');
+  const isDoneOnSidebarDate = selectedHabitRecords.some(r => r.date === selectedSidebarDate && r.completion === 'DONE');
 
   const content = (
     <>
@@ -47,7 +47,7 @@ export default function HabitSidebar({
         </div>
         <div className="grid grid-cols-7 gap-1.5">
           {getRollingDays(28).map(d => {
-            const done = selectedHabit.records.some(r => r.date === d && r.completion === 'DONE');
+            const done = selectedHabitRecords.some(r => r.date === d && r.completion === 'DONE');
             const isSelectedDate = d === selectedSidebarDate;
             return (
               <button
