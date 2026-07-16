@@ -12,13 +12,12 @@
   "scripts": {
     "dev": "vite --config vite.config.cjs",
     "build": "vite build --config vite.config.cjs",
-    "build:firebase": "VITE_APP_MODE=client vite build --mode firebase --config vite.config.cjs && npm run bump:sw",
-    "build:cloud": "VITE_APP_MODE=client vite build --mode firebase --config vite.config.cjs && npm run bump:sw",
+    "build:firebase": "VITE_APP_MODE=client vite build --config vite.config.cjs",
+    "build:cloud": "VITE_APP_MODE=client vite build --config vite.config.cjs",
     "deploy": "npm run build:cloud && firebase deploy --only hosting --project fitness-aos",
     "deploy:cloud": "npm run build:cloud && firebase deploy --only hosting --project fitness-aos",
     "preview": "vite preview --config vite.config.cjs",
     "deploy:preview": "npm run build:cloud && node scripts/deploy-preview.mjs",
-    "bump:sw": "node scripts/bump-sw.mjs",
     "deploy:prev": "npm run deploy:preview",
     "build:preview": "npm run deploy:preview",
     "build:prev": "npm run deploy:preview"
