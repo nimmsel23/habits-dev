@@ -6,7 +6,7 @@
 // Firebase-Projekt kommt aus .firebaserc, der App-Name aus package.json,
 // Telegram-Creds aus ~/.env/fitness.env (TELEGRAM_TOKEN, TELEGRAM_CHAT_ID).
 
-import { execSync } from "node:child_process";
+import { execSync, spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -53,11 +53,6 @@ const env = loadEnvFile(join(homedir(), ".env", "fitness.env"));
 const token = env.TELEGRAM_TOKEN;
 const chatIds = (env.TELEGRAM_CHAT_ID || "").split(",").map((s) => s.trim()).filter(Boolean);
 
-if (!token || chatIds.length === 0) {
-  console.log("ℹ️  Kein TELEGRAM_TOKEN/TELEGRAM_CHAT_ID in ~/.env/fitness.env — überspringe Telegram.");
-  process.exit(0);
-}
-
 let commit = "";
 try {
   commit = execSync("git log -1 --format=%s", { encoding: "utf8" }).trim();
@@ -70,6 +65,21 @@ const text = [
   `⏱️ Gültig für ${EXPIRES}.`,
   commit ? `\nCommit: ${commit}` : "",
 ].join("\n");
+
+// Bevorzugter lokaler Weg: tele-CLI (~/.local/bin/tele, Ideapad-Bot mit
+// hartkodiertem Token — funktioniert ohne .env). Fällt tele weg/fehl,
+// greift der alte Weg über ~/.env/fitness.env.
+const tele = spawnSync("tele", [text], { stdio: "inherit" });
+if (tele.status === 0) {
+  console.log("📨 Telegram via tele-CLI gesendet.");
+  process.exit(0);
+}
+console.log("ℹ️  tele-CLI nicht verfügbar/fehlgeschlagen — Fallback ~/.env/fitness.env.");
+
+if (!token || chatIds.length === 0) {
+  console.log("ℹ️  Kein TELEGRAM_TOKEN/TELEGRAM_CHAT_ID in ~/.env/fitness.env — überspringe Telegram.");
+  process.exit(0);
+}
 
 for (const chatId of chatIds) {
   const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
