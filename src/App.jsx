@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { CheckSquare, LogIn, Loader } from 'lucide-react'
 import { watchAuth, signIn, isLocalMode } from '@db'
 import Habits from './views/Habits/index.jsx'
+import Journal from '@journal/views/JournalVosView.jsx'
 
 export default function App() {
   const [user, setUser]     = useState(undefined)
   const [signing, setSigning] = useState(false)
+  const [activeTab, setActiveTab] = useState('habits')
 
   useEffect(() => {
     if (isLocalMode()) { setUser({ displayName: 'Local' }); return }
@@ -35,7 +37,27 @@ export default function App() {
 
   return (
     <div style={{ minHeight:'100dvh', background:'var(--bg, #0a0a0f)', color:'var(--text, #e2e8f0)', fontFamily:'system-ui, sans-serif' }}>
-      <Habits />
+      <header style={{ padding: '16px', display: 'flex', gap: '8px', borderBottom: '1px solid #334155', background: '#0f172a' }}>
+        <button 
+          onClick={() => setActiveTab('habits')}
+          style={{ padding: '8px 16px', borderRadius: '8px', background: activeTab === 'habits' ? '#3b82f6' : 'transparent', color: activeTab === 'habits' ? '#fff' : '#94a3b8', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+        >
+          Habits
+        </button>
+        <button 
+          onClick={() => setActiveTab('journal')}
+          style={{ padding: '8px 16px', borderRadius: '8px', background: activeTab === 'journal' ? '#f59e0b' : 'transparent', color: activeTab === 'journal' ? '#1e293b' : '#94a3b8', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+        >
+          Journal
+        </button>
+      </header>
+      <main style={{ padding: '16px' }}>
+        {activeTab === 'habits' ? (
+          <Habits />
+        ) : (
+          <Journal user={user} date={new Date()} />
+        )}
+      </main>
     </div>
   )
 }
