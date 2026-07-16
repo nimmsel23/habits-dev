@@ -5,8 +5,8 @@ const path = require("path");
 
 // Nachbar-Repos: die vitalos-Submodule-Checkouts (master = firebase-first,
 // modulare Firestore-Layer). Die Home-Worktrees sind dev-Playgrounds.
-const FITNESS = "/home/alpha/vitalos/fitness-dev";
-const FUEL = "/home/alpha/vitalos/fuel-dev";
+const FITNESS = path.resolve(__dirname, "../fitness-dev");
+const FUEL = path.resolve(__dirname, "../fuel-dev");
 
 module.exports = defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
@@ -95,7 +95,7 @@ module.exports = defineConfig(({ mode }) => {
         "@utils":   path.resolve(__dirname, "./src/db/index.js"),
         "@fitness-db": path.resolve(FITNESS, "src/lib/db"),
         "@fuel":    path.resolve(FUEL, "src/client"),
-        "@journal": path.resolve("/home/alpha/journal-dev/src"),
+        "@journal": path.resolve(__dirname, "../journal-dev/src"),
         "@constants": path.resolve(FITNESS, "src/constants"),
         "@fitness/components": path.resolve(FITNESS, "src/components"),
         "@api": path.resolve(FUEL, appMode === "client" ? "src/client/lib/api.cloud.js" : "src/client/lib/api.local.js"),
