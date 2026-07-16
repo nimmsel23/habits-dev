@@ -1,22 +1,18 @@
-# Preview-Deploy für Habits: dev-Push → 24h-Channel "dev", PR → eigener PR-Channel.
-#
-# Warum vitalos-Checkout: Die Vite-Configs aliassen Nachbar-Repos
-# (Cross-Repo-Imports) — ein nackter Checkout dieses Repos kann nie bauen.
-# Das Meta-Repo vitalos liefert per Submodules alle Nachbarn, danach wird
-# DIESES Submodule auf den gerade gepushten Commit gesetzt und nur dieser
-# Workspace gebaut.
+# Live-Deploy für Habits: Push auf master
+# 
+# Baut die App und lädt sie direkt live auf Firebase hoch.
+# Analog zur Preview-Action wird das vitalos Meta-Repo ausgecheckt,
+# damit alle Nachbar-Repos (cross-repo imports) vorhanden sind.
 
-name: Preview (Habits dev)
+name: Live Deploy (Habits master)
 
 on:
   workflow_dispatch:
   push:
-    branches: [dev]
-  pull_request:
-    branches: [master, dev]
+    branches: [master]
 
 jobs:
-  preview:
+  deploy_live:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout vitalos (Meta-Repo, liefert Nachbar-Repos)
@@ -34,7 +30,7 @@ jobs:
       - name: habits-dev auf den ausgelösten Commit setzen
         run: |
           cd habits-dev
-          SHA="${{ github.event.pull_request.head.sha || github.sha }}"
+          SHA="${{ github.sha }}"
           git fetch origin "$SHA"
           git checkout "$SHA"
 
@@ -46,7 +42,7 @@ jobs:
       - name: Install (Workspaces)
         run: npm ci
 
-      - name: Firebase config bereitstellen (fitness-dev/firebase.config.js ist gitignored)
+      - name: Firebase config bereitstellen
         run: |
           if [ -n "$FIREBASE_CONFIG" ]; then
             echo "$FIREBASE_CONFIG" > fitness-dev/firebase.config.js
@@ -56,10 +52,10 @@ jobs:
         env:
           FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
 
-      - name: Build Habits
-        run: npm run build:firebase --workspace=habits-dev
+      - name: Build Habits (Live)
+        run: npm run build:cloud --workspace=habits-dev
 
-      - name: Deploy Preview Channel
+      - name: Deploy Live
         id: firebase_deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -67,19 +63,18 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FITNESS_AOS || secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: fitness-aos
           entryPoint: habits-dev
-          channelId: ${{ github.event_name != 'pull_request' && 'dev' || '' }}
-          expires: 24h
+          channelId: live
 
-      - name: Telegram-Link senden
+      - name: Telegram-Benachrichtigung senden
         if: success()
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            🚀 Preview für Habits (${{ github.event_name == 'pull_request' && format('PR #{0}', github.event.pull_request.number) || 'dev' }}) gebaut!
+            🚀 Habits ist LIVE deployed (master)!
 
-            🔗 ${{ steps.firebase_deploy.outputs.details_url }}
-            ⏱️ Gültig 24h.
+            🔗 Live-URL: https://fitness-aos.web.app
+            (oder eine verknüpfte Domain)
 
-            Commit: ${{ github.event.pull_request.title || github.event.head_commit.message }}
+            Commit: ${{ github.event.head_commit.message }}
