@@ -61,10 +61,7 @@ module.exports = defineConfig(({ mode }) => {
           start_url: "/",
           scope: "/",
           icons: [
-            { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-            { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-            { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
-            { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+            { src: "/favicon.svg", sizes: "192x192 512x512", type: "image/svg+xml", purpose: "any maskable" }
           ],
         },
         workbox: {
@@ -96,7 +93,9 @@ module.exports = defineConfig(({ mode }) => {
         "@fitness-db": path.resolve(FITNESS, "src/lib/db"),
         "@fuel":    path.resolve(FUEL, "src/client"),
         "@journal": path.resolve(__dirname, "../journal-dev/src"),
+        "@habits":  path.resolve(__dirname, "src"),
         "@constants": path.resolve(FITNESS, "src/constants"),
+        "@fitness/constants": path.resolve(FITNESS, "src/constants"),
         "@fitness/components": path.resolve(FITNESS, "src/components"),
         "@api": path.resolve(FUEL, appMode === "client" ? "src/client/lib/api.cloud.js" : "src/client/lib/api.local.js"),
       },
