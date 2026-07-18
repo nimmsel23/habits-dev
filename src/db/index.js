@@ -16,3 +16,8 @@
 import "../lib/firebase.js";
 
 export * from "@fitness-db/index.firestore.js";
+
+// index.firestore.js hat bewusst keinen Fuel-Proxy mehr (learn-dev braucht
+// @fuel nicht) — der eingebettete Journal-Tab (@journal → JournalTimeline)
+// hier in habits-dev braucht Fuel-Daten aber schon, deshalb explizit:
+export { getMealsHistory, getNutritionNotesHistory, getSupplementsHistory } from "@fuel/lib/db/firestore/index.js";
