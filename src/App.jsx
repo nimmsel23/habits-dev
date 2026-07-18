@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
-import { CheckSquare, LogIn, Loader } from 'lucide-react'
+import { CheckSquare, LogIn, Loader, RotateCcw } from 'lucide-react'
 import { watchAuth, signIn, isLocalMode } from '@db'
 import Habits from './views/Habits/index.jsx'
 import Journal from '@journal/views/JournalVosView.jsx'
+import { useRegisterSW } from "virtual:pwa-register/react"
 
 export default function App() {
   const [user, setUser]     = useState(undefined)
   const [signing, setSigning] = useState(false)
   const [activeTab, setActiveTab] = useState('habits')
+  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
 
   useEffect(() => {
     if (isLocalMode()) { setUser({ displayName: 'Local' }); return }
@@ -37,19 +39,29 @@ export default function App() {
 
   return (
     <div style={{ minHeight:'100dvh', background:'var(--bg, #0a0a0f)', color:'var(--text, #e2e8f0)', fontFamily:'system-ui, sans-serif' }}>
-      <header style={{ padding: '16px', display: 'flex', gap: '8px', borderBottom: '1px solid #334155', background: '#0f172a' }}>
-        <button 
-          onClick={() => setActiveTab('habits')}
-          style={{ padding: '8px 16px', borderRadius: '8px', background: activeTab === 'habits' ? '#3b82f6' : 'transparent', color: activeTab === 'habits' ? '#fff' : '#94a3b8', border: 'none', cursor: 'pointer', fontWeight: 600 }}
-        >
-          Habits
-        </button>
-        <button 
-          onClick={() => setActiveTab('journal')}
-          style={{ padding: '8px 16px', borderRadius: '8px', background: activeTab === 'journal' ? '#f59e0b' : 'transparent', color: activeTab === 'journal' ? '#1e293b' : '#94a3b8', border: 'none', cursor: 'pointer', fontWeight: 600 }}
-        >
-          Journal
-        </button>
+      <header style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #334155', background: '#0f172a' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button 
+            onClick={() => setActiveTab('habits')}
+            style={{ padding: '8px 16px', borderRadius: '8px', background: activeTab === 'habits' ? '#3b82f6' : 'transparent', color: activeTab === 'habits' ? '#fff' : '#94a3b8', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+          >
+            Habits
+          </button>
+          <button 
+            onClick={() => setActiveTab('journal')}
+            style={{ padding: '8px 16px', borderRadius: '8px', background: activeTab === 'journal' ? '#f59e0b' : 'transparent', color: activeTab === 'journal' ? '#1e293b' : '#94a3b8', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+          >
+            Journal
+          </button>
+        </div>
+        {needRefresh && (
+          <button
+            onClick={() => updateServiceWorker(true)}
+            style={{ display:'flex', alignItems:'center', gap:'6px', padding:'6px 12px', borderRadius:'100px', background:'#f59e0b20', color:'#fcd34d', border:'1px solid #f59e0b40', cursor:'pointer', fontSize:'12px', fontWeight:600, textTransform:'uppercase', letterSpacing:'1px' }}
+          >
+            <RotateCcw size={14} /> Update
+          </button>
+        )}
       </header>
       <main style={{ padding: '16px' }}>
         {activeTab === 'habits' ? (

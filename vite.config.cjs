@@ -93,7 +93,7 @@ module.exports = defineConfig(({ mode }) => {
         "@fitness-db": path.resolve(FITNESS, "src/lib/db"),
         "@fuel":    path.resolve(FUEL, "src/client"),
         "@journal": path.resolve(__dirname, "../journal-dev/src"),
-        "@habits":  path.resolve(__dirname, "src"),
+        "@habits":  path.resolve(__dirname, "./src"),
         "@constants": path.resolve(FITNESS, "src/constants"),
         "@fitness/constants": path.resolve(FITNESS, "src/constants"),
         "@fitness/components": path.resolve(FITNESS, "src/components"),
