@@ -99,7 +99,12 @@ module.exports = defineConfig(({ mode }) => {
         "@fitness/components": path.resolve(FITNESS, "src/components"),
         "@api": path.resolve(FUEL, appMode === "client" ? "src/client/lib/api.cloud.js" : "src/client/lib/api.local.js"),
       },
-      dedupe: ["react", "react-dom", "@tanstack/react-query"],
+      // "firebase" hier zwingend: fitness-dev/fuel-dev importieren firebase/auth
+      // und firebase/firestore auch direkt (nicht nur über firebase.js), und
+      // haben dort eine andere Firebase-Version im eigenen node_modules.
+      // Ohne dedupe entstehen zwei SDK-Instanzen -> "Component auth has not
+      // been registered yet".
+      dedupe: ["react", "react-dom", "@tanstack/react-query", "firebase"],
     },
     build: {
       outDir,
