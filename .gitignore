@@ -2,6 +2,15 @@ node_modules/
 dist/
 dist-firebase/
 .firebase/
-.archiv/
+.firebase/hosting.*.cache
+*.log
+.env
+.env.*.local
+.DS_Store
 *.bak
-*.bak-*
+*.bak*
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.archiv/
