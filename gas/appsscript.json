@@ -1,12 +1,7 @@
 {
-  "timeZone": "Europe/Vienna",
-  "dependencies": {},
+  "timeZone": "America/New_York",
+  "dependencies": {
+  },
   "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8",
-  "oauthScopes": [
-    "https://www.googleapis.com/auth/datastore",
-    "https://www.googleapis.com/auth/script.external_request",
-    "https://www.googleapis.com/auth/script.scriptapp",
-    "https://www.googleapis.com/auth/firebase.messaging"
-  ]
+  "runtimeVersion": "V8"
 }
