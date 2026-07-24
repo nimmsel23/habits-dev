@@ -15,7 +15,7 @@
     "build:firebase": "VITE_APP_MODE=client vite build --config vite.config.cjs",
     "build:cloud": "VITE_APP_MODE=client vite build --config vite.config.cjs",
     "firebase": "npm run build:cloud && npm run deploy:cloud",
-    "deploy": "npm run build:cloud && npm run deploy:cloud",
+    "deploy": "./deploy.sh",
     "deploy:cloud": "firebase deploy --only hosting --project fitness-aos",
     "preview": "vite preview --config vite.config.cjs",
     "deploy:preview": "npm run build:cloud && node scripts/deploy-preview.mjs",
