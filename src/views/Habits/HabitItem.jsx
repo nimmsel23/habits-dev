@@ -1,6 +1,6 @@
 import { Edit, Check, Trash2, Sparkles } from "lucide-react";
 import { ICON_OPTIONS, ICON_COMPONENTS_MAP } from "./utils";
-import { isLocalMode } from "@db";
+import { isLocalMode } from "@habits-db";
 
 export default function HabitItem({ 
   h, 
