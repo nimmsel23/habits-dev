@@ -3,7 +3,7 @@ import { Star, CalendarDays, Activity, PenLine } from "lucide-react";
 import {
   getHabits, recordHabit, unrecordHabit, addHabit, deleteHabit,
   updateHabit, getHabitRecordsForDate, getHabitJournal, saveHabitJournal, getHabitJournalHistory
-} from "@db";
+} from "@habits-db";
 import { localToday } from "@utils";
 import { ICON_COMPONENTS_MAP } from "./utils";
 
