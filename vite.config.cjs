@@ -8,10 +8,33 @@ const path = require("path");
 const FITNESS = path.resolve(__dirname, "../fitness-app");
 const FUEL = path.resolve(__dirname, "../fuel-app");
 const RELAX = path.resolve(__dirname, "../relax-app");
+const JOURNAL = path.resolve(__dirname, "../journal-app");
 
-module.exports = defineConfig(({ mode }) => {
+// SSOT für Cross-App-Aliase ist @vos/cross-app-aliases (~/vitalos/packages/
+// cross-app-aliases) — dynamic import() geht auch aus einer .cjs-Datei
+// (das Package ist ESM). Fällt zurück auf die alten hartcodierten
+// vitalos-relativen Pfade, falls das Package (noch) nicht installiert ist.
+async function resolveCrossAppAliases() {
+  try {
+    const { crossAppAliases } = await import("@vos/cross-app-aliases");
+    return crossAppAliases();
+  } catch {
+    return {
+      "@journal-db": path.resolve(JOURNAL, "src/db/index.js"),
+      "@journal":    path.resolve(JOURNAL, "src"),
+      "@fitness-db": path.resolve(FITNESS, "src/lib/db"),
+      "@fitness/constants":  path.resolve(FITNESS, "src/constants"),
+      "@fitness/components": path.resolve(FITNESS, "src/components"),
+      "@fuel":  path.resolve(FUEL, "src/client"),
+      "@relax": path.resolve(RELAX, "src"),
+    };
+  }
+}
+
+module.exports = defineConfig(async ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const appMode = process.env.VITE_APP_MODE || env.VITE_APP_MODE || "coach";
+  const crossAppAliases = await resolveCrossAppAliases();
 
   // fitness-dev/src/firebase.js auf habits' eigene lib/firebase.js umleiten —
   // genau eine initializeApp im Bundle (Muster: vitalos
@@ -89,18 +112,12 @@ module.exports = defineConfig(({ mode }) => {
     resolve: {
       preserveSymlinks: true,
       alias: {
+        ...crossAppAliases,
         "@habits-db": path.resolve(__dirname, "./src/db/index.js"),
-        "@journal-db": path.resolve(__dirname, "../journal-app/src/db/index.js"),
         "@db":      path.resolve(__dirname, "../journal-app/src/db/index.js"),
         "@utils":   path.resolve(__dirname, "./src/db/index.js"),
-        "@fitness-db": path.resolve(FITNESS, "src/lib/db"),
-        "@fuel":    path.resolve(FUEL, "src/client"),
-        "@relax":   path.resolve(RELAX, "src"),
-        "@journal": path.resolve(__dirname, "../journal-app/src"),
         "@habits":  path.resolve(__dirname, "./src"),
         "@constants": path.resolve(FITNESS, "src/constants"),
-        "@fitness/constants": path.resolve(FITNESS, "src/constants"),
-        "@fitness/components": path.resolve(FITNESS, "src/components"),
         "@api": path.resolve(FUEL, appMode === "client" ? "src/client/lib/api.cloud.js" : "src/client/lib/api.local.js"),
       },
       // "firebase" hier zwingend: fitness-dev/fuel-dev importieren firebase/auth
