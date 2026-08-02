@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { X, Save } from "lucide-react";
 import { ICON_COMPONENTS_MAP } from "./utils";
 
@@ -36,7 +37,7 @@ export default function HabitJournalModal({
 
   const Icon = ICON_COMPONENTS_MAP[habit.icon || "Activity"];
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-8 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
       <div
         className="absolute inset-0"
@@ -86,6 +87,7 @@ export default function HabitJournalModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
