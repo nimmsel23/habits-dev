@@ -14,17 +14,17 @@ import HabitJournalModal from "./HabitJournalModal";
 import HabitStats from "./HabitStats";
 import { getRollingDays } from "./utils";
 
-export default function Habits() {
+export default function Habits({ selectedDate: controlledDate = null, onSelectedDateChange = null }) {
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newHabit, setNewHabit] = useState("");
   const [selectedIcon, setSelectedIcon] = useState('Activity');
   const [saving, setSaving] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(localToday());
+  const [selectedDate, setSelectedDateState] = useState(controlledDate || localToday());
   const [editingHabitId, setEditingHabitId] = useState(null);
   const [editingIcon, setEditingIcon] = useState(null);
   const [selectedHabitId, setSelectedHabitId] = useState(null);
-  const [selectedSidebarDate, setSelectedSidebarDate] = useState(localToday());
+  const [selectedSidebarDate, setSelectedSidebarDate] = useState(controlledDate || localToday());
   const [journalText, setJournalText] = useState("");
   const [journalHistory, setJournalHistory] = useState([]);
   const [isJournalSaving, setIsJournalSaving] = useState(false);
@@ -33,6 +33,15 @@ export default function Habits() {
 
   const rollingDates = useMemo(() => getRollingDays(28), []);
   const recentDates = useMemo(() => getRollingDays(10), []);
+
+  useEffect(() => {
+    if (controlledDate && controlledDate !== selectedDate) setSelectedDateState(controlledDate);
+  }, [controlledDate, selectedDate]);
+
+  function setSelectedDate(nextDate) {
+    setSelectedDateState(nextDate);
+    onSelectedDateChange?.(nextDate);
+  }
 
   const outstandingMemoirs = useMemo(
     () => habits.filter(h => h.isDoneForSelectedDate && !memoirWrittenIds.has(h.uuid)),
