@@ -17,6 +17,19 @@ import "../lib/firebase.js";
 
 export * from "@fitness-db/index.firestore.js";
 
+// Der modulare fitness-app Firestore-Barrel exportiert aktuell keine
+// Habit-CRUD-Helpers mehr. habits-dev konsumiert sie aber weiterhin direkt,
+// daher ziehen wir die kompatiblen Exporte aus dem VitalOS-SSOT nach.
+export {
+  getHabits,
+  updateHabit,
+  addHabit,
+  deleteHabit,
+  getHabitRecordsForDate,
+  recordHabit,
+  unrecordHabit,
+} from "../../../src/cloud/db.firestore.js";
+
 // index.firestore.js hat bewusst keinen Fuel-Proxy mehr (learn-dev braucht
 // @fuel nicht) — der eingebettete Journal-Tab (@journal → JournalTimeline)
 // hier in habits-dev braucht Fuel-Daten aber schon, deshalb explizit:
