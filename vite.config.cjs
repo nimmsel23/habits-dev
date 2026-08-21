@@ -2,6 +2,9 @@ const { defineConfig, loadEnv } = require("vite");
 const react = require("@vitejs/plugin-react");
 const { VitePWA } = require("vite-plugin-pwa");
 const path = require("path");
+const { createRequire } = require("module");
+
+const requireFromRoot = createRequire(path.resolve(__dirname, "../package.json"));
 
 // Nachbar-Repos: die vitalos-Submodule-Checkouts (master = firebase-first,
 // modulare Firestore-Layer). Die Home-Worktrees sind dev-Playgrounds.
@@ -44,6 +47,8 @@ module.exports = defineConfig(async ({ mode }) => {
   const SUBREPO_FIREBASE = new Set([
     path.resolve(FITNESS, "src/firebase.js"),
     path.resolve(FUEL, "src/client/lib/firebase.js"),
+    path.resolve(JOURNAL, "src/lib/firebase.js"),
+    path.resolve(RELAX, "src/firebase.js"),
   ]);
   const firebaseRedirect = {
     name: "habits:subrepo-firebase-redirect",
@@ -114,18 +119,25 @@ module.exports = defineConfig(async ({ mode }) => {
       alias: {
         ...crossAppAliases,
         "@habits-db": path.resolve(__dirname, "./src/db/index.js"),
-        "@db":      path.resolve(__dirname, "../journal-app/src/db/index.js"),
+        "@db":      path.resolve(__dirname, "./src/db/index.js"),
         "@utils":   path.resolve(__dirname, "./src/db/index.js"),
         "@habits":  path.resolve(__dirname, "./src"),
         "@constants": path.resolve(FITNESS, "src/constants"),
         "@api": path.resolve(FUEL, appMode === "client" ? "src/client/lib/api.cloud.js" : "src/client/lib/api.local.js"),
+        "@firebase-config": path.resolve(__dirname, "../firebase.config.js"),
+        "firebase/vertexai": requireFromRoot.resolve("firebase/vertexai"),
+        "firebase/ai": requireFromRoot.resolve("firebase/ai"),
       },
       // "firebase" hier zwingend: fitness-dev/fuel-dev importieren firebase/auth
       // und firebase/firestore auch direkt (nicht nur über firebase.js), und
       // haben dort eine andere Firebase-Version im eigenen node_modules.
       // Ohne dedupe entstehen zwei SDK-Instanzen -> "Component auth has not
       // been registered yet".
-      dedupe: ["react", "react-dom", "@tanstack/react-query", "firebase"],
+      dedupe: [
+        "react", "react-dom", "@tanstack/react-query",
+        "firebase", "firebase/app", "firebase/firestore", "firebase/auth",
+        "firebase/ai", "firebase/vertexai",
+      ],
     },
     build: {
       outDir,
