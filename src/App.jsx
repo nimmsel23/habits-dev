@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { CheckSquare, LogIn, Loader, RotateCcw } from 'lucide-react'
-import { watchAuth, signIn, isLocalMode } from '@db'
+import { watchAuth, signIn, isLocalMode, localToday } from '@db'
 import Habits from './views/Habits/index.jsx'
 import Journal from '@journal/views/JournalVosView.jsx'
 import { useRegisterSW } from "virtual:pwa-register/react"
@@ -9,6 +9,7 @@ export default function App() {
   const [user, setUser]     = useState(undefined)
   const [signing, setSigning] = useState(false)
   const [activeTab, setActiveTab] = useState('habits')
+  const [journalDate, setJournalDate] = useState(() => localToday())
   const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
 
   useEffect(() => {
@@ -67,7 +68,12 @@ export default function App() {
         {activeTab === 'habits' ? (
           <Habits />
         ) : (
-          <Journal user={user} date={new Date()} />
+          <Journal
+            embedded
+            user={user}
+            date={journalDate}
+            onDateChange={setJournalDate}
+          />
         )}
       </main>
     </div>
