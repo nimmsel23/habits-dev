@@ -5,6 +5,23 @@ import Habits from './views/Habits/index.jsx'
 import Journal from '@journal/views/JournalVosView.jsx'
 import { useRegisterSW } from "virtual:pwa-register/react"
 
+function parseHashState(today) {
+  const raw = window.location.hash.replace(/^#\/?/, '')
+  if (!raw) return { tab: null, date: null }
+  const [tab = null, rawDate = null] = raw.split('/')
+  if (!tab) return { tab: null, date: null }
+  if (!rawDate) return { tab, date: null }
+  if (rawDate === 'today') return { tab, date: today }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) return { tab, date: rawDate }
+  return { tab, date: null }
+}
+
+function buildHashState(tab, date, today) {
+  if (!tab) return '#'
+  if (!date) return `#${tab}`
+  return `#${tab}/${date === today ? 'today' : date}`
+}
+
 export default function App() {
   const [user, setUser]     = useState(undefined)
   const [signing, setSigning] = useState(false)
@@ -16,6 +33,26 @@ export default function App() {
     if (isLocalMode()) { setUser({ displayName: 'Local' }); return }
     return watchAuth(u => setUser(u ?? null))
   }, [])
+
+  useEffect(() => {
+    const today = localToday()
+    const handleHashChange = () => {
+      const { tab, date } = parseHashState(today)
+      if (tab === 'habits' || tab === 'journal') setActiveTab(tab)
+      if (date) setJournalDate(date)
+    }
+    handleHashChange()
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
+
+  useEffect(() => {
+    const today = localToday()
+    const nextHash = buildHashState(activeTab, journalDate, today)
+    if (window.location.hash !== nextHash) {
+      window.location.hash = nextHash
+    }
+  }, [activeTab, journalDate])
 
   if (user === undefined) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100dvh', background:'#0a0a0f' }}>
@@ -66,7 +103,7 @@ export default function App() {
       </header>
       <main style={{ padding: '16px' }}>
         {activeTab === 'habits' ? (
-          <Habits />
+          <Habits selectedDate={journalDate} onSelectedDateChange={setJournalDate} />
         ) : (
           <Journal
             embedded
