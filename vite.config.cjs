@@ -5,6 +5,7 @@ const path = require("path");
 const { createRequire } = require("module");
 
 const requireFromRoot = createRequire(path.resolve(__dirname, "../package.json"));
+const ROOT_FIREBASE = path.resolve(__dirname, "../node_modules/firebase");
 
 // Nachbar-Repos: die vitalos-Submodule-Checkouts (master = firebase-first,
 // modulare Firestore-Layer). Die Home-Worktrees sind dev-Playgrounds.
@@ -125,6 +126,10 @@ module.exports = defineConfig(async ({ mode }) => {
         "@constants": path.resolve(FITNESS, "src/constants"),
         "@api": path.resolve(FUEL, appMode === "client" ? "src/client/lib/api.cloud.js" : "src/client/lib/api.local.js"),
         "@firebase-config": path.resolve(__dirname, "../firebase.config.js"),
+        "firebase": ROOT_FIREBASE,
+        "firebase/app": requireFromRoot.resolve("firebase/app"),
+        "firebase/auth": requireFromRoot.resolve("firebase/auth"),
+        "firebase/firestore": requireFromRoot.resolve("firebase/firestore"),
         "firebase/vertexai": requireFromRoot.resolve("firebase/vertexai"),
         "firebase/ai": requireFromRoot.resolve("firebase/ai"),
       },
