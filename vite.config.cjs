@@ -5,10 +5,17 @@ const path = require("path");
 
 // Nachbar-Repos: die vitalos-Submodule-Checkouts (master = firebase-first,
 // modulare Firestore-Layer). Die Home-Worktrees sind dev-Playgrounds.
-const FITNESS = path.resolve(__dirname, "../fitness-app");
-const FUEL = path.resolve(__dirname, "../fuel-app");
-const RELAX = path.resolve(__dirname, "../relax-app");
-const JOURNAL = path.resolve(__dirname, "../journal-app");
+const fs = require("fs");
+function resolveSibling(nameApp, nameDev) {
+  const pApp = path.resolve(__dirname, `../${nameApp}`);
+  if (fs.existsSync(pApp)) return pApp;
+  return path.resolve(__dirname, `../${nameDev}`);
+}
+
+const FITNESS = resolveSibling("fitness-app", "fitness-dev");
+const FUEL = resolveSibling("fuel-app", "fuel-dev");
+const RELAX = resolveSibling("relax-app", "relax-dev");
+const JOURNAL = resolveSibling("journal-app", "journal-dev");
 
 // SSOT für Cross-App-Aliase ist @vos/cross-app-aliases (~/vitalos/packages/
 // cross-app-aliases) — dynamic import() geht auch aus einer .cjs-Datei
@@ -114,7 +121,7 @@ module.exports = defineConfig(async ({ mode }) => {
       alias: {
         ...crossAppAliases,
         "@habits-db": path.resolve(__dirname, "./src/db/index.js"),
-        "@db":      path.resolve(__dirname, "../journal-app/src/db/index.js"),
+        "@db":      path.resolve(JOURNAL, "src/db/index.js"),
         "@utils":   path.resolve(__dirname, "./src/db/index.js"),
         "@habits":  path.resolve(__dirname, "./src"),
         "@constants": path.resolve(FITNESS, "src/constants"),

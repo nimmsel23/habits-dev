@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
-import { Star, CalendarDays, Activity, PenLine } from "lucide-react";
+import { Star, CalendarDays, Activity, PenLine, LayoutGrid, Smartphone } from "lucide-react";
 import {
   getHabits, recordHabit, unrecordHabit, addHabit, deleteHabit,
-  updateHabit, getHabitRecordsForDate, getHabitJournal, saveHabitJournal, getHabitJournalHistory
+  updateHabit, getHabitRecordsForDate, getHabitJournal, saveHabitJournal, getHabitJournalHistory,
+  saveHabitOrder
 } from "@habits-db";
 import { localToday } from "@utils";
 import { ICON_COMPONENTS_MAP } from "./utils";
@@ -13,6 +14,20 @@ import HabitSidebar from "./HabitSidebar";
 import HabitJournalModal from "./HabitJournalModal";
 import HabitStats from "./HabitStats";
 import { getRollingDays } from "./utils";
+
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import Core4Layout from "./Core4Layout";
 
 export default function Habits() {
   const [habits, setHabits] = useState([]);
@@ -30,6 +45,33 @@ export default function Habits() {
   const [isJournalSaving, setIsJournalSaving] = useState(false);
   const [journalModalOpen, setJournalModalOpen] = useState(false);
   const [memoirWrittenIds, setMemoirWrittenIds] = useState(new Set());
+  const [layoutMode, setLayoutMode] = useState(() => localStorage.getItem("habits-layout-mode") || "v1");
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  async function handleDragEnd(event) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    
+    setHabits((prev) => {
+      const oldIndex = prev.findIndex((h) => h.uuid === active.id);
+      const newIndex = prev.findIndex((h) => h.uuid === over.id);
+      const nextHabits = arrayMove(prev, oldIndex, newIndex);
+      
+      const orderedUuids = nextHabits.map(h => h.uuid);
+      saveHabitOrder(orderedUuids).catch(err => {
+        console.error("Failed to save habit order:", err);
+      });
+      
+      return nextHabits;
+    });
+  }
 
   const rollingDates = useMemo(() => getRollingDays(28), []);
   const recentDates = useMemo(() => getRollingDays(10), []);
@@ -180,6 +222,48 @@ export default function Habits() {
     load();
   };
 
+  if (layoutMode === "core4") {
+    return (
+      <div className="pb-32 px-2 sm:px-4 lg:px-6">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-3xl font-black text-slate-100">Deine Habits</h1>
+          <div className="flex items-center gap-2 bg-slate-900 border border-white/10 px-3 py-2 rounded-2xl shadow-xl">
+            <button
+              onClick={() => { setLayoutMode("v1"); localStorage.setItem("habits-layout-mode", "v1"); }}
+              className={`p-1.5 rounded-xl border transition-all ${layoutMode === 'v1' ? 'bg-orange-400 text-black border-orange-400' : 'bg-slate-900 text-slate-400 border-white/10 hover:border-orange-400'}`}
+              title="V1 Standard-Ansicht"
+            >
+              <LayoutGrid size={16} />
+            </button>
+            <button
+              onClick={() => { setLayoutMode("core4"); localStorage.setItem("habits-layout-mode", "core4"); }}
+              className={`p-1.5 rounded-xl border transition-all ${layoutMode === 'core4' ? 'bg-orange-400 text-black border-orange-400' : 'bg-slate-900 text-slate-400 border-white/10 hover:border-orange-400'}`}
+              title="Core4 Minimal-Ansicht"
+            >
+              <Smartphone size={16} />
+            </button>
+          </div>
+        </div>
+        <Core4Layout 
+          habits={habits}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          onToggleCheck={toggleCheck}
+          onDragEnd={handleDragEnd}
+          onOpenJournal={(h) => {
+            setSelectedHabitId(h.uuid);
+          }}
+          journalText={journalText}
+          setJournalText={setJournalText}
+          onSaveJournal={() => onSaveJournal()}
+          isJournalSaving={isJournalSaving}
+          selectedHabitId={selectedHabitId}
+          setSelectedHabitId={setSelectedHabitId}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="pb-32 px-2 sm:px-4 lg:px-6">
       <div className="mb-10 flex flex-col gap-6">
@@ -196,6 +280,23 @@ export default function Habits() {
              <div className="w-10 h-10 rounded-xl bg-orange-400/10 flex items-center justify-center text-orange-400">
                 <Star size={20} fill="currentColor" fillOpacity={0.2} />
              </div>
+          </div>
+          
+          <div className="flex items-center gap-2 bg-slate-900 border border-white/10 px-3 py-2 rounded-2xl shadow-xl">
+            <button
+              onClick={() => { setLayoutMode("v1"); localStorage.setItem("habits-layout-mode", "v1"); }}
+              className={`p-1.5 rounded-xl border transition-all ${layoutMode === 'v1' ? 'bg-orange-400 text-black border-orange-400' : 'bg-slate-900 text-slate-400 border-white/10 hover:border-orange-400'}`}
+              title="V1 Standard-Ansicht"
+            >
+              <LayoutGrid size={16} />
+            </button>
+            <button
+              onClick={() => { setLayoutMode("core4"); localStorage.setItem("habits-layout-mode", "core4"); }}
+              className={`p-1.5 rounded-xl border transition-all ${layoutMode === 'core4' ? 'bg-orange-400 text-black border-orange-400' : 'bg-slate-900 text-slate-400 border-white/10 hover:border-orange-400'}`}
+              title="Core4 Minimal-Ansicht"
+            >
+              <Smartphone size={16} />
+            </button>
           </div>
         </div>
 
@@ -282,23 +383,27 @@ export default function Habits() {
                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Noch keine Habits</p>
               </div>
             )}
-            {habits.map(h => (
-              <HabitItem
-                key={h.uuid}
-                h={h}
-                isSelected={selectedHabitId === h.uuid}
-                isEditing={editingHabitId === h.uuid}
-                editingIcon={editingIcon}
-                setEditingIcon={setEditingIcon}
-                setEditingHabitId={setEditingHabitId}
-                onToggleSelection={() => setSelectedHabitId(selectedHabitId === h.uuid ? null : h.uuid)}
-                onToggleCheck={toggleCheck}
-                onDelete={handleDelete}
-                onUpdateName={updateHabitName}
-                onFinishEditing={finishEditing}
-                selectedDate={selectedDate}
-              />
-            ))}
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={habits.map(h => h.uuid)} strategy={verticalListSortingStrategy}>
+                {habits.map(h => (
+                  <HabitItem
+                    key={h.uuid}
+                    h={h}
+                    isSelected={selectedHabitId === h.uuid}
+                    isEditing={editingHabitId === h.uuid}
+                    editingIcon={editingIcon}
+                    setEditingIcon={setEditingIcon}
+                    setEditingHabitId={setEditingHabitId}
+                    onToggleSelection={() => setSelectedHabitId(selectedHabitId === h.uuid ? null : h.uuid)}
+                    onToggleCheck={toggleCheck}
+                    onDelete={handleDelete}
+                    onUpdateName={updateHabitName}
+                    onFinishEditing={finishEditing}
+                    selectedDate={selectedDate}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           </div>
         </div>
 
