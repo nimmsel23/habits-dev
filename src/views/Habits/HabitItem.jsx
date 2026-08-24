@@ -1,22 +1,24 @@
 import { Edit, Check, Trash2, Sparkles, GripVertical } from "lucide-react";
-import { ICON_OPTIONS, ICON_COMPONENTS_MAP } from "./utils";
+import { ICON_OPTIONS, ICON_COMPONENTS_MAP, CATEGORY_OPTIONS, CATEGORY_LABEL_MAP } from "./utils";
 import { isLocalMode } from "@habits-db";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-export default function HabitItem({ 
-  h, 
-  isSelected, 
-  isEditing, 
-  editingIcon, 
-  setEditingIcon, 
-  setEditingHabitId, 
-  onToggleSelection, 
-  onToggleCheck, 
-  onDelete, 
+export default function HabitItem({
+  h,
+  isSelected,
+  isEditing,
+  editingIcon,
+  setEditingIcon,
+  editingCategory,
+  setEditingCategory,
+  setEditingHabitId,
+  onToggleSelection,
+  onToggleCheck,
+  onDelete,
   onUpdateName,
   onFinishEditing,
-  selectedDate 
+  selectedDate
 }) {
   const isCoachHabit = h.source === 'coach';
   const canEdit = isLocalMode() || !isCoachHabit;
@@ -82,6 +84,14 @@ export default function HabitItem({
                       );
                   })}
               </div>
+              <div className="flex flex-wrap gap-2">
+                  {CATEGORY_OPTIONS.map(cat => (
+                      <button type="button" key={cat.key} onClick={(e) => { e.stopPropagation(); setEditingCategory(cat.key); }}
+                          className={`px-2.5 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest transition-colors ${editingCategory === cat.key ? 'bg-orange-400 border-orange-400 text-black' : 'bg-slate-900 border-white/10 text-slate-400 hover:border-orange-400'}`}>
+                          {cat.label}
+                      </button>
+                  ))}
+              </div>
             </div>
           ) : (
             <div className="flex items-center gap-2">
@@ -90,6 +100,11 @@ export default function HabitItem({
                 return IconComponent && <IconComponent size={16} className="text-slate-400 shrink-0" />;
               })()}
               <div className="text-sm font-black text-slate-100 truncate">{h.name}</div>
+              {h.category && CATEGORY_LABEL_MAP[h.category] && (
+                <span className="text-[8px] font-black px-1.5 py-0.5 bg-slate-800 text-slate-400 rounded-full border border-white/10 uppercase tracking-tighter shrink-0">
+                  {CATEGORY_LABEL_MAP[h.category]}
+                </span>
+              )}
               {isCoachHabit && (
                 <span className="flex items-center gap-0.5 text-[8px] font-black px-1.5 py-0.5 bg-orange-400/10 text-orange-400 rounded-full border border-orange-400/20 uppercase tracking-tighter shrink-0">
                   <Sparkles size={8} /> Coach

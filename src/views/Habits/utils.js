@@ -8,6 +8,20 @@ export const ICON_COMPONENTS_MAP = {
   Activity, Footprints, Apple, BookOpen, Coffee, Droplet, Dumbbell, Feather, Heart, Home, Moon, Sunrise, Sun, Zap
 };
 
+// Feste Core4-Kategorien statt frei anlegbarer Kategorien — deckt sich mit
+// den Domänen aus Core4Layout.jsx (dort bislang nur per Keyword-Heuristik
+// aus dem Namen geraten, hier explizit am Habit gespeichert).
+export const CATEGORY_OPTIONS = [
+  { key: "body", label: "Body" },
+  { key: "being", label: "Being" },
+  { key: "balance", label: "Balance" },
+  { key: "business", label: "Business" },
+];
+
+export const CATEGORY_LABEL_MAP = Object.fromEntries(
+  CATEGORY_OPTIONS.map((c) => [c.key, c.label])
+);
+
 export function getRollingDays(count) {
   const dates = [];
   const today = new Date();

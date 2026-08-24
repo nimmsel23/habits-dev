@@ -66,18 +66,20 @@ export async function getHabits(days = 28) {
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 }
 
-export async function updateHabit(uuid, newName, newIcon) {
+export async function updateHabit(uuid, newName, newIcon, newCategory = null) {
   await setDoc(doc(db, "fitness", getUid(), "habits", uuid), {
     name: newName,
     icon: newIcon,
+    category: newCategory,
     updated_at: serverTimestamp(),
   }, { merge: true });
 }
 
-export async function addHabit(name, icon = "Activity") {
+export async function addHabit(name, icon = "Activity", category = null) {
   return addDoc(collection(db, "fitness", getUid(), "habits"), {
     name,
     icon,
+    category,
     created_at: serverTimestamp(),
   });
 }

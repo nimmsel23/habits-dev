@@ -27,6 +27,10 @@ const DOMAINS = [
 ];
 
 function getHabitDomain(habit) {
+  if (habit.category && DOMAINS.some(d => d.key === habit.category)) {
+    return habit.category;
+  }
+
   const name = (habit.name || '').toLowerCase();
   const icon = (habit.icon || '').toLowerCase();
   

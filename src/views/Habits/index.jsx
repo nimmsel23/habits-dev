@@ -34,10 +34,12 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
   const [loading, setLoading] = useState(true);
   const [newHabit, setNewHabit] = useState("");
   const [selectedIcon, setSelectedIcon] = useState('Activity');
+  const [selectedCategory, setSelectedCategory] = useState('body');
   const [saving, setSaving] = useState(false);
   const [selectedDate, setSelectedDateState] = useState(controlledDate || localToday());
   const [editingHabitId, setEditingHabitId] = useState(null);
   const [editingIcon, setEditingIcon] = useState(null);
+  const [editingCategory, setEditingCategory] = useState(null);
   const [selectedHabitId, setSelectedHabitId] = useState(null);
   const [selectedSidebarDate, setSelectedSidebarDate] = useState(controlledDate || localToday());
   const [journalText, setJournalText] = useState("");
@@ -142,8 +144,10 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
     if (editingHabitId) {
       const habitToEdit = habits.find(h => h.uuid === editingHabitId);
       setEditingIcon(habitToEdit?.icon || 'Activity');
+      setEditingCategory(habitToEdit?.category || null);
     } else {
       setEditingIcon(null);
+      setEditingCategory(null);
     }
   }, [editingHabitId, habits]);
 
@@ -187,7 +191,7 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
     if (!newHabit.trim()) return;
     setSaving(true);
     try {
-      await addHabit(newHabit.trim(), selectedIcon);
+      await addHabit(newHabit.trim(), selectedIcon, selectedCategory);
       setNewHabit("");
       setSelectedIcon('Activity');
       load();
@@ -224,10 +228,11 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
   const finishEditing = async () => {
     const h = habits.find(x => x.uuid === editingHabitId);
     if (h) {
-      await updateHabit(h.uuid, h.name.trim(), editingIcon);
+      await updateHabit(h.uuid, h.name.trim(), editingIcon, editingCategory);
     }
     setEditingHabitId(null);
     setEditingIcon(null);
+    setEditingCategory(null);
     load();
   };
 
@@ -402,6 +407,8 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
                     isEditing={editingHabitId === h.uuid}
                     editingIcon={editingIcon}
                     setEditingIcon={setEditingIcon}
+                    editingCategory={editingCategory}
+                    setEditingCategory={setEditingCategory}
                     setEditingHabitId={setEditingHabitId}
                     onToggleSelection={() => setSelectedHabitId(selectedHabitId === h.uuid ? null : h.uuid)}
                     onToggleCheck={toggleCheck}
@@ -442,6 +449,8 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
                 setNewHabit={setNewHabit}
                 selectedIcon={selectedIcon}
                 setSelectedIcon={setSelectedIcon}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
                 onAdd={handleAdd}
                 saving={saving}
               />
