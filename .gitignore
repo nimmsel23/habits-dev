@@ -16,3 +16,4 @@ __pycache__/
 *.pyc
 *.egg-info/
 .archiv/
+gas/.clasp.json

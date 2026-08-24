@@ -24,6 +24,7 @@ import {
   serverTimestamp,
   setDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 
 export * from "@fitness-db/index.firestore.js";
@@ -53,14 +54,16 @@ export async function getHabits(days = 28) {
   const recordsSnap = await getDocs(recordsQuery);
   const allRecords = recordsSnap.docs.map((entry) => entry.data());
 
-  return habits.map((habit) => {
-    const records = allRecords.filter((record) => record.habitId === habit.uuid);
-    return {
-      ...habit,
-      records,
-      hasRecord: (date) => records.some((record) => record.date === date && record.completion === "DONE"),
-    };
-  });
+  return habits
+    .map((habit) => {
+      const records = allRecords.filter((record) => record.habitId === habit.uuid);
+      return {
+        ...habit,
+        records,
+        hasRecord: (date) => records.some((record) => record.date === date && record.completion === "DONE"),
+      };
+    })
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 }
 
 export async function updateHabit(uuid, newName, newIcon) {
@@ -113,6 +116,15 @@ export async function unrecordHabit(uuid, date = todayISO()) {
     recorded_at: serverTimestamp(),
   }, { merge: true });
   return { ok: true };
+}
+
+export async function saveHabitOrder(orderedUuids) {
+  const batch = writeBatch(db);
+  orderedUuids.forEach((uuid, idx) => {
+    const ref = doc(db, "fitness", getUid(), "habits", uuid);
+    batch.set(ref, { order: idx }, { merge: true });
+  });
+  await batch.commit();
 }
 
 // index.firestore.js hat bewusst keinen Fuel-Proxy mehr (learn-dev braucht
