@@ -4,12 +4,21 @@ const { VitePWA } = require("vite-plugin-pwa");
 const path = require("path");
 const { createRequire } = require("module");
 
-const requireFromRoot = createRequire(path.resolve(__dirname, "../package.json"));
-const ROOT_FIREBASE = path.resolve(__dirname, "../node_modules/firebase");
+// ../package.json existiert nur, wenn dieses Repo als vitalos-Submodule
+// eingebunden ist (~/vitalos/habit-app). Standalone (~/habits-dev, "../"
+// = ~/) gibt es keine vitalos-Root — dann auf eigenes package.json/
+// node_modules zurückfallen.
+const fs = require("fs");
+const VITALOS_ROOT_PKG = path.resolve(__dirname, "../package.json");
+const requireFromRoot = createRequire(
+  fs.existsSync(VITALOS_ROOT_PKG) ? VITALOS_ROOT_PKG : path.resolve(__dirname, "package.json")
+);
+const ROOT_FIREBASE = fs.existsSync(VITALOS_ROOT_PKG)
+  ? path.resolve(__dirname, "../node_modules/firebase")
+  : path.resolve(__dirname, "node_modules/firebase");
 
 // Nachbar-Repos: die vitalos-Submodule-Checkouts (master = firebase-first,
 // modulare Firestore-Layer). Die Home-Worktrees sind dev-Playgrounds.
-const fs = require("fs");
 function resolveSibling(nameApp, nameDev) {
   const pApp = path.resolve(__dirname, `../${nameApp}`);
   if (fs.existsSync(pApp)) return pApp;
