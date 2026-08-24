@@ -77,7 +77,9 @@ export default function HabitItem({
                   {ICON_OPTIONS.map(iconName => {
                       const IconComponent = ICON_COMPONENTS_MAP[iconName];
                       return (
-                          <button type="button" key={iconName} onClick={(e) => { e.stopPropagation(); setEditingIcon(iconName); }}
+                          <button type="button" key={iconName}
+                              onMouseDown={(e) => e.preventDefault()}
+                              onClick={(e) => { e.stopPropagation(); setEditingIcon(iconName); }}
                               className={`p-2 rounded-full border transition-colors ${editingIcon === iconName ? 'bg-orange-400 border-orange-400 text-black' : 'bg-slate-900 border-white/10 text-slate-400 hover:border-orange-400'}`}>
                               {IconComponent && <IconComponent size={20} />}
                           </button>
@@ -86,7 +88,9 @@ export default function HabitItem({
               </div>
               <div className="flex flex-wrap gap-2">
                   {CATEGORY_OPTIONS.map(cat => (
-                      <button type="button" key={cat.key} onClick={(e) => { e.stopPropagation(); setEditingCategory(cat.key); }}
+                      <button type="button" key={cat.key}
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={(e) => { e.stopPropagation(); setEditingCategory(cat.key); }}
                           className={`px-2.5 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest transition-colors ${editingCategory === cat.key ? 'bg-orange-400 border-orange-400 text-black' : 'bg-slate-900 border-white/10 text-slate-400 hover:border-orange-400'}`}>
                           {cat.label}
                       </button>
