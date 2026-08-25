@@ -1,8 +1,9 @@
 import { Edit, Check, Trash2, Sparkles, GripVertical } from "lucide-react";
-import { ICON_OPTIONS, ICON_COMPONENTS_MAP, CATEGORY_OPTIONS, CATEGORY_LABEL_MAP } from "./utils";
+import { ICON_OPTIONS, ICON_COMPONENTS_MAP, CATEGORY_OPTIONS, CATEGORY_LABEL_MAP, formatFrequency } from "./utils";
 import { isLocalMode } from "@habits-db";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import FrequencyPicker from "./FrequencyPicker";
 
 export default function HabitItem({
   h,
@@ -12,6 +13,8 @@ export default function HabitItem({
   setEditingIcon,
   editingCategory,
   setEditingCategory,
+  editingFrequency,
+  setEditingFrequency,
   setEditingHabitId,
   onToggleSelection,
   onToggleCheck,
@@ -96,6 +99,7 @@ export default function HabitItem({
                       </button>
                   ))}
               </div>
+              <FrequencyPicker frequency={editingFrequency} onChange={setEditingFrequency} compact />
             </div>
           ) : (
             <div className="flex items-center gap-2">
@@ -107,6 +111,11 @@ export default function HabitItem({
               {h.category && CATEGORY_LABEL_MAP[h.category] && (
                 <span className="text-[8px] font-black px-1.5 py-0.5 bg-slate-800 text-slate-400 rounded-full border border-white/10 uppercase tracking-tighter shrink-0">
                   {CATEGORY_LABEL_MAP[h.category]}
+                </span>
+              )}
+              {formatFrequency(h) && (
+                <span className="text-[8px] font-black px-1.5 py-0.5 bg-slate-800 text-slate-400 rounded-full border border-white/10 uppercase tracking-tighter shrink-0">
+                  {formatFrequency(h)}
                 </span>
               )}
               {isCoachHabit && (

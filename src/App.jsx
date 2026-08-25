@@ -103,7 +103,7 @@ export default function App() {
       </header>
       <main style={{ padding: '16px' }}>
         {activeTab === 'habits' ? (
-          <Habits selectedDate={journalDate} onSelectedDateChange={setJournalDate} />
+          <Habits user={user} selectedDate={journalDate} onSelectedDateChange={setJournalDate} />
         ) : (
           <Journal
             embedded

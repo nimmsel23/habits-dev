@@ -1,21 +1,24 @@
 import { useState, useMemo } from 'react';
-import { 
-  Activity, Smile, Users, Briefcase, Layers, 
-  ChevronLeft, ChevronRight, GripVertical, Check, MessageSquare 
+import {
+  Activity, Smile, Users, Briefcase, Layers,
+  GripVertical, MessageSquare, Plus, Pencil, X, Trash2
 } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { 
-  DndContext, 
-  closestCenter, 
-  PointerSensor, 
-  useSensor, 
-  useSensors 
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors
 } from '@dnd-kit/core';
-import { 
-  SortableContext, 
-  verticalListSortingStrategy 
+import {
+  SortableContext,
+  verticalListSortingStrategy
 } from '@dnd-kit/sortable';
+import { ICON_OPTIONS, ICON_COMPONENTS_MAP, CATEGORY_OPTIONS } from './utils';
+import FrequencyPicker from './FrequencyPicker';
 import './core4.css';
 
 const DOMAINS = [
@@ -33,34 +36,34 @@ function getHabitDomain(habit) {
 
   const name = (habit.name || '').toLowerCase();
   const icon = (habit.icon || '').toLowerCase();
-  
+
   if (
-    name.includes('fit') || name.includes('gym') || name.includes('run') || name.includes('walk') || 
-    name.includes('train') || name.includes('sport') || name.includes('ess') || name.includes('eat') || 
+    name.includes('fit') || name.includes('gym') || name.includes('run') || name.includes('walk') ||
+    name.includes('train') || name.includes('sport') || name.includes('ess') || name.includes('eat') ||
     name.includes('fuel') || name.includes('water') || name.includes('sleep') || name.includes('kraft') ||
     icon.includes('activity') || icon.includes('heart') || icon.includes('zap')
   ) {
     return 'body';
   }
   if (
-    name.includes('meditat') || name.includes('journal') || name.includes('memoir') || name.includes('mind') || 
-    name.includes('seele') || name.includes('ruhe') || name.includes('geist') || name.includes('read') || 
+    name.includes('meditat') || name.includes('journal') || name.includes('memoir') || name.includes('mind') ||
+    name.includes('seele') || name.includes('ruhe') || name.includes('geist') || name.includes('read') ||
     name.includes('buch') || name.includes('lesen') || name.includes('study') || name.includes('breathe') ||
     icon.includes('book') || icon.includes('eye') || icon.includes('smile') || icon.includes('star')
   ) {
     return 'being';
   }
   if (
-    name.includes('partner') || name.includes('frau') || name.includes('mann') || name.includes('kind') || 
-    name.includes('freund') || name.includes('call') || name.includes('check') || name.includes('social') || 
+    name.includes('partner') || name.includes('frau') || name.includes('mann') || name.includes('kind') ||
+    name.includes('freund') || name.includes('call') || name.includes('check') || name.includes('social') ||
     name.includes('love') || name.includes('haushalt') || name.includes('putzen') || name.includes('beziehung') ||
     icon.includes('users') || icon.includes('message') || icon.includes('phone')
   ) {
     return 'balance';
   }
   if (
-    name.includes('work') || name.includes('code') || name.includes('arbeit') || name.includes('lerne') || 
-    name.includes('project') || name.includes('business') || name.includes('geld') || name.includes('money') || 
+    name.includes('work') || name.includes('code') || name.includes('arbeit') || name.includes('lerne') ||
+    name.includes('project') || name.includes('business') || name.includes('geld') || name.includes('money') ||
     name.includes('job') || name.includes('career') ||
     icon.includes('briefcase') || icon.includes('code') || icon.includes('trending') || icon.includes('dollar')
   ) {
@@ -69,7 +72,7 @@ function getHabitDomain(habit) {
   return 'other';
 }
 
-function SortableHabitRow({ h, onToggleCheck, onOpenJournal }) {
+function SortableHabitRow({ h, onToggleCheck, onOpenJournal, onEditHabit }) {
   const {
     attributes,
     listeners,
@@ -99,9 +102,9 @@ function SortableHabitRow({ h, onToggleCheck, onOpenJournal }) {
 
   return (
     <div ref={setNodeRef} style={style} className="core4-theme-habit-row">
-      <div 
-        {...attributes} 
-        {...listeners} 
+      <div
+        {...attributes}
+        {...listeners}
         className="p-1 text-slate-600 hover:text-slate-400 cursor-grab active:cursor-grabbing shrink-0"
       >
         <GripVertical size={14} />
@@ -112,12 +115,19 @@ function SortableHabitRow({ h, onToggleCheck, onOpenJournal }) {
       >
         {h.name}
       </button>
-      
-      <button 
+
+      <button
         onClick={() => onOpenJournal(h)}
         className="p-1.5 text-slate-500 hover:text-slate-300 transition-colors"
       >
         <MessageSquare size={13} />
+      </button>
+
+      <button
+        onClick={() => onEditHabit(h)}
+        className="p-1.5 text-slate-500 hover:text-orange-400 transition-colors"
+      >
+        <Pencil size={13} />
       </button>
 
       <div className="core4-theme-mini-ring-wrap">
@@ -128,9 +138,9 @@ function SortableHabitRow({ h, onToggleCheck, onOpenJournal }) {
             cx="20"
             cy="20"
             r="12"
-            style={{ 
-              strokeDasharray: '75.4', 
-              strokeDashoffset: miniOffset.toFixed(2) 
+            style={{
+              strokeDasharray: '75.4',
+              strokeDashoffset: miniOffset.toFixed(2)
             }}
           />
         </svg>
@@ -144,20 +154,137 @@ function SortableHabitRow({ h, onToggleCheck, onOpenJournal }) {
   );
 }
 
-export default function Core4Layout({ 
-  habits, 
-  selectedDate, 
-  setSelectedDate, 
-  onToggleCheck, 
-  onDragEnd, 
+function AddHabitInline({ newHabit, setNewHabit, selectedIcon, setSelectedIcon, selectedCategory, setSelectedCategory, selectedFrequency, setSelectedFrequency, onSubmit, saving, onCancel }) {
+  return (
+    <form onSubmit={onSubmit} className="core4-theme-journal-section" style={{ marginBottom: '10px' }}>
+      <input
+        type="text"
+        value={newHabit}
+        onChange={(e) => setNewHabit(e.target.value)}
+        placeholder="z.B. Früh aufstehen"
+        className="core4-theme-journal-input"
+        autoFocus
+      />
+      <div className="core4-theme-picker-row">
+        {ICON_OPTIONS.map(iconName => {
+          const IconComponent = ICON_COMPONENTS_MAP[iconName];
+          return (
+            <button type="button" key={iconName}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setSelectedIcon(iconName)}
+              className={`core4-theme-picker-chip ${selectedIcon === iconName ? 'active' : ''}`}>
+              {IconComponent && <IconComponent size={16} />}
+            </button>
+          );
+        })}
+      </div>
+      <div className="core4-theme-picker-row">
+        {CATEGORY_OPTIONS.map(cat => (
+          <button type="button" key={cat.key}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => setSelectedCategory(cat.key)}
+            className={`core4-theme-picker-chip text ${selectedCategory === cat.key ? 'active' : ''}`}>
+            {cat.label}
+          </button>
+        ))}
+      </div>
+      <FrequencyPicker frequency={selectedFrequency} onChange={setSelectedFrequency} compact />
+      <div className="core4-theme-journal-actions">
+        <button type="button" onClick={onCancel} className="core4-theme-sheet-cancel">Abbrechen</button>
+        <button type="submit" disabled={saving || !newHabit.trim()} className="core4-theme-journal-save">
+          Anlegen
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function HabitEditSheet({ habit, name, onNameChange, icon, onIconChange, category, onCategoryChange, frequency, onFrequencyChange, onSave, onDelete, onClose }) {
+  if (!habit) return null;
+
+  return createPortal(
+    <div className="core4-theme-sheet-backdrop" onClick={onClose}>
+      <div className="core4-theme-sheet" onClick={(e) => e.stopPropagation()}>
+        <div className="core4-theme-sheet-head">
+          <span>HABIT BEARBEITEN</span>
+          <button onClick={onClose} className="core4-theme-sheet-close"><X size={18} /></button>
+        </div>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => onNameChange(e.target.value)}
+          className="core4-theme-journal-input"
+          autoFocus
+        />
+        <div className="core4-theme-picker-row">
+          {ICON_OPTIONS.map(iconName => {
+            const IconComponent = ICON_COMPONENTS_MAP[iconName];
+            return (
+              <button type="button" key={iconName}
+                onClick={() => onIconChange(iconName)}
+                className={`core4-theme-picker-chip ${icon === iconName ? 'active' : ''}`}>
+                {IconComponent && <IconComponent size={16} />}
+              </button>
+            );
+          })}
+        </div>
+        <div className="core4-theme-picker-row">
+          {CATEGORY_OPTIONS.map(cat => (
+            <button type="button" key={cat.key}
+              onClick={() => onCategoryChange(cat.key)}
+              className={`core4-theme-picker-chip text ${category === cat.key ? 'active' : ''}`}>
+              {cat.label}
+            </button>
+          ))}
+        </div>
+        <FrequencyPicker frequency={frequency} onChange={onFrequencyChange} compact />
+        <div className="core4-theme-sheet-actions">
+          <button onClick={onDelete} className="core4-theme-sheet-delete"><Trash2 size={14} /> Löschen</button>
+          <button onClick={onSave} className="core4-theme-journal-save">Speichern</button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+export default function Core4Layout({
+  habits,
+  selectedDate,
+  setSelectedDate,
+  onToggleCheck,
+  onDragEnd,
   onOpenJournal,
   journalText,
   setJournalText,
   onSaveJournal,
   isJournalSaving,
   selectedHabitId,
-  setSelectedHabitId
+  setSelectedHabitId,
+  newHabit,
+  setNewHabit,
+  selectedIcon,
+  setSelectedIcon,
+  selectedCategory,
+  setSelectedCategory,
+  selectedFrequency,
+  setSelectedFrequency,
+  onAddHabit,
+  saving,
+  editingHabitId,
+  setEditingHabitId,
+  editingIcon,
+  setEditingIcon,
+  editingCategory,
+  setEditingCategory,
+  editingFrequency,
+  setEditingFrequency,
+  onUpdateHabitName,
+  onFinishEditing,
+  onDeleteHabit,
 }) {
+  const [showAddForm, setShowAddForm] = useState(false);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -179,7 +306,7 @@ export default function Core4Layout({
   // Statistics
   const totalHabitsCount = habits.length;
   const doneTodayCount = habits.filter(h => h.isDoneForSelectedDate).length;
-  
+
   const dailyPct = totalHabitsCount === 0 ? '0%' : Math.round((doneTodayCount / totalHabitsCount) * 100) + '%';
   const ringOffset = useMemo(() => {
     const pct = totalHabitsCount === 0 ? 0 : doneTodayCount / totalHabitsCount;
@@ -228,7 +355,7 @@ export default function Core4Layout({
         if (dk === selectedDate) return h.isDoneForSelectedDate;
         return (h.records || []).some(r => r.date === dk && r.completion === 'DONE');
       }).length;
-      
+
       const ratio = totalHabitsCount === 0 ? 0 : totalForDay / totalHabitsCount;
       let level = 0;
       if (ratio > 0) {
@@ -237,7 +364,7 @@ export default function Core4Layout({
         else if (ratio <= 0.75) level = 3;
         else level = 4;
       }
-      
+
       const dateObj = new Date(dk);
       return {
         dk,
@@ -249,21 +376,30 @@ export default function Core4Layout({
     });
   }, [last7Days, habits, totalHabitsCount, selectedDate]);
 
+  async function handleAddSubmit(e) {
+    e.preventDefault();
+    if (!newHabit.trim()) return;
+    await onAddHabit(e);
+    setShowAddForm(false);
+  }
+
+  const editingHabit = editingHabitId ? habits.find(h => h.uuid === editingHabitId) : null;
+
   return (
     <div className="core4-layout-container">
       <div className="core4-theme-wrap">
-        
+
         {/* Hero Section */}
         <section className="core4-theme-hero">
           <div className="core4-theme-ring-wrap">
             <svg className="core4-theme-ring-svg" viewBox="0 0 120 120">
               <circle className="core4-theme-ring-bg" cx="60" cy="60" r="50" />
-              <circle 
-                className="core4-theme-ring-track" 
-                cx="60" 
-                cy="60" 
+              <circle
+                className="core4-theme-ring-track"
+                cx="60"
+                cy="60"
                 r="50"
-                style={{ strokeDashoffset: ringOffset }} 
+                style={{ strokeDashoffset: ringOffset }}
               />
             </svg>
             <div className="core4-theme-ring-center">
@@ -319,8 +455,27 @@ export default function Core4Layout({
         {/* Sortable Habits Cards */}
         <div className="core4-theme-section-label">
           <span>HABITS</span>
-          <span className="core4-theme-sl-hint">drag to reorder / rings = weekly completion</span>
+          <button type="button" className="core4-theme-add-toggle" onClick={() => setShowAddForm(v => !v)}>
+            <Plus size={12} /> {showAddForm ? 'Schließen' : 'Neu'}
+          </button>
         </div>
+
+        {showAddForm && (
+          <AddHabitInline
+            newHabit={newHabit}
+            setNewHabit={setNewHabit}
+            selectedIcon={selectedIcon}
+            setSelectedIcon={setSelectedIcon}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            selectedFrequency={selectedFrequency}
+            setSelectedFrequency={setSelectedFrequency}
+            onSubmit={handleAddSubmit}
+            saving={saving}
+            onCancel={() => setShowAddForm(false)}
+          />
+        )}
+
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
           <section className="core4-theme-cards">
             {DOMAINS.map(domain => {
@@ -342,11 +497,12 @@ export default function Core4Layout({
                       <div className="core4-theme-card-habits">
                         <SortableContext items={domainHabits.map(h => h.uuid)} strategy={verticalListSortingStrategy}>
                           {domainHabits.map(h => (
-                            <SortableHabitRow 
-                              key={h.uuid} 
-                              h={h} 
-                              onToggleCheck={onToggleCheck} 
+                            <SortableHabitRow
+                              key={h.uuid}
+                              h={h}
+                              onToggleCheck={onToggleCheck}
                               onOpenJournal={onOpenJournal}
+                              onEditHabit={(habit) => setEditingHabitId(habit.uuid)}
                             />
                           ))}
                         </SortableContext>
@@ -373,9 +529,9 @@ export default function Core4Layout({
             </div>
             <section className="core4-theme-journal-section">
               <div className="core4-theme-journal-controls">
-                <select 
-                  value={selectedHabitId} 
-                  onChange={(e) => setSelectedHabitId(e.target.value)} 
+                <select
+                  value={selectedHabitId}
+                  onChange={(e) => setSelectedHabitId(e.target.value)}
                   className="core4-theme-journal-select"
                 >
                   {habits.map(h => (
@@ -399,8 +555,8 @@ export default function Core4Layout({
                 <span className="core4-theme-journal-status">
                   {isJournalSaving ? 'Saving...' : 'Saved'}
                 </span>
-                <button 
-                  className="core4-theme-journal-save" 
+                <button
+                  className="core4-theme-journal-save"
                   onClick={() => onSaveJournal()}
                   disabled={isJournalSaving}
                 >
@@ -412,6 +568,24 @@ export default function Core4Layout({
         )}
 
       </div>
+
+      <HabitEditSheet
+        habit={editingHabit}
+        name={editingHabit?.name || ''}
+        onNameChange={(name) => onUpdateHabitName(editingHabit.uuid, name)}
+        icon={editingIcon}
+        onIconChange={setEditingIcon}
+        category={editingCategory}
+        onCategoryChange={setEditingCategory}
+        frequency={editingFrequency}
+        onFrequencyChange={setEditingFrequency}
+        onSave={onFinishEditing}
+        onDelete={async () => {
+          await onDeleteHabit(editingHabit.uuid);
+          setEditingHabitId(null);
+        }}
+        onClose={() => setEditingHabitId(null)}
+      />
     </div>
   );
 }

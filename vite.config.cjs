@@ -101,7 +101,7 @@ module.exports = defineConfig(async ({ mode }) => {
           name: "VOS Habits",
           short_name: "Habits",
           description: "Habits auf VitalOS-Stack",
-          theme_color: "#10b981",
+          theme_color: "#fb923c",
           background_color: "#0f172a",
           display: "standalone",
           start_url: "/",
@@ -141,7 +141,10 @@ module.exports = defineConfig(async ({ mode }) => {
         "@habits":  path.resolve(__dirname, "./src"),
         "@constants": path.resolve(FITNESS, "src/constants"),
         "@api": path.resolve(FUEL, appMode === "client" ? "src/client/lib/api.cloud.js" : "src/client/lib/api.local.js"),
-        "@firebase-config": path.resolve(__dirname, "../firebase.config.js"),
+        // Eigene Kopie statt ../firebase.config.js (galt nur im vitalos-
+        // Submodule-Checkout) — gleicher Firebase-Projekt-Wert, aber ohne
+        // Abhängigkeit vom Nachbarverzeichnis (Standalone-Bug-Klasse s.o.).
+        "@firebase-config": path.resolve(__dirname, "src/lib/firebase.config.js"),
         "firebase": ROOT_FIREBASE,
         "firebase/app": requireFromRoot.resolve("firebase/app"),
         "firebase/auth": requireFromRoot.resolve("firebase/auth"),

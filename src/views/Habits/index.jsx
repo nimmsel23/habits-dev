@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
-import { Star, CalendarDays, Activity, PenLine, LayoutGrid, Smartphone } from "lucide-react";
+import { Star, CalendarDays, Activity, PenLine, LayoutGrid, Smartphone, Bell } from "lucide-react";
 import {
   getHabits, recordHabit, unrecordHabit, addHabit, deleteHabit,
   updateHabit, getHabitRecordsForDate, getHabitJournal, saveHabitJournal, getHabitJournalHistory,
   saveHabitOrder
 } from "@habits-db";
 import { localToday } from "@utils";
-import { ICON_COMPONENTS_MAP } from "./utils";
+import { ICON_COMPONENTS_MAP, DEFAULT_FREQUENCY } from "./utils";
 
 import HabitForm from "./HabitForm";
 import HabitItem from "./HabitItem";
@@ -28,18 +28,22 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import Core4Layout from "./Core4Layout";
+import PushSettingsModal from "./PushSettingsModal";
+import { usePushNotifications } from "./usePushNotifications";
 
-export default function Habits({ selectedDate: controlledDate = null, onSelectedDateChange = null }) {
+export default function Habits({ user = null, selectedDate: controlledDate = null, onSelectedDateChange = null }) {
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newHabit, setNewHabit] = useState("");
   const [selectedIcon, setSelectedIcon] = useState('Activity');
   const [selectedCategory, setSelectedCategory] = useState('body');
+  const [selectedFrequency, setSelectedFrequency] = useState(DEFAULT_FREQUENCY);
   const [saving, setSaving] = useState(false);
   const [selectedDate, setSelectedDateState] = useState(controlledDate || localToday());
   const [editingHabitId, setEditingHabitId] = useState(null);
   const [editingIcon, setEditingIcon] = useState(null);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [editingFrequency, setEditingFrequency] = useState(DEFAULT_FREQUENCY);
   const [selectedHabitId, setSelectedHabitId] = useState(null);
   const [selectedSidebarDate, setSelectedSidebarDate] = useState(controlledDate || localToday());
   const [journalText, setJournalText] = useState("");
@@ -48,6 +52,8 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
   const [journalModalOpen, setJournalModalOpen] = useState(false);
   const [memoirWrittenIds, setMemoirWrittenIds] = useState(new Set());
   const [layoutMode, setLayoutMode] = useState(() => localStorage.getItem("habits-layout-mode") || "v1");
+  const [pushModalOpen, setPushModalOpen] = useState(false);
+  const push = usePushNotifications(user);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -145,9 +151,11 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
       const habitToEdit = habits.find(h => h.uuid === editingHabitId);
       setEditingIcon(habitToEdit?.icon || 'Activity');
       setEditingCategory(habitToEdit?.category || null);
+      setEditingFrequency(habitToEdit?.frequency || DEFAULT_FREQUENCY);
     } else {
       setEditingIcon(null);
       setEditingCategory(null);
+      setEditingFrequency(DEFAULT_FREQUENCY);
     }
   }, [editingHabitId, habits]);
 
@@ -191,9 +199,10 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
     if (!newHabit.trim()) return;
     setSaving(true);
     try {
-      await addHabit(newHabit.trim(), selectedIcon, selectedCategory);
+      await addHabit(newHabit.trim(), selectedIcon, selectedCategory, selectedFrequency);
       setNewHabit("");
       setSelectedIcon('Activity');
+      setSelectedFrequency(DEFAULT_FREQUENCY);
       load();
     } finally {
       setSaving(false);
@@ -228,11 +237,12 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
   const finishEditing = async () => {
     const h = habits.find(x => x.uuid === editingHabitId);
     if (h) {
-      await updateHabit(h.uuid, h.name.trim(), editingIcon, editingCategory);
+      await updateHabit(h.uuid, h.name.trim(), editingIcon, editingCategory, editingFrequency);
     }
     setEditingHabitId(null);
     setEditingIcon(null);
     setEditingCategory(null);
+    setEditingFrequency(DEFAULT_FREQUENCY);
     load();
   };
 
@@ -256,9 +266,16 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
             >
               <Smartphone size={16} />
             </button>
+            <button
+              onClick={() => setPushModalOpen(true)}
+              className={`p-1.5 rounded-xl border transition-all ${push.settings?.enabled ? 'bg-orange-400 text-black border-orange-400' : 'bg-slate-900 text-slate-400 border-white/10 hover:border-orange-400'}`}
+              title="Erinnerungen"
+            >
+              <Bell size={16} />
+            </button>
           </div>
         </div>
-        <Core4Layout 
+        <Core4Layout
           habits={habits}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
@@ -273,6 +290,37 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
           isJournalSaving={isJournalSaving}
           selectedHabitId={selectedHabitId}
           setSelectedHabitId={setSelectedHabitId}
+          newHabit={newHabit}
+          setNewHabit={setNewHabit}
+          selectedIcon={selectedIcon}
+          setSelectedIcon={setSelectedIcon}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedFrequency={selectedFrequency}
+          setSelectedFrequency={setSelectedFrequency}
+          onAddHabit={handleAdd}
+          saving={saving}
+          editingHabitId={editingHabitId}
+          setEditingHabitId={setEditingHabitId}
+          editingIcon={editingIcon}
+          setEditingIcon={setEditingIcon}
+          editingCategory={editingCategory}
+          setEditingCategory={setEditingCategory}
+          editingFrequency={editingFrequency}
+          setEditingFrequency={setEditingFrequency}
+          onUpdateHabitName={updateHabitName}
+          onFinishEditing={finishEditing}
+          onDeleteHabit={handleDelete}
+        />
+        <PushSettingsModal
+          open={pushModalOpen}
+          onClose={() => setPushModalOpen(false)}
+          settings={push.settings}
+          permission={push.permission}
+          busy={push.busy}
+          onEnable={push.enable}
+          onDisable={push.disable}
+          onReminderTimeChange={push.updateReminderTime}
         />
       </div>
     );
@@ -310,6 +358,13 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
               title="Core4 Minimal-Ansicht"
             >
               <Smartphone size={16} />
+            </button>
+            <button
+              onClick={() => setPushModalOpen(true)}
+              className={`p-1.5 rounded-xl border transition-all ${push.settings?.enabled ? 'bg-orange-400 text-black border-orange-400' : 'bg-slate-900 text-slate-400 border-white/10 hover:border-orange-400'}`}
+              title="Erinnerungen"
+            >
+              <Bell size={16} />
             </button>
           </div>
         </div>
@@ -409,6 +464,8 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
                     setEditingIcon={setEditingIcon}
                     editingCategory={editingCategory}
                     setEditingCategory={setEditingCategory}
+                    editingFrequency={editingFrequency}
+                    setEditingFrequency={setEditingFrequency}
                     setEditingHabitId={setEditingHabitId}
                     onToggleSelection={() => setSelectedHabitId(selectedHabitId === h.uuid ? null : h.uuid)}
                     onToggleCheck={toggleCheck}
@@ -451,6 +508,8 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
                 setSelectedIcon={setSelectedIcon}
                 selectedCategory={selectedCategory}
                 setSelectedCategory={setSelectedCategory}
+                selectedFrequency={selectedFrequency}
+                setSelectedFrequency={setSelectedFrequency}
                 onAdd={handleAdd}
                 saving={saving}
               />
@@ -492,6 +551,17 @@ export default function Habits({ selectedDate: controlledDate = null, onSelected
         setJournalText={setJournalText}
         isJournalSaving={isJournalSaving}
         onSaveJournal={onSaveJournal}
+      />
+
+      <PushSettingsModal
+        open={pushModalOpen}
+        onClose={() => setPushModalOpen(false)}
+        settings={push.settings}
+        permission={push.permission}
+        busy={push.busy}
+        onEnable={push.enable}
+        onDisable={push.disable}
+        onReminderTimeChange={push.updateReminderTime}
       />
     </div>
   );

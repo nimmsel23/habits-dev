@@ -1,7 +1,8 @@
 import { Plus } from "lucide-react";
 import { ICON_OPTIONS, ICON_COMPONENTS_MAP, CATEGORY_OPTIONS } from "./utils";
+import FrequencyPicker from "./FrequencyPicker";
 
-export default function HabitForm({ newHabit, setNewHabit, selectedIcon, setSelectedIcon, selectedCategory, setSelectedCategory, onAdd, saving }) {
+export default function HabitForm({ newHabit, setNewHabit, selectedIcon, setSelectedIcon, selectedCategory, setSelectedCategory, selectedFrequency, setSelectedFrequency, onAdd, saving }) {
   return (
     <form onSubmit={onAdd} className="card p-6 shadow-xl border-orange-400/10 bg-slate-900 border-white/10">
       <div className="label-caps mb-4 flex items-center gap-2 text-orange-400">
@@ -42,6 +43,10 @@ export default function HabitForm({ newHabit, setNewHabit, selectedIcon, setSele
                   </button>
               ))}
           </div>
+      </div>
+      <div className="mt-4">
+          <div className="label-caps !mb-2 text-slate-400">Frequenz</div>
+          <FrequencyPicker frequency={selectedFrequency} onChange={setSelectedFrequency} />
       </div>
     </form>
   );
