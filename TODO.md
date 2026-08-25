@@ -72,17 +72,25 @@ Habit bekommt `block: "push" | "pull" | "legs" | "supplement" | "custom"`
 
 ### P0 — Frequenz-Konfiguration
 
-- [ ] **`frequency` Feld pro Habit** — `daily` | `weekly` | `every_N_days` (N konfigurierbar)
-- [ ] **Fälligkeits-Logik** — letzter Record + Frequenz → ist Habit "heute fällig"?
+- [x] **`frequency` Feld pro Habit** — `{type, weekdays, timesPerPeriod}` via `FrequencyPicker` (2026-08-24), geteilt zwischen V1 + Core4
+- [x] **`formatFrequency`/`isHabitDueOnDate`** in `utils.js` definiert (2026-08-24) — **`isHabitDueOnDate` ist noch nirgends verdrahtet**, keine tatsächliche Fälligkeits-Filterung/Graying-out in der UI
 - [ ] **Overdue-Indikator** — visuelles Signal wenn Habit überfällig (letzter Record > N Tage)
 - [ ] **"Zu früh"-Guard** — optional: Warnung wenn Abstand zu letztem Record zu kurz (z.B. Push gestern, Push heute = Warnung)
 - [ ] **Nächste-Fälligkeit-Anzeige** — "Push: nächstes Mal frühestens Do 10.7."
 
 ### P1 — Habit-Kategorien
 
-- [ ] **`category` Feld** — `workout` | `supplement` | `custom`
+- [x] **`category` Feld** — fix auf `Body` | `Being` | `Balance` | `Business` (Core4-Domains, statt ursprünglich geplant `workout`/`supplement`/`custom`)
+- [x] **Core4 volles CRUD** — Inline-Add + Edit/Delete-Sheet direkt im Core4-Layout (2026-08-24), vorher nur Anzeige/Check/Journal/Reorder
 - [ ] **Gruppierte Ansicht** — Workouts oben, Supplements darunter (oder nach Category)
 - [ ] **Habit-Templates** — Preset "Push/Pull/Legs" legt 3 Habits auf einmal an (weekly, Workout)
+
+### P0.5 — Reminder/Push (neu, 2026-08-24)
+
+- [x] **Echte Push-Benachrichtigungen** via bereits laufender `scheduledPushReminders` Cloud Function (`vitalos/functions`) — Client-Teil ergänzt: `usePushNotifications.js`, `PushSettingsModal.jsx`, `firebase-messaging-sw.js`
+- [x] **App-Icon** von Hantel auf Flamme (Streak-Symbol) umgestellt
+- [x] **Icon-Picker** auf ~54 Icons erweitert
+- [ ] Deploy zu `habit-vos.web.app` (`npm run firebase`) nach dem letzten Release noch nicht durchgeführt
 
 ### P2 — Coach/Klient Multi-View
 
