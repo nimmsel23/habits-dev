@@ -45,6 +45,7 @@ async function resolveCrossAppAliases() {
       "@fitness-db": path.resolve(FITNESS, "src/lib/db"),
       "@fitness/constants":  path.resolve(FITNESS, "src/constants"),
       "@fitness/components": path.resolve(FITNESS, "src/components"),
+      "@fitness/hooks":      path.resolve(FITNESS, "src/hooks"),
       "@fuel":  path.resolve(FUEL, "src/client"),
       "@relax": path.resolve(RELAX, "src"),
     };
