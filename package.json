@@ -38,7 +38,7 @@
     "tailwind-merge": "^2.5.3"
   },
   "optionalDependencies": {
-    "@vos/cross-app-aliases": "1.0.0"
+    "@vos/cross-app-aliases": "workspace:*"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.2",
