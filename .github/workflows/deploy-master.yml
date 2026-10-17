@@ -31,31 +31,35 @@ jobs:
 
       - name: habits-dev auf den ausgelösten Commit setzen
         run: |
-          cd habits-dev
+          cd habit-app
           SHA="${{ github.sha }}"
           git fetch origin "$SHA"
           git checkout "$SHA"
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.3.0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
 
       - name: Install (Workspaces)
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Firebase config bereitstellen
         run: |
           if [ -n "$FIREBASE_CONFIG" ]; then
-            echo "$FIREBASE_CONFIG" > fitness-dev/firebase.config.js
-          elif [ ! -f fitness-dev/firebase.config.js ]; then
-            cp firebase.config.js fitness-dev/firebase.config.js
+            echo "$FIREBASE_CONFIG" > habit-app/firebase.config.js
+          elif [ ! -f habit-app/firebase.config.js ]; then
+            cp firebase.config.js habit-app/firebase.config.js
           fi
         env:
           FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
 
       - name: Build Habits (Live)
-        run: npm run build:cloud --workspace=habits-dev
+        run: pnpm --filter ./habit-app run build:cloud
 
       - name: Deploy Live
         id: firebase_deploy
@@ -64,7 +68,7 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FITNESS_AOS || secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: fitness-aos
-          entryPoint: habits-dev
+          entryPoint: habit-app
           channelId: live
 
       - name: Telegram-Benachrichtigung senden
