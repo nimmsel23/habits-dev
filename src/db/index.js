@@ -18,6 +18,7 @@ import {
   addDoc,
   collection,
   doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -30,6 +31,36 @@ import {
 export * from "@fitness-db/index.firestore.js";
 import { db, getUid } from "@fitness-db/index.firestore.js";
 import { todayISO } from "@fitness-db/shared/utils.js";
+
+const PUSH_DEFAULTS = {
+  enabled: false,
+  tokens: [],
+  token: null,
+  types: { workout: true, habit: true, restday: true },
+  reminderTime: "18:00",
+};
+
+// Habit notifications belong to VitalOS. The shared Firestore document keeps
+// app-specific settings and device tokens separate from Fitness.
+export async function getPushSettings() {
+  const snap = await getDoc(doc(db, "fitness", getUid(), "settings", "push"));
+  if (!snap.exists()) return PUSH_DEFAULTS;
+  const stored = snap.data() || {};
+  const legacy = { ...stored, tokens: [], token: null };
+  delete legacy.apps;
+  const settings = stored.apps?.vitalos || legacy;
+  const tokens = Array.from(new Set([...(settings.tokens || []), ...(settings.token ? [settings.token] : [])].filter(Boolean)));
+  return { ...PUSH_DEFAULTS, ...settings, tokens, token: tokens[0] || null };
+}
+
+export async function savePushSettings(settings) {
+  const tokens = Array.from(new Set([...(settings?.tokens || []), ...(settings?.token ? [settings.token] : [])].filter(Boolean)));
+  await setDoc(doc(db, "fitness", getUid(), "settings", "push"), {
+    apps: { vitalos: { ...settings, tokens, token: tokens[0] || null } },
+    updated_at: serverTimestamp(),
+  }, { merge: true });
+  return { ok: true };
+}
 
 // Der modulare fitness-app Firestore-Barrel exportiert aktuell keine
 // Habit-CRUD-Helpers. Die alten Re-Exports aus vitalos/src/cloud führten in
