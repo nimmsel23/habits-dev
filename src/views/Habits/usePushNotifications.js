@@ -4,8 +4,8 @@ import { getMessagingIfSupported } from "../../lib/firebase.js";
 import { getToken } from "firebase/messaging";
 import { VAPID_KEY } from "../../lib/firebase.config.js";
 
-const PUSH_SW_URL = "/firebase-messaging-sw.js";
-const PUSH_SW_SCOPE = "/firebase-push/";
+const PUSH_SW_URL = "/vitalos-messaging-sw.js";
+const PUSH_SW_SCOPE = "/vitalos-push/";
 
 function mergePushSettings(base = {}, patch = {}) {
   const merged = { ...base, ...patch };
@@ -25,12 +25,8 @@ function mergePushSettings(base = {}, patch = {}) {
   };
 }
 
-// Nutzt dieselbe fitness/{uid}/settings/push-Collection wie fitness-app —
-// die bereits laufende Cloud Function scheduledPushReminders
-// (~/vitalos/functions) liest genau dieses Dokument und schickt bei
-// types.habit=true + offenen Habits zur reminderTime eine Push-Notification.
-// Kein neues Backend nötig, nur der Client-Teil (Token-Registrierung +
-// Settings-UI) fehlte in habits-dev bisher.
+// VitalOS and Fitness share the Firestore document, but keep preferences and
+// device tokens in separate app lanes.
 export function usePushNotifications(user) {
   const [settings, setSettings] = useState(null);
   const [permission, setPermission] = useState(() =>
@@ -44,6 +40,26 @@ export function usePushNotifications(user) {
     getPushSettings().then((s) => alive && setSettings(mergePushSettings({}, s)));
     return () => { alive = false; };
   }, [user]);
+
+  useEffect(() => {
+    if (isLocalMode() || !user || permission !== "granted" || !settings?.enabled) return;
+    let alive = true;
+    (async () => {
+      try {
+        const messaging = await getMessagingIfSupported();
+        if (!messaging) return;
+        const registration = await navigator.serviceWorker.register(PUSH_SW_URL, { scope: PUSH_SW_SCOPE });
+        const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration });
+        if (!alive || !token || settings.tokens?.includes(token)) return;
+        const next = mergePushSettings(settings, { token, tokens: [...(settings.tokens || []), token] });
+        await savePushSettings(next);
+        if (alive) setSettings(next);
+      } catch {
+        // Keep existing preferences if this browser cannot migrate now.
+      }
+    })();
+    return () => { alive = false; };
+  }, [user, permission, settings]);
 
   const enable = useCallback(async () => {
     if (isLocalMode() || !user) return;
