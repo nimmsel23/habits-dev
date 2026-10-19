@@ -2,6 +2,7 @@
   "name": "@vos/habits",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.3.0",
   "type": "module",
   "exports": {
     ".": "./src/db.js",
@@ -14,14 +15,14 @@
     "build": "vite build --config vite.config.cjs",
     "build:firebase": "VITE_APP_MODE=client vite build --config vite.config.cjs",
     "build:cloud": "VITE_APP_MODE=client vite build --config vite.config.cjs",
-    "firebase": "npm run build:cloud && npm run deploy:cloud",
+    "firebase": "pnpm run build:cloud && pnpm run deploy:cloud",
     "deploy": "./deploy.sh",
     "deploy:cloud": "firebase deploy --only hosting --project fitness-aos",
     "preview": "vite preview --config vite.config.cjs",
-    "deploy:preview": "npm run build:cloud && node scripts/deploy-preview.mjs",
-    "deploy:prev": "npm run deploy:preview",
-    "build:preview": "npm run deploy:preview",
-    "build:prev": "npm run deploy:preview"
+    "deploy:preview": "pnpm run build:cloud && node scripts/deploy-preview.mjs",
+    "deploy:prev": "pnpm run deploy:preview",
+    "build:preview": "pnpm run deploy:preview",
+    "build:prev": "pnpm run deploy:preview"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

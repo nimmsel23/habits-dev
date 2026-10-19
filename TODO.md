@@ -1,5 +1,9 @@
 # habits-dev TODO
 
+## [x] VitalOS-Push-Lane und eigener Service Worker (2026-10-19)
+- VitalOS-Tokens getrennt von Fitness speichern; eigenen Worker und Scope nutzen.
+- Aktive Altgeräte beim Öffnen automatisch migrieren.
+
 ## Vision
 
 Habit Tracker für **Workouts** und **Supplements** — yes/no mit optionalem Journaling.
