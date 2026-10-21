@@ -1,4 +1,5 @@
 import { X, Calendar, Check, Save, History, Brain, PenLine } from "lucide-react";
+import { useSwipeToDismiss } from "@fitness/hooks/useSwipeToDismiss.js";
 import { ICON_COMPONENTS_MAP, getRollingDays } from "./utils";
 
 export default function HabitSidebar({
@@ -16,6 +17,7 @@ export default function HabitSidebar({
   inline = false,
 }) {
   const selectedHabit = habits.find(h => h.uuid === selectedHabitId);
+  const swipeRef = useSwipeToDismiss(() => setSelectedHabitId(null), { enabled: Boolean(selectedHabit) && !inline });
   if (!selectedHabit) return null;
 
   const selectedHabitRecords = selectedHabit.records || [];
@@ -144,9 +146,9 @@ export default function HabitSidebar({
   }
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 max-h-[85vh] bg-slate-900 shadow-2xl z-50 rounded-t-[32px] transform transition-transform duration-300 ${selectedHabitId ? 'translate-y-0' : 'translate-y-full'}`}>
+    <div ref={swipeRef} className={`fixed bottom-0 left-0 right-0 max-h-[85vh] bg-slate-900 shadow-2xl z-50 rounded-t-[32px] transform transition-transform duration-300 ${selectedHabitId ? 'translate-y-0' : 'translate-y-full'}`}>
       <div className="w-12 h-1 rounded-full bg-white/10 mx-auto mt-3 mb-1" />
-      <div className="flex flex-col p-6 space-y-5 overflow-y-auto max-h-[calc(85vh-2rem)]">
+      <div className="flex flex-col p-6 space-y-5 overflow-y-auto overscroll-contain max-h-[calc(85vh-2rem)]">
         {content}
       </div>
     </div>
