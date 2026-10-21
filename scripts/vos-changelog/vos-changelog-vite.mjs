@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import { readVosReleaseInfo } from './vos-release-info.mjs';
+import { readVosReleaseInfo, readVosShellReleaseInfo } from './vos-release-info.mjs';
 
 // One plugin installs the screen for dev and all Vite build modes.
 export function vosChangelog(options) {
@@ -9,7 +9,11 @@ export function vosChangelog(options) {
   let release;
   return {
     name: 'vos-changelog',
-    configResolved(config) { release = readVosReleaseInfo({ root: config.root }); },
+    configResolved(config) {
+      release = options.shell
+        ? readVosShellReleaseInfo({ root: config.root, apps: options.apps })
+        : readVosReleaseInfo({ root: config.root });
+    },
     resolveId(id) { if (id === virtualId) return resolvedId; },
     load(id) {
       if (id !== resolvedId) return;
@@ -18,7 +22,9 @@ export function vosChangelog(options) {
     transformIndexHtml: {
       order: 'pre',
       handler() {
-        return [{ tag: 'script', attrs: { type: 'module' }, children: `import '${virtualId}';`, injectTo: 'body' }];
+        const tags = [{ tag: 'script', attrs: { type: 'module' }, children: `import '${virtualId}';`, injectTo: 'body' }];
+        if (options.shell) tags.unshift({ tag: 'script', children: 'document.documentElement.dataset.vosShell = \"true\";', injectTo: 'head-prepend' });
+        return tags;
       },
     },
     generateBundle() {

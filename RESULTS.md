@@ -1,3 +1,13 @@
+## 2026-10-21 — Zentraler Changelog im Shell-Betrieb
+
+Gemeinsame Quelle aktualisiert: Habits zeigt im Shell-Dokument und in Frames
+keinen eigenen Dialog. Die Habits-Änderungen erscheinen im zentralen
+VitalOS-Changelog mit einer Bestätigung für den gesamten Stand. Eigenständige
+Habits-Nutzung behält ihren Dialog und Schlüssel. APP.md ergänzt.
+
+Client-Build, Vendor-Parität, gemeinsame Metadaten-Tests und Browserprüfung
+bei 320/390px erfolgreich. Kein Push/Deployment.
+
 ## 2026-10-21 — Gemeinsamer VitalOS-Changelog
 
 Habits bindet den universellen Changelog aus VitalOS über einen Vite-Plugin

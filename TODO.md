@@ -1,5 +1,8 @@
 # habits-dev TODO
 
+## [x] Zentraler Shell-Changelog (2026-10-21)
+- Im VitalOS-Betrieb Habits-Änderungen gemeinsam anzeigen und eigene Dialoge unterdrücken.
+
 ## [x] Gemeinsamer VitalOS-Changelog (2026-10-21)
 - 6Pack-Update-Dialog universalisieren und in alle Habits-Build-Modi integrieren.
 - Änderungen in APP.md dokumentieren.

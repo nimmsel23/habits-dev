@@ -2,6 +2,10 @@
 
 ## Update-Changelog
 
+Innerhalb der VitalOS-Shell erscheinen die Habits-Änderungen im gemeinsamen
+VitalOS-Changelog. Es gibt dort nur eine Bestätigung für den gesamten Stand.
+Der eigene Habits-Dialog erscheint ausschließlich bei eigenständigem Betrieb.
+
 Beim ersten Start und bei einer neuen Version erscheint ein Dialog mit den
 Änderungen, GitHub-Commit-Links und einem Link zur gesamten Commit-Historie.
 „Weiter“ oder Escape bestätigt die Version für diesen Browser. Erst beim
