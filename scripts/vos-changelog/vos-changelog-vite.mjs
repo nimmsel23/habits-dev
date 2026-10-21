@@ -10,9 +10,10 @@ export function vosChangelog(options) {
   return {
     name: 'vos-changelog',
     configResolved(config) {
+      const root = options.releaseRoot || config.root;
       release = options.shell
-        ? readVosShellReleaseInfo({ root: config.root, apps: options.apps })
-        : readVosReleaseInfo({ root: config.root });
+        ? readVosShellReleaseInfo({ root, apps: options.apps })
+        : readVosReleaseInfo({ root });
     },
     resolveId(id) { if (id === virtualId) return resolvedId; },
     load(id) {
