@@ -1,6 +1,29 @@
+import { useEffect, useState } from "react";
 import { Target, TrendingUp } from "lucide-react";
+import { getDailyPsychologyPrompt } from "./dailyPsychology";
 
 export default function HabitStats({ todayCompletionPercentage, getMotivationalMessage }) {
+  const [psychologyPrompt, setPsychologyPrompt] = useState(() => getDailyPsychologyPrompt());
+
+  useEffect(() => {
+    let timer;
+    const refresh = () => {
+      clearTimeout(timer);
+      const now = new Date();
+      setPsychologyPrompt(getDailyPsychologyPrompt(now));
+      const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      timer = setTimeout(refresh, midnight.getTime() - now.getTime());
+    };
+    refresh();
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, []);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
        <div className="card bg-orange-400/5 border-orange-400/20 p-6 flex flex-col justify-between border">
@@ -24,8 +47,7 @@ export default function HabitStats({ todayCompletionPercentage, getMotivationalM
              Psychologie
           </div>
           <p className="text-[11px] font-medium opacity-50 leading-relaxed italic text-slate-400">
-             "Motivation bringt dich in Gang. Gewohnheit hält dich am Laufen." – Jim Ryun. 
-             Konzentriere dich darauf, die Kette nicht zu unterbrechen.
+             {psychologyPrompt}
           </p>
        </div>
     </div>

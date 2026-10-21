@@ -1,5 +1,9 @@
 # habits-dev TODO
 
+## [x] Täglicher Psychologie-Impuls (2026-10-21)
+- 30 Impulse zu Gewohnheiten und Motivation, täglich nach lokalem Datum wechselnd.
+- Bei offener App um Mitternacht und beim Zurückkehren aktualisieren.
+
 ## [x] VitalOS-Push-Lane und eigener Service Worker (2026-10-19)
 - VitalOS-Tokens getrennt von Fitness speichern; eigenen Worker und Scope nutzen.
 - Aktive Altgeräte beim Öffnen automatisch migrieren.
