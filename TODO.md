@@ -1,5 +1,9 @@
 # habits-dev TODO
 
+## [x] npm run deploy:vos (2026-10-21)
+- Bestehenden vos-release-Ablauf für Habits ohne zusätzliche Bestätigung aufrufen.
+- dev pushen, nach habit-app/vitalos mergen und VitalOS-Pointer für CI pushen.
+
 ## [x] Täglicher Psychologie-Impuls (2026-10-21)
 - 30 Impulse zu Gewohnheiten und Motivation, täglich nach lokalem Datum wechselnd.
 - Bei offener App um Mitternacht und beim Zurückkehren aktualisieren.

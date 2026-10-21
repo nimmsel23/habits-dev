@@ -17,6 +17,7 @@
     "build:cloud": "VITE_APP_MODE=client vite build --config vite.config.cjs",
     "firebase": "pnpm run build:cloud && pnpm run deploy:cloud",
     "deploy": "./deploy.sh",
+    "deploy:vos": "bash scripts/deploy-vos.sh",
     "deploy:cloud": "firebase deploy --only hosting --project fitness-aos",
     "preview": "vite preview --config vite.config.cjs",
     "deploy:preview": "pnpm run build:cloud && node scripts/deploy-preview.mjs",
