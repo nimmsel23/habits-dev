@@ -1,3 +1,15 @@
+## 2026-10-21 — Gemeinsamer VitalOS-Changelog
+
+Habits bindet den universellen Changelog aus VitalOS über einen Vite-Plugin
+in allen Modi ein. Drei vendorte Module unter scripts/vos-changelog erlauben
+Standalone-Builds; APP.md beschreibt Verhalten, Quelle und Aktualisierung.
+Build-gebundene Release-Daten, Commit-Links, Browser-Bestätigung beim Schließen.
+
+Produktionsbuild in Coach- und Client-Modus sowie Vendor-Parität erfolgreich.
+Gemeinsame Metadaten-/Plugin-Tests und isolierter Browser bei 320/390px geprüft:
+Erstanzeige, neue Version, Bestätigung, Escape, Fokus, sichere Texte/Links,
+schmale Ansicht und blockierter localStorage. Kein Push oder Deployment.
+
 ## 2026-10-21 — npm run deploy:vos
 
 Neuer npm-Befehl delegiert an `vos-release habits --yes`: dev pushen, nach

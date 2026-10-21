@@ -1,5 +1,9 @@
 # habits-dev TODO
 
+## [x] Gemeinsamer VitalOS-Changelog (2026-10-21)
+- 6Pack-Update-Dialog universalisieren und in alle Habits-Build-Modi integrieren.
+- Änderungen in APP.md dokumentieren.
+
 ## [x] npm run deploy:vos (2026-10-21)
 - Bestehenden vos-release-Ablauf für Habits ohne zusätzliche Bestätigung aufrufen.
 - dev pushen, nach habit-app/vitalos mergen und VitalOS-Pointer für CI pushen.

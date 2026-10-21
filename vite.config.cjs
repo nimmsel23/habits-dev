@@ -56,6 +56,7 @@ module.exports = defineConfig(async ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const appMode = process.env.VITE_APP_MODE || env.VITE_APP_MODE || "coach";
   const crossAppAliases = await resolveCrossAppAliases();
+  const { vosChangelog } = await import("./scripts/vos-changelog/vos-changelog-vite.mjs");
 
   // fitness-dev/src/firebase.js auf habits' eigene lib/firebase.js umleiten —
   // genau eine initializeApp im Bundle (Muster: vitalos
@@ -91,6 +92,7 @@ module.exports = defineConfig(async ({ mode }) => {
       "import.meta.env.VITE_APP_MODE": JSON.stringify(appMode),
     },
     plugins: [
+      vosChangelog({ appId: "habits", appName: "Habits", accent: "#fb923c" }),
       firebaseRedirect,
       react(),
       VitePWA({
