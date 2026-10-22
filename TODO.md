@@ -1,5 +1,10 @@
 # habits-dev TODO
 
+## [x] Vollständiges Journal als Sicherheitskopie (2026-10-22)
+- Journal als gepinntes Git-Submodul einbinden und mit eigenem AppWrapper bauen.
+- Alle Journal-Bereiche, Datum/Modus-Links und Offline-Cache integrieren.
+- CI nach Habits-Checkout rekursiv initialisieren und vollständigen Build prüfen.
+
 ## [x] Zentraler Shell-Changelog (2026-10-21)
 - Im VitalOS-Betrieb Habits-Änderungen gemeinsam anzeigen und eigene Dialoge unterdrücken.
 

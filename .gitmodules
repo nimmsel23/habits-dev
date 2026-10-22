@@ -1,0 +1,4 @@
+[submodule "journal"]
+	path = journal
+	url = https://github.com/nimmsel23/journal-dev.git
+	branch = dev

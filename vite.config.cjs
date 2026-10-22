@@ -28,7 +28,11 @@ function resolveSibling(nameApp, nameDev) {
 const FITNESS = resolveSibling("fitness-app", "fitness-dev");
 const FUEL = resolveSibling("fuel-app", "fuel-dev");
 const RELAX = resolveSibling("relax-app", "relax-dev");
-const JOURNAL = resolveSibling("journal-app", "journal-dev");
+// Journal is a pinned, complete checkout owned by this Habits build.
+const JOURNAL = path.resolve(__dirname, "journal");
+if (!fs.existsSync(path.join(JOURNAL, "src/routes.js"))) {
+  throw new Error("Journal fehlt: git submodule update --init --recursive");
+}
 
 // SSOT für Cross-App-Aliase ist @vos/cross-app-aliases (~/vitalos/packages/
 // cross-app-aliases) — dynamic import() geht auch aus einer .cjs-Datei
@@ -87,7 +91,7 @@ module.exports = defineConfig(async ({ mode }) => {
   console.log(`🚀 Building for mode: ${mode}, APP_MODE: ${appMode} -> outDir: ${outDir}`);
 
   return {
-    base: "/",
+    base: "./",
     define: {
       "import.meta.env.VITE_APP_MODE": JSON.stringify(appMode),
     },
@@ -138,6 +142,8 @@ module.exports = defineConfig(async ({ mode }) => {
       preserveSymlinks: true,
       alias: {
         ...crossAppAliases,
+        "@journal-db": path.resolve(JOURNAL, "src/db/index.js"),
+        "@journal": path.resolve(JOURNAL, "src"),
         "@habits-db": path.resolve(__dirname, "./src/db/index.js"),
         "@db":      path.resolve(__dirname, "./src/db/index.js"),
         "@utils":   path.resolve(__dirname, "./src/db/index.js"),
@@ -167,6 +173,7 @@ module.exports = defineConfig(async ({ mode }) => {
       ],
     },
     build: {
+      manifest: true,
       outDir,
       emptyOutDir: true,
       rollupOptions: {

@@ -1,3 +1,27 @@
+## 2026-10-22 — Vollständiges Journal im Habits-Build
+
+Journal als Git-Submodul unter journal/ hinzugefügt, gepinnt auf den auf GitHub
+veröffentlichten Commit 8e824cb. Eigener JournalAppWrapper verwendet die originale
+Routenliste mit allen sieben Bereichen, eigenem React-Query-Provider und
+Habits-Anmeldung/Datum. Bereich und Modus werden in Habits-Deep-Links gespeichert.
+Vite, Firebase-Redirect und Tailwind zeigen auf den lokalen Submodul-Stand;
+der benachbarte Journal-Checkout wird dafür nicht verwendet. Habits-Datenmodell
+und Journal-Firestore bleiben gemeinsam; dies ist eine Quellcode-Sicherheitskopie.
+
+Preview-/Live-CI initialisieren nach dem Habits-Checkout rekursiv die gepinnten
+Submodule und installieren Journal mit seinem unveränderten Lockfile.
+Gitlink-/Konfigurationsänderungen lösen CI ebenfalls aus. Build-Manifest und
+scripts/check-journal-build.mjs prüfen die vollständige Routenübernahme und
+Service-Worker-Precaching. APP.md und DEPLOYMENT.md beschreiben Nutzung/Updates.
+
+Validierung: Client- und Coach-Produktionsbuild erfolgreich; alle sieben
+Journal-Einstiege im Build und Offline-Cache vorhanden. Isolierter Browser mit
+390px: alle sieben Bereiche geladen, Navigation aktiv, keine unbehandelten
+JavaScript-Ausnahmen. Keine Anmeldung, keine Benutzerdaten geschrieben; echte
+Firestore-Zugriffe und entfernte Backend-Funktionen wurden nicht geprüft.
+Journal-Lockfile-Installation eingefroren erfolgreich; GitHub-Erreichbarkeit des
+gepinnten Commits als Vorfahr von origin/dev geprüft. Kein Push/Deployment.
+
 ## 2026-10-21 — Zentraler Changelog im Shell-Betrieb
 
 Gemeinsame Quelle aktualisiert: Habits zeigt im Shell-Dokument und in Frames

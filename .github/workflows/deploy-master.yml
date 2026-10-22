@@ -12,6 +12,12 @@ on:
     branches: [master]
     paths:
       - 'src/**'
+      - 'journal'
+      - '.gitmodules'
+      - 'vite.config.cjs'
+      - 'tailwind.config.cjs'
+      - 'scripts/**'
+      - '.github/workflows/**'
 
 jobs:
   deploy_live:
@@ -35,6 +41,8 @@ jobs:
           SHA="${{ github.sha }}"
           git fetch origin "$SHA"
           git checkout "$SHA"
+          git submodule sync --recursive
+          git submodule update --init --recursive
 
       - uses: pnpm/action-setup@v4
         with:
@@ -48,6 +56,9 @@ jobs:
       - name: Install (Workspaces)
         run: pnpm install --frozen-lockfile
 
+      - name: Install pinned Journal dependencies
+        run: pnpm --dir habit-app/journal install --frozen-lockfile --ignore-scripts
+
       - name: Firebase config bereitstellen
         run: |
           if [ -n "$FIREBASE_CONFIG" ]; then
@@ -60,6 +71,9 @@ jobs:
 
       - name: Build Habits (Live)
         run: pnpm --filter ./habit-app run build:cloud
+
+      - name: Verify complete Journal build and offline cache
+        run: node habit-app/scripts/check-journal-build.mjs habit-app/dist-firebase
 
       - name: Deploy Live
         id: firebase_deploy

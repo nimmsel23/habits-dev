@@ -2,31 +2,33 @@ import { useState, useEffect } from 'react'
 import { CheckSquare, LogIn, Loader, RotateCcw } from 'lucide-react'
 import { watchAuth, signIn, isLocalMode, localToday } from '@db'
 import Habits from './views/Habits/index.jsx'
-import Journal from '@journal/views/JournalVosView.jsx'
+import JournalAppWrapper from './shell/JournalAppWrapper.jsx'
 import { useRegisterSW } from "virtual:pwa-register/react"
 
 function parseHashState(today) {
   const raw = window.location.hash.replace(/^#\/?/, '')
   if (!raw) return { tab: null, date: null }
-  const [tab = null, rawDate = null] = raw.split('/')
+  const [tab = null, rawDate = null, view = 'journal', mode = null] = raw.split('/')
   if (!tab) return { tab: null, date: null }
   if (!rawDate) return { tab, date: null }
-  if (rawDate === 'today') return { tab, date: today }
-  if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) return { tab, date: rawDate }
+  if (rawDate === 'today') return { tab, date: today, view, mode }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) return { tab, date: rawDate, view, mode }
   return { tab, date: null }
 }
 
-function buildHashState(tab, date, today) {
+function buildHashState(tab, date, today, view, mode) {
   if (!tab) return '#'
   if (!date) return `#${tab}`
-  return `#${tab}/${date === today ? 'today' : date}`
+  return `#${tab}/${date === today ? 'today' : date}${tab === 'journal' && view !== 'journal' ? `/${view}${mode ? `/${mode}` : ''}` : ''}`
 }
 
 export default function App() {
   const [user, setUser]     = useState(undefined)
   const [signing, setSigning] = useState(false)
-  const [activeTab, setActiveTab] = useState('habits')
-  const [journalDate, setJournalDate] = useState(() => localToday())
+  const [activeTab, setActiveTab] = useState(() => parseHashState(localToday()).tab === 'journal' ? 'journal' : 'habits')
+  const [journalDate, setJournalDate] = useState(() => parseHashState(localToday()).date || localToday())
+  const [journalView, setJournalView] = useState(() => parseHashState(localToday()).view || 'journal')
+  const [journalMode, setJournalMode] = useState(() => parseHashState(localToday()).mode)
   const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
 
   useEffect(() => {
@@ -35,11 +37,14 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const today = localToday()
     const handleHashChange = () => {
-      const { tab, date } = parseHashState(today)
+      const { tab, date, view, mode } = parseHashState(localToday())
       if (tab === 'habits' || tab === 'journal') setActiveTab(tab)
       if (date) setJournalDate(date)
+      if (tab === 'journal') {
+        setJournalView(view || 'journal')
+        setJournalMode(mode || null)
+      }
     }
     handleHashChange()
     window.addEventListener('hashchange', handleHashChange)
@@ -48,11 +53,11 @@ export default function App() {
 
   useEffect(() => {
     const today = localToday()
-    const nextHash = buildHashState(activeTab, journalDate, today)
+    const nextHash = buildHashState(activeTab, journalDate, today, journalView, journalMode)
     if (window.location.hash !== nextHash) {
       window.location.hash = nextHash
     }
-  }, [activeTab, journalDate])
+  }, [activeTab, journalDate, journalView, journalMode])
 
   if (user === undefined) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100dvh', background:'#0a0a0f' }}>
@@ -105,8 +110,11 @@ export default function App() {
         {activeTab === 'habits' ? (
           <Habits user={user} selectedDate={journalDate} onSelectedDateChange={setJournalDate} />
         ) : (
-          <Journal
-            embedded
+          <JournalAppWrapper
+            view={journalView}
+            mode={journalMode}
+            onViewChange={(view) => { setJournalView(view); setJournalMode(null) }}
+            onModeChange={setJournalMode}
             user={user}
             date={journalDate}
             onDateChange={setJournalDate}

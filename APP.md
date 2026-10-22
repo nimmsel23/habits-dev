@@ -1,5 +1,23 @@
 # Habits
 
+## Eingebautes Journal
+
+Habits besitzt unter `journal/` einen vollständigen, auf einen Commit gepinnten
+Checkout von `journal-dev` als Git-Submodul. Vite und Tailwind verwenden diesen
+Stand ausschließlich, unabhängig von einem benachbarten Journal-Checkout.
+`src/shell/JournalAppWrapper.jsx` importiert die originale Routenliste: Journal,
+Journal v2, Door v2, Game v2, Tent v2, Smart Log und Door.
+Alle Ansichten werden beim Build gebündelt und vom Habits-Service-Worker vorab
+gecacht. React Query erhält einen eigenen Provider; Firebase, Anmeldung,
+App-Updates und Datum gehören weiterhin zu Habits.
+
+Deep Links bleiben unter Habits: `#journal/today/journal-v2/woche` bzw.
+`#journal/2026-10-22/game-v2/fire`. Zurück/Vorwärts stellt Bereich und Modus wieder her.
+Der gepinnte Quellstand dient als reproduzierbare Sicherheitskopie der Journal-App.
+Benutzerdaten werden weiterhin im gemeinsamen Firestore gespeichert; das
+Submodul erstellt keine Datenkopie. Zusätzliche Backend-Funktionen wie Door-
+APIs benötigen weiterhin den zuständigen Server.
+
 ## Update-Changelog
 
 Innerhalb der VitalOS-Shell erscheinen die Habits-Änderungen im gemeinsamen
@@ -30,6 +48,8 @@ aus dem App-Repository. Dadurch erhalten Submodule im Parent-CI ihre eigenen
 Release-Daten. Änderungen an der generierten Kopie immer zuerst in VitalOS machen.
 
 ## Änderungen
+
+- 2026-10-22: Vollständiges Journal als Submodul mit eigenem Wrapper, allen Bereichen und Offline-Build eingebunden.
 
 - 2026-10-21: Gemeinsamen VitalOS-Changelog aus dem 6Pack-Pilot übernommen.
 - 2026-10-21: `npm run deploy:vos` für den VitalOS-Release ergänzt.

@@ -1,3 +1,35 @@
+# Journal im Habits-Build
+
+Nach dem Klonen und nach einem Wechsel des Habits-Commits:
+
+```sh
+git submodule update --init --recursive
+pnpm --dir journal install --frozen-lockfile --ignore-scripts
+```
+
+Anschließend Habits wie bisher installieren und bauen. Die beiden Habits-CI-
+Workflows initialisieren Journal nach dem Checkout des ausgelösten Habits-
+Commits, installieren dessen eingefrorene Abhängigkeiten und prüfen nach dem
+Build alle Journal-Einstiege und deren Service-Worker-Cache. Auch ein reiner
+Journal-Gitlink-Commit startet die Workflows. Der öffentliche HTTPS-Remote
+benötigt keinen lokalen Nachbarordner. Der unveränderte VitalOS-Workspace-
+Lockfile kann weiterverwendet werden, da Habits keine neuen Paketabhängigkeiten hat.
+
+Journal bewusst auf einen neueren veröffentlichten Stand aktualisieren:
+
+```sh
+git -C journal fetch origin dev
+git -C journal checkout --detach origin/dev
+pnpm --dir journal install --frozen-lockfile --ignore-scripts
+npm run build:firebase
+node scripts/check-journal-build.mjs dist-firebase
+git add journal
+git commit -m "chore(journal): update embedded snapshot"
+```
+
+CI verwendet immer den gespeicherten Gitlink, keinen beweglichen Branch-HEAD.
+Journal-Quellcode und -Lockfile werden im Journal-Repository gepflegt.
+
 # VitalOS-Release
 
 Nach dem Committen der Änderungen:
