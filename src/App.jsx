@@ -29,6 +29,7 @@ export default function App() {
   const [journalDate, setJournalDate] = useState(() => parseHashState(localToday()).date || localToday())
   const [journalView, setJournalView] = useState(() => parseHashState(localToday()).view || 'journal')
   const [journalMode, setJournalMode] = useState(() => parseHashState(localToday()).mode)
+  const habitsV2Active = activeTab === 'journal' && journalView === 'journal-v2' && journalMode === 'habits'
   const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
 
   useEffect(() => {
@@ -82,17 +83,24 @@ export default function App() {
 
   return (
     <div style={{ minHeight:'100dvh', background:'var(--bg, #0a0a0f)', color:'var(--text, #e2e8f0)', fontFamily:'system-ui, sans-serif' }}>
-      <header style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #334155', background: '#0f172a' }}>
-        <div style={{ display: 'flex', gap: '8px' }}>
+      <header style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #334155', background: '#0f172a' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           <button 
             onClick={() => setActiveTab('habits')}
             style={{ padding: '8px 16px', borderRadius: '8px', background: activeTab === 'habits' ? '#3b82f6' : 'transparent', color: activeTab === 'habits' ? '#fff' : '#94a3b8', border: 'none', cursor: 'pointer', fontWeight: 600 }}
           >
             Habits
           </button>
-          <button 
-            onClick={() => setActiveTab('journal')}
-            style={{ padding: '8px 16px', borderRadius: '8px', background: activeTab === 'journal' ? '#f59e0b' : 'transparent', color: activeTab === 'journal' ? '#1e293b' : '#94a3b8', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+          <button
+            onClick={() => { setActiveTab('journal'); setJournalView('journal-v2'); setJournalMode('habits') }}
+            aria-current={habitsV2Active ? 'page' : undefined}
+            style={{ padding: '8px 16px', borderRadius: '8px', background: habitsV2Active ? '#f59e0b' : 'transparent', color: habitsV2Active ? '#1e293b' : '#94a3b8', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+          >
+            Habits v2
+          </button>
+          <button
+            onClick={() => { setActiveTab('journal'); setJournalView('journal'); setJournalMode(null) }}
+            style={{ padding: '8px 16px', borderRadius: '8px', background: activeTab === 'journal' && !habitsV2Active ? '#f59e0b' : 'transparent', color: activeTab === 'journal' && !habitsV2Active ? '#1e293b' : '#94a3b8', border: 'none', cursor: 'pointer', fontWeight: 600 }}
           >
             Journal
           </button>

@@ -1,5 +1,9 @@
 # habits-dev TODO
 
+## [x] Erweitertes Habits v2 übernehmen (2026-10-22)
+- Journal-Submodul auf f7f9e5f aktualisieren und direkten Habits-v2-Einstieg ergänzen.
+- Journal-interne Links über den Host routen; Build und Offline-Cache prüfen.
+
 ## [x] Vollständiges Journal als Sicherheitskopie (2026-10-22)
 - Journal als gepinntes Git-Submodul einbinden und mit eigenem AppWrapper bauen.
 - Alle Journal-Bereiche, Datum/Modus-Links und Offline-Cache integrieren.

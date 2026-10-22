@@ -1,5 +1,14 @@
 # Habits
 
+## Habits v2
+
+Der direkte Einstieg „Habits v2“ öffnet Journal v2 im Habits-Modus.
+Deep Link: `#journal/today/journal-v2/habits`. Enthält Bearbeiten von Namen,
+Core4-Kategorie und Frequenz, Suchen/Filtern, Archiv/Wiederherstellen und
+Korrekturen im 28-Tage-Raster. Die erweiterte Journal-Quelle wird über das
+gepinnt gespeicherte Submodul übernommen; Daten und Anmeldung bleiben gemeinsam.
+Eingebettete Door-/Journal-v1-Links und Browser-Zurück bleiben in Habits.
+
 ## Eingebautes Journal
 
 Habits besitzt unter `journal/` einen vollständigen, auf einen Commit gepinnten
@@ -48,6 +57,8 @@ aus dem App-Repository. Dadurch erhalten Submodule im Parent-CI ihre eigenen
 Release-Daten. Änderungen an der generierten Kopie immer zuerst in VitalOS machen.
 
 ## Änderungen
+
+- 2026-10-22: Erweitertes Habits v2 aus Journal übernommen und als direkten Einstieg eingebunden.
 
 - 2026-10-22: Vollständiges Journal als Submodul mit eigenem Wrapper, allen Bereichen und Offline-Build eingebunden.
 

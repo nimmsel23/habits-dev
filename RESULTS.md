@@ -1,3 +1,19 @@
+## 2026-10-22 — Erweitertes Habits v2 eingebunden
+
+Journal-Submodul auf f7f9e5f aktualisiert: Bearbeiten von Name/Kategorie/Frequenz,
+Archiv/Wiederherstellen, Suche/Filter, Tagesraster-Korrekturen, geplante Serien,
+Monatsziele, historische Datenfenster und sichtbare Fehler mit Entwurfserhalt.
+Direkter Habits-v2-Einstieg in der Habits-Navigation führt zu
+#journal/today/journal-v2/habits. Journal-v2-Links zu Door/v1 laufen über den
+Host-Wrapper, Datum und Browser-Historie bleiben unter Habits-Kontrolle.
+
+Validierung: Journal-Tests (13) und Firebase-Build erfolgreich. Habits-Client-
+und Coach-Build mit vollständigem Journal und Offline-Cache geprüft. Browser bei
+320/390px: Habits-v2-Direkteinstieg/Deep Link, Door/v1-Links, Browser-Zurück und
+Layout. Synthetischer Auth-Zustand, keine Nutzerdaten geschrieben. Echte
+Firestore-Schreibvorgänge nicht getestet. Quellen und Gitlink nur lokal
+committed; Journal muss vor Habits veröffentlicht werden. Kein Push/Deployment.
+
 ## 2026-10-22 — Vollständiges Journal im Habits-Build
 
 Journal als Git-Submodul unter journal/ hinzugefügt, gepinnt auf den auf GitHub

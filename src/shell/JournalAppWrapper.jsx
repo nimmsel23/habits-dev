@@ -39,7 +39,7 @@ export default function JournalAppWrapper({ user, date, onDateChange, view, mode
           ))}
         </nav>
         <Suspense fallback={<div role="status" className="py-20 text-center text-slate-500">Journal lädt…</div>}>
-          <View {...tab.getProps(ctx)} embedded />
+          <View {...tab.getProps(ctx)} embedded onNavigateJournal={onViewChange} />
         </Suspense>
       </section>
     </QueryClientProvider>

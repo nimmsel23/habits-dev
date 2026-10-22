@@ -27,6 +27,10 @@ git add journal
 git commit -m "chore(journal): update embedded snapshot"
 ```
 
+Bei Änderungen an der Journal-Quelle zuerst den Journal-Commit auf `origin/dev`
+veröffentlichen, danach Habits mit dem aktualisierten Gitlink veröffentlichen.
+Ein nur lokal existierender Journal-Commit kann von CI nicht geladen werden.
+
 CI verwendet immer den gespeicherten Gitlink, keinen beweglichen Branch-HEAD.
 Journal-Quellcode und -Lockfile werden im Journal-Repository gepflegt.
 
