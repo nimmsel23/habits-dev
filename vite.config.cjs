@@ -57,6 +57,7 @@ async function resolveCrossAppAliases() {
 }
 
 module.exports = defineConfig(async ({ mode }) => {
+  const { miniAppSubmodulePlugin } = await import(path.join(FITNESS, "vite-miniapp-submodules.mjs"));
   const env = loadEnv(mode, process.cwd(), "");
   const appMode = process.env.VITE_APP_MODE || env.VITE_APP_MODE || "coach";
   const crossAppAliases = await resolveCrossAppAliases();
@@ -98,6 +99,7 @@ module.exports = defineConfig(async ({ mode }) => {
     plugins: [
       vosChangelog({ appId: "habits", appName: "Habits", accent: "#fb923c" }),
       firebaseRedirect,
+      miniAppSubmodulePlugin(FITNESS),
       react(),
       VitePWA({
         base: "/",
