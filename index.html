@@ -31,12 +31,7 @@
             })
           })
         }).catch(() => {})
-        let reloading = false
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (reloading) return
-          reloading = true
-          window.location.reload()
-        })
+        // Offline-first: kein automatisches Neuladen. Die neue Version (Workbox-Precache) greift beim nächsten Start.
       }
     </script>
   </body>

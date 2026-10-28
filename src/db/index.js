@@ -15,18 +15,14 @@
 // Init zuerst evaluieren, damit die fitness-Module dieselbe Instanz sehen.
 import "../lib/firebase.js";
 import {
-  addDoc,
   collection,
   doc,
-  getDoc,
-  getDocs,
   orderBy,
   query,
   serverTimestamp,
-  setDoc,
   where,
-  writeBatch,
 } from "firebase/firestore";
+import { addDoc, getDoc, getDocs, setDoc, writeBatch } from "../lib/offline.js";
 
 export * from "@fitness-db/index.firestore.js";
 import { db, getUid } from "@fitness-db/index.firestore.js";
