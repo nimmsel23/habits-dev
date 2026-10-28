@@ -21,7 +21,7 @@ on:
       - 'scripts/**'
       - '.github/workflows/**'
   pull_request:
-    branches: [master, dev]
+    branches: [vitalos, master, dev]
     paths:
       - 'src/**'
       - 'journal'
@@ -34,12 +34,21 @@ on:
 jobs:
   preview:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
     steps:
       - name: Checkout vitalos (Meta-Repo, liefert Nachbar-Repos)
         uses: actions/checkout@v4
         with:
           repository: nimmsel23/vitalos
           ref: master
+
+      - name: Private Skills submodule access
+        uses: ./.github/actions/skills-submodule-auth
+        with:
+          deploy-key: ${{ secrets.SKILLS_DEPLOY_KEY }}
 
       - name: Submodules via HTTPS + Token
         run: |

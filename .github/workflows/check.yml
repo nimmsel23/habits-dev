@@ -1,0 +1,79 @@
+# Check für Habits: Build auf jedem PR/dev-Push, ohne Deploy und ohne Firebase-Secrets.
+#
+# Gleicher Aufbau wie preview-dev.yml (Meta-Repo vitalos liefert die Nachbar-Repos, dieses
+# Submodul wird auf den geprüften Commit gesetzt), aber ohne Pfadfilter und ohne Preview
+# (Muster aus fitness-dev/check.yml).
+
+name: Check (Habits)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [vitalos, master, dev]
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout vitalos (Meta-Repo, liefert Nachbar-Repos)
+        uses: actions/checkout@v4
+        with:
+          repository: nimmsel23/vitalos
+          ref: master
+
+      - name: Private Skills submodule access
+        uses: ./.github/actions/skills-submodule-auth
+        with:
+          deploy-key: ${{ secrets.SKILLS_DEPLOY_KEY }}
+
+      - name: Submodules via HTTPS + Token
+        run: |
+          git config --global url."https://x-access-token:${{ github.token }}@github.com/".insteadOf "git@github.com:"
+          git submodule sync
+          git submodule update --init --recursive
+
+      - name: habits-dev auf den geprüften Commit setzen
+        run: |
+          cd habit-app
+          SHA="${{ github.event.pull_request.head.sha || github.sha }}"
+          git fetch origin "$SHA"
+          git checkout "$SHA"
+          git submodule sync --recursive
+          git submodule update --init --recursive
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.3.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install (Workspaces)
+        run: pnpm install --frozen-lockfile
+
+      - name: Install pinned Journal dependencies
+        run: pnpm --dir habit-app/journal install --frozen-lockfile --ignore-scripts
+
+      - name: Firebase config bereitstellen (gitignored, Platzhalter genügt zum Bauen)
+        run: |
+          if [ ! -f habit-app/firebase.config.js ]; then
+            cp firebase.config.js habit-app/firebase.config.js
+          fi
+
+      - name: Build Habits
+        run: pnpm --filter ./habit-app run build:firebase
+
+      - name: Verify complete Journal build and offline cache
+        run: node habit-app/scripts/check-journal-build.mjs habit-app/dist-firebase
