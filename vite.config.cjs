@@ -26,6 +26,7 @@ function resolveSibling(nameApp, nameDev) {
 }
 
 const FITNESS = resolveSibling("fitness-app", "fitness-dev");
+const VOS_FITNESS = fs.existsSync(path.resolve(__dirname, "../vitalos/fitness-app")) ? path.resolve(__dirname, "../vitalos/fitness-app") : FITNESS;
 const FUEL = resolveSibling("fuel-app", "fuel-dev");
 const RELAX = resolveSibling("relax-app", "relax-dev");
 // Journal is a pinned, complete checkout owned by this Habits build.
@@ -100,6 +101,9 @@ module.exports = defineConfig(async ({ mode }) => {
       vosChangelog({ appId: "habits", appName: "Habits", accent: "#fb923c" }),
       firebaseRedirect,
       miniAppSubmodulePlugin(FITNESS),
+      // cross-app-aliases zeigen auf ~/vitalos/fitness-app; liegt FITNESS woanders (Home-Worktree
+      // ~/fitness-dev), braucht dieser Quellbaum denselben Resolver für views/{Plan,SixPack,Skills}.
+      ...(VOS_FITNESS !== FITNESS ? [miniAppSubmodulePlugin(VOS_FITNESS)] : []),
       react(),
       VitePWA({
         base: "/",
