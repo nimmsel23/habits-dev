@@ -11,7 +11,7 @@
 while read -r local_ref local_sha remote_ref remote_sha; do
   [ -z "$local_ref" ] && continue
   if [ "${local_ref#refs/heads/}" = "dev" ]; then
-    echo "💡 Tipp: für den kompletten dev->master->vitalos-Flow gibt es 'habits-release' (~/vitalos/bin, habits-release --help)." >&2
+    echo "💡 Release: dev → master per PR mit 'vos-release-pr habits' (Check, Auto-Merge, Live per CI); master → vitalos (Shell) mit 'habits-release'. Doku: ~/vitalos/docs/DEPLOYMENT.md" >&2
     break
   fi
 done
