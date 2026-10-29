@@ -76,9 +76,6 @@ jobs:
 
       - name: Install (Workspaces)
         run: pnpm install --frozen-lockfile
-      # fitness-app erzeugt die KB-Daten (push/pull/legs.generated.js) sonst nur im eigenen prebuild
-      - name: Generate fitness KB data (transitive dependency via @fitness-db)
-        run: pnpm --filter ./fitness-app run build:kb-data
 
       - name: Install pinned Journal dependencies
         run: pnpm --dir habit-app/journal install --frozen-lockfile --ignore-scripts

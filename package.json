@@ -12,9 +12,9 @@
   },
   "scripts": {
     "dev": "vite --config vite.config.cjs",
-    "build": "vite build --config vite.config.cjs",
-    "build:firebase": "VITE_APP_MODE=client vite build --config vite.config.cjs",
-    "build:cloud": "VITE_APP_MODE=client vite build --config vite.config.cjs",
+    "build": "node scripts/ensure-kb-data.mjs && vite build --config vite.config.cjs",
+    "build:firebase": "node scripts/ensure-kb-data.mjs && VITE_APP_MODE=client vite build --config vite.config.cjs",
+    "build:cloud": "node scripts/ensure-kb-data.mjs && VITE_APP_MODE=client vite build --config vite.config.cjs",
     "firebase": "pnpm run build:cloud && pnpm run deploy:cloud",
     "deploy": "./deploy.sh",
     "deploy:vos": "bash scripts/deploy-vos.sh",
