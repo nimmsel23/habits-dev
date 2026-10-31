@@ -1,67 +1,33 @@
 #!/usr/bin/env bash
-# deploy.sh — Versioned deployment for Habits (local channel → Desktop Prod)
+# Build in source; /opt/habit contains only the finished static application.
 set -euo pipefail
-
 DEST="/opt/habit"
-BACKUP_DIR="/opt/habit_backups"
 SERVICE="habit.service"
 SOURCE="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
+DRY=false
+case "${1:-}" in
+  '') ;;
+  --dry-run) DRY=true ;;
+  *) echo 'Usage: deploy.sh [--dry-run]' >&2; exit 1 ;;
+esac
 
-msg() { printf '\033[1;32m%s\033[0m\n' "$*"; }
-warn() { printf '\033[1;33m%s\033[0m\n' "$*" >&2; }
-die() { printf '\033[1;31m%s\033[0m\n' "$*" >&2; exit 1; }
-
-msg "🚀 Starting Habits Deployment (local channel)"
-
-# 1. Versioned Backup
-timestamp=$(date +%Y%m%d_%H%M%S)
-backup_path="$BACKUP_DIR/habit_$timestamp"
-
-if [[ -d "$DEST" ]]; then
-  msg "📦 Creating versioned backup: $backup_path"
-  sudo mkdir -p "$BACKUP_DIR"
-  sudo cp -a "$DEST" "$backup_path"
+# Sibling aliases and Vite are build-time dependencies only.
+if ! $DRY; then
+  (cd "$SOURCE" && pnpm install --frozen-lockfile && pnpm run build)
 fi
-
-# 2. Sync to /opt/habit
-if [[ ! -d "$DEST" ]]; then
-  msg "📂 Creating target directory $DEST"
-  sudo mkdir -p "$DEST"
-  sudo chown "$(id -u):$(id -g)" "$DEST"
-fi
-
-msg "📦 Syncing files from $SOURCE → $DEST"
-sudo rsync -av --delete \
-  --exclude ".git" \
-  --exclude ".env" \
-  --exclude ".env.*" \
-  --exclude "node_modules" \
-  --exclude "data" \
-  --exclude "dist" \
-  --exclude "dist-firebase" \
-  --exclude "dev-dist" \
-  --exclude ".firebase" \
-  --exclude ".archiv" \
-  --exclude "*.bak" \
-  --exclude ".claude" \
-  --exclude "*.log" \
-  "$SOURCE/" "$DEST/"
-
-# 3. Finalize Prod Environment
-msg "📦 Installing dependencies and building UI"
-sudo chown -R "$(id -u):$(id -g)" "$DEST"
-(
-  cd "$DEST"
-  pnpm install --frozen-lockfile --silent
-  pnpm run build > /dev/null
+[[ -f "$SOURCE/dist/index.html" ]] || { echo 'Build dist/index.html in the source checkout first.' >&2; exit 1; }
+SYNC=(
+  --filter 'P /.env*' --filter 'P /data/***' --filter 'P /.git/***'
+  --include '/dist/***' --exclude '*'
 )
-
-# 4. Restart Service
-if systemctl list-unit-files "$SERVICE" > /dev/null 2>&1; then
-  msg "🔄 Restarting $SERVICE"
+if $DRY; then
+  rsync -ani --delete --delete-excluded "${SYNC[@]}" "$SOURCE/" "$DEST/"
+  exit 0
+fi
+sudo mkdir -p "$DEST"
+sudo rsync -aL --delete --delete-excluded "${SYNC[@]}" "$SOURCE/" "$DEST/"
+if systemctl list-unit-files "$SERVICE" 2>/dev/null | grep -q "^$SERVICE"; then
   sudo systemctl restart "$SERVICE"
 else
-  warn "⚠️ $SERVICE not found. Skipping restart."
+  echo "Static product installed at $DEST/dist; $SERVICE is not installed."
 fi
-
-msg "✅ Habits deployed to $DEST complete."

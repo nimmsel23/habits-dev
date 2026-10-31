@@ -95,3 +95,9 @@ Statische Syntax-, JSON- und Diff-Prüfungen erfolgreich. Kein Firebase-Release.
 ## 2026-10-31 — Dev-Projekte unter ~/dev
 
 Lokale Entwicklungspfade und betroffene Verknüpfungen auf `~/dev/*-dev` umgestellt. Runtime-Daten, Branches und Release-Checkouts behalten ihre Zuständigkeit. Keine Pushes oder Releases. Gesamter Umzug und Prüfungen: `~/RESULTS.md`.
+
+## 2026-10-31 — Schlankes lokales Deployment
+
+Build im Quellrepo; nur dist/ nach /opt/habit. Keine Repo-Kopie, Ziel-Installation oder unbegrenzte Vollbackups. --dry-run liest vorhandenen Build.
+
+Bash-Syntax geprüft; habit.service ist auf diesem System nicht installiert. Kein Live-Deploy oder neu eingerichteter Static-Host.

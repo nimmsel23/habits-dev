@@ -166,3 +166,7 @@ habits-dev soll in die **klienten-dev** App integrierbar sein:
 - Trainingsplan-Erstellung im Coach-Interface legt Habits in Klienten-UID an
 
 Verbindung: `klienten-dev` (Port 9001) kennt Klienten-UIDs → kann Habit-Status abfragen.
+
+## 2026-10-31 — Lokales Produkt unter /opt
+
+- [x] Build im Quellrepo; nur dist/ nach /opt/habit. Keine Repo-Kopie, Ziel-Installation oder unbegrenzte Vollbackups. --dry-run liest vorhandenen Build.
