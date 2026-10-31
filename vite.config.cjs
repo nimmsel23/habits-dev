@@ -5,7 +5,7 @@ const path = require("path");
 const { createRequire } = require("module");
 
 // ../package.json existiert nur, wenn dieses Repo als vitalos-Submodule
-// eingebunden ist (~/vitalos/habit-app). Standalone (~/habits-dev, "../"
+// eingebunden ist (~/vitalos/habit-app). Standalone (~/dev/habits-dev, "../"
 // = ~/) gibt es keine vitalos-Root — dann auf eigenes package.json/
 // node_modules zurückfallen.
 const fs = require("fs");
@@ -102,7 +102,7 @@ module.exports = defineConfig(async ({ mode }) => {
       firebaseRedirect,
       miniAppSubmodulePlugin(FITNESS),
       // cross-app-aliases zeigen auf ~/vitalos/fitness-app; liegt FITNESS woanders (Home-Worktree
-      // ~/fitness-dev), braucht dieser Quellbaum denselben Resolver für views/{Plan,SixPack,Skills}.
+      // ~/dev/fitness-dev), braucht dieser Quellbaum denselben Resolver für views/{Plan,SixPack,Skills}.
       ...(VOS_FITNESS !== FITNESS ? [miniAppSubmodulePlugin(VOS_FITNESS)] : []),
       react(),
       VitePWA({

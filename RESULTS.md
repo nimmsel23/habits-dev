@@ -90,3 +90,8 @@ beim nächsten Öffnen und migrieren das Token. Der Worker zeigt ausschließlich
 Payloads mit `app: "vitalos"`.
 
 Statische Syntax-, JSON- und Diff-Prüfungen erfolgreich. Kein Firebase-Release.
+
+
+## 2026-10-31 — Dev-Projekte unter ~/dev
+
+Lokale Entwicklungspfade und betroffene Verknüpfungen auf `~/dev/*-dev` umgestellt. Runtime-Daten, Branches und Release-Checkouts behalten ihre Zuständigkeit. Keine Pushes oder Releases. Gesamter Umzug und Prüfungen: `~/RESULTS.md`.

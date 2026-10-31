@@ -2,7 +2,7 @@
 // Stellt die generierten KB-Dateien von fitness sicher (src/lib/db/firestore/{push,pull,legs}.generated.js u. a.).
 // Diese Dateien sind gitignored und entstehen sonst nur im Prebuild von fitness selbst; Learn/Habits bauen
 // fitness-Quellen mit (@fitness-db) und scheiterten ohne sie mit `Could not resolve "./push.generated.js"`.
-// Fitness-Checkout: Nachbar neben diesem Repo (fitness-app im vitalos-Workspace, sonst ~/fitness-dev).
+// Fitness-Checkout: Nachbar neben diesem Repo (fitness-app im vitalos-Workspace, sonst ~/dev/fitness-dev).
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';

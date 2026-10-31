@@ -1,4 +1,4 @@
-# Standalone-Settings für ~/habits-dev (greift nur bei direktem Install hier).
+# Standalone-Settings für ~/dev/habits-dev (greift nur bei direktem Install hier).
 # Im vitalos-Workspace gilt dessen pnpm-workspace.yaml — Werte hier = Kopie davon.
 #
 # shamefullyHoist: Sibling-Repos (fitness/fuel/relax) und framer-motion
