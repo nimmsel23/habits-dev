@@ -35,33 +35,39 @@ if (!fs.existsSync(path.join(JOURNAL, "src/routes.js"))) {
   throw new Error("Journal fehlt: git submodule update --init --recursive");
 }
 
-// SSOT für Cross-App-Aliase ist @vos/cross-app-aliases (~/vitalos/packages/
-// cross-app-aliases) — dynamic import() geht auch aus einer .cjs-Datei
-// (das Package ist ESM). Fällt zurück auf die alten hartcodierten
-// vitalos-relativen Pfade, falls das Package (noch) nicht installiert ist.
-async function resolveCrossAppAliases() {
-  try {
-    const { crossAppAliases } = await import("@vos/cross-app-aliases");
-    return crossAppAliases();
-  } catch {
-    return {
-      "@journal-db": path.resolve(JOURNAL, "src/db/index.js"),
-      "@journal":    path.resolve(JOURNAL, "src"),
-      "@fitness-db": path.resolve(FITNESS, "src/lib/db"),
-      "@fitness/constants":  path.resolve(FITNESS, "src/constants"),
-      "@fitness/components": path.resolve(FITNESS, "src/components"),
-      "@fitness/hooks":      path.resolve(FITNESS, "src/hooks"),
-      "@fuel":  path.resolve(FUEL, "src/client"),
-      "@relax": path.resolve(RELAX, "src"),
-    };
-  }
+// Cross-App-Aliase, vollständig hier definiert (kein Paket mehr). Reihenfolge ist Absicht: Vite
+// matcht Alias-Keys in Objekt-Reihenfolge, spezifischere Keys ('@fitness/hooks') müssen vor den
+// kurzen ('@fitness') stehen. Alle Sibling-Pfade kommen aus resolveSibling()/JOURNAL oben und sind
+// damit in jedem Kontext (~/dev, ~/vitalos/<x>-app, CI) dieselben, auch die des Mini-App-Resolvers
+// (miniAppSubmodulePlugin(FITNESS)). Das frühere Paket @vos/cross-app-aliases zeigte immer auf
+// ~/vitalos/fitness-app, der Resolver nur auf FITNESS: nach dem Umzug nach ~/dev passte das nicht mehr
+// zusammen (PWA-Build: "Could not resolve ../../../views/SixPack/workoutDoc.js"), und der Lockfile
+// kippte je nach Installationsort (link:../vitalos/… vs. workspace:*).
+function resolveCrossAppAliases() {
+  return {
+    "@fitness/components": path.resolve(FITNESS, "src/components"),
+    "@fitness/constants":  path.resolve(FITNESS, "src/constants"),
+    "@fitness/lib":        path.resolve(FITNESS, "src/lib"),
+    "@fitness/hooks":      path.resolve(FITNESS, "src/hooks"),
+    "@fitness-db":         path.resolve(FITNESS, "src/lib/db"),
+    "@fitness":            FITNESS,
+    "@fuel-db":            path.resolve(FUEL, "src/client/lib/db"),
+    "@fuel-views":         path.resolve(FUEL, "src/client/views"),
+    "@fuel":               path.resolve(FUEL, "src/client"),
+    "@journal-db":         path.resolve(JOURNAL, "src/db/index.js"),
+    "@journal":            path.resolve(JOURNAL, "src"),
+    "@habits-db":          path.resolve(__dirname, "src/db"),
+    "@habits":             path.resolve(__dirname, "src"),
+    "@relax-db":           path.resolve(RELAX, "src/lib/db"),
+    "@relax":              path.resolve(RELAX, "src"),
+  };
 }
 
 module.exports = defineConfig(async ({ mode }) => {
   const { miniAppSubmodulePlugin } = await import(path.join(FITNESS, "vite-miniapp-submodules.mjs"));
   const env = loadEnv(mode, process.cwd(), "");
   const appMode = process.env.VITE_APP_MODE || env.VITE_APP_MODE || "coach";
-  const crossAppAliases = await resolveCrossAppAliases();
+  const crossAppAliases = resolveCrossAppAliases();
   const { vosChangelog } = await import("./scripts/vos-changelog/vos-changelog-vite.mjs");
 
   // fitness-dev/src/firebase.js auf habits' eigene lib/firebase.js umleiten —
