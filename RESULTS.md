@@ -101,3 +101,6 @@ Lokale Entwicklungspfade und betroffene Verknüpfungen auf `~/dev/*-dev` umgeste
 Build im Quellrepo; nur dist/ nach /opt/habit. Keine Repo-Kopie, Ziel-Installation oder unbegrenzte Vollbackups. --dry-run liest vorhandenen Build.
 
 Bash-Syntax geprüft; habit.service ist auf diesem System nicht installiert. Kein Live-Deploy oder neu eingerichteter Static-Host.
+## 2026-10-31 — Dependabot
+
+Enabled Dependabot alerts and security updates. Configured weekly GitHub Actions and npm/pnpm updates; version updates target `dev`. Minor/patch updates are grouped; vendored mini-app-shell copies stay maintained at their source. Validated YAML, repository manifest paths and update targets.
