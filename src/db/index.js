@@ -19,14 +19,30 @@ import {
   doc,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
   where,
 } from "firebase/firestore";
 import { addDoc, getDoc, getDocs, setDoc, writeBatch } from "../lib/offline.js";
+import { listSessionsForDate as listFitnessSessionsForDate } from "@fitness-db/index.firestore.js";
 
 export * from "@fitness-db/index.firestore.js";
 import { db, getUid } from "@fitness-db/index.firestore.js";
 import { todayISO } from "@fitness-db/shared/utils.js";
+import {
+  DAILY_DIMENSIONS,
+  createDailyExecutionSnapshot,
+  dailyExecutionScore,
+  linkDailyExecutionRecord as applyDailyRecordLink,
+  normalizeDailyAssignments,
+  replaceDailyAssignments,
+  setDailyDimensionCompleted as updateDailyDimension,
+} from "../views/Habits/dailyExecutionModel.js";
+import {
+  dailyNutritionRecordOption,
+  dailyRelaxSessionOption,
+  hasDailySkillRecordData,
+} from "../views/Habits/dailySkillRecordModel.js";
 
 const PUSH_DEFAULTS = {
   enabled: false,
@@ -127,6 +143,246 @@ export async function getHabitRecordsForDate(date = todayISO()) {
   );
   const snap = await getDocs(recordsQuery);
   return snap.docs.map((entry) => entry.data().habitId);
+}
+
+const dailyConfigRef = (uid) => doc(db, "fitness", uid, "settings", "dailyExecution");
+const dailySnapshotRef = (uid, date) => doc(db, "fitness", uid, "dailyExecution", date);
+const habitRef = (uid, id) => doc(db, "fitness", uid, "habits", id);
+const habitRecordRef = (uid, id, date) => doc(db, "fitness", uid, "habitRecords", `${id}_${date}`);
+
+function emptyDailyExecution(date) {
+  return {
+    schemaVersion: 1,
+    date,
+    configured: false,
+    score: 0,
+    dimensions: Object.fromEntries(DAILY_DIMENSIONS.map(({ key }) => [key, null])),
+  };
+}
+
+function nextLocalDate(date) {
+  const value = new Date(`${date}T12:00:00`);
+  value.setDate(value.getDate() + 1);
+  return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`;
+}
+
+export async function getDailyExecutionConfig() {
+  const snap = await getDoc(dailyConfigRef(getUid()));
+  return snap.exists() ? (snap.data() || {}) : { assignments: {}, effectiveDate: todayISO() };
+}
+
+export async function getDailyExecution(date = todayISO()) {
+  const uid = getUid();
+  const dayRef = dailySnapshotRef(uid, date);
+  const configRef = dailyConfigRef(uid);
+  return runTransaction(db, async (transaction) => {
+    const [daySnap, configSnap] = await Promise.all([transaction.get(dayRef), transaction.get(configRef)]);
+    if (daySnap.exists()) return { ...daySnap.data(), configured: true };
+
+    const config = configSnap.exists() ? configSnap.data() || {} : {};
+    if (!config.assignments || !DAILY_DIMENSIONS.every(({ key }) => config.assignments[key])
+        || date < (config.effectiveDate || todayISO())) return emptyDailyExecution(date);
+    const assignments = normalizeDailyAssignments(config.assignments, DAILY_DIMENSIONS.map(({ key }) => ({
+      uuid: config.assignments[key]?.habitId || config.assignments[key],
+      name: "placeholder",
+    })));
+    const selectedIds = DAILY_DIMENSIONS.map(({ key }) => assignments[key].habitId);
+    const habitSnaps = await Promise.all(selectedIds.map((id) => transaction.get(habitRef(uid, id))));
+    const habits = habitSnaps.map((snap, index) => ({ uuid: selectedIds[index], ...(snap.data() || {}) }));
+    if (habits.some((habit, index) => !habitSnaps[index].exists() || habit.deleted)) return emptyDailyExecution(date);
+
+    const normalized = normalizeDailyAssignments(config.assignments, habits);
+    const snapshot = createDailyExecutionSnapshot({ date, assignments: normalized, habits });
+    // A legacy habit record can come from Smart Logging or another tracker.
+    // Daily Four points require the explicit Daily Four confirmation below;
+    // never infer them while creating a day's first snapshot.
+    transaction.set(dayRef, { ...snapshot, score: dailyExecutionScore(snapshot), configured: true });
+    return { ...snapshot, score: dailyExecutionScore(snapshot), configured: true };
+  });
+}
+
+export async function getDailyFitnessSessionOptions(date = todayISO()) {
+  const sessions = await listFitnessSessionsForDate(date);
+  return (sessions || []).flatMap((session) => {
+    const duration = Number(session.duration || session.activity?.duration || session.activity?.minutes) || 0;
+    const exerciseCount = Array.isArray(session.exercises) ? session.exercises.length : 0;
+    const hasDetail = exerciseCount > 0 || duration > 0 || (session.activityAddons || []).length > 0;
+    if (!hasDetail) return [];
+    const recordId = session.session_id || session.id ? `${date}__${session.session_id || session.id}` : date;
+    const title = String(session.block || session.activity?.type || session.trainingsart || "Training").slice(0, 120);
+    const detail = [duration ? `${duration} Min.` : null, exerciseCount ? `${exerciseCount} Übungen` : null].filter(Boolean).join(" · ");
+    return [{ recordId, date, title, detail }];
+  });
+}
+
+export async function linkDailyFitnessSession(date, dimensionKey, recordId) {
+  if (typeof recordId !== "string" || !recordId || recordId.length > 180 || recordId.includes("/")) {
+    throw new Error("daily_fitness_record_invalid");
+  }
+  const uid = getUid();
+  const dayRef = dailySnapshotRef(uid, date);
+  const sessionRef = doc(db, "fitness", uid, "sessions", recordId);
+  const loaded = await getDailyExecution(date);
+  if (!loaded.configured) throw new Error("daily_execution_not_configured");
+
+  return runTransaction(db, async (transaction) => {
+    const [daySnap, sessionSnap] = await Promise.all([transaction.get(dayRef), transaction.get(sessionRef)]);
+    if (!daySnap.exists() || !sessionSnap.exists()) throw new Error("daily_fitness_record_missing");
+    const snapshot = daySnap.data();
+    const session = sessionSnap.data() || {};
+    if (session.date !== date) throw new Error("daily_fitness_record_date_mismatch");
+    const exerciseCount = Array.isArray(session.exercises) ? session.exercises.length : 0;
+    const duration = Number(session.duration || session.activity?.duration || session.activity?.minutes) || 0;
+    if (!exerciseCount && !duration && !(session.activityAddons || []).length) throw new Error("daily_fitness_record_empty");
+
+    const title = String(session.block || session.activity?.type || session.trainingsart || "Training").slice(0, 120);
+    const next = applyDailyRecordLink(snapshot, dimensionKey, {
+      skill: "fitness",
+      recordId,
+      date,
+      title,
+    });
+    const score = dailyExecutionScore(next);
+    transaction.set(dayRef, { ...next, score, configured: true });
+    const assigned = next.dimensions?.[dimensionKey];
+    transaction.set(habitRecordRef(uid, assigned.habitId, date), {
+      habitId: assigned.habitId,
+      date,
+      completion: "DONE",
+      dailyDimension: dimensionKey,
+      dailyHabitName: assigned.habitName,
+      dailyExecutionDate: date,
+      linkedRecords: assigned.linkedRecords,
+      recorded_at: serverTimestamp(),
+    }, { merge: true });
+    return { ...next, score, configured: true };
+  });
+}
+
+const DAILY_LINK_SKILLS = Object.freeze({
+  nutrition: { collection: "nutrition", emptyError: "daily_nutrition_record_empty" },
+  relax: { collection: "relax", emptyError: "daily_relax_record_empty" },
+});
+
+export async function getDailyNutritionLogOptions(date = todayISO()) {
+  const snap = await getDoc(doc(db, "nutrition", getUid(), "logs", date));
+  if (!snap.exists()) return [];
+  const option = dailyNutritionRecordOption(date, snap.data() || {});
+  return option ? [option] : [];
+}
+
+export async function getDailyRelaxSessionOptions(date = todayISO()) {
+  const snap = await getDoc(doc(db, "relax", getUid(), "sessions", date));
+  if (!snap.exists()) return [];
+  const option = dailyRelaxSessionOption(date, snap.data() || {});
+  return option ? [option] : [];
+}
+
+export async function linkDailySkillRecord(date, dimensionKey, skill, recordId) {
+  const config = DAILY_LINK_SKILLS[skill];
+  if (!config || recordId !== date) throw new Error("daily_link_record_invalid");
+  const uid = getUid();
+  const dayRef = dailySnapshotRef(uid, date);
+  const sourceRef = doc(db, config.collection, uid, skill === "nutrition" ? "logs" : "sessions", recordId);
+  const loaded = await getDailyExecution(date);
+  if (!loaded.configured) throw new Error("daily_execution_not_configured");
+
+  return runTransaction(db, async (transaction) => {
+    const [daySnap, sourceSnap] = await Promise.all([transaction.get(dayRef), transaction.get(sourceRef)]);
+    if (!daySnap.exists() || !sourceSnap.exists()) throw new Error("daily_link_record_missing");
+    const source = sourceSnap.data() || {};
+    if (source.date && source.date !== date) throw new Error("daily_link_record_date_mismatch");
+    if (!hasDailySkillRecordData(skill, source)) throw new Error(config.emptyError);
+    const label = skill === "nutrition" ? "Ernährungseintrag" : "Relax-Praxis";
+    const next = applyDailyRecordLink(daySnap.data(), dimensionKey, { skill, recordId, date, title: label });
+    const score = dailyExecutionScore(next);
+    transaction.set(dayRef, { ...next, score, configured: true });
+    const assigned = next.dimensions?.[dimensionKey];
+    transaction.set(habitRecordRef(uid, assigned.habitId, date), {
+      habitId: assigned.habitId,
+      date,
+      completion: "DONE",
+      dailyDimension: dimensionKey,
+      dailyHabitName: assigned.habitName,
+      dailyExecutionDate: date,
+      linkedRecords: assigned.linkedRecords,
+      recorded_at: serverTimestamp(),
+    }, { merge: true });
+    return { ...next, score, configured: true };
+  });
+}
+
+export async function saveDailyExecutionAssignments(assignments, habits, date = todayISO()) {
+  const uid = getUid();
+  const configRef = dailyConfigRef(uid);
+  const dayRef = dailySnapshotRef(uid, date);
+  normalizeDailyAssignments(assignments, habits);
+
+  return runTransaction(db, async (transaction) => {
+    const [daySnap, ...habitSnaps] = await Promise.all([
+      transaction.get(dayRef),
+      ...DAILY_DIMENSIONS.map(({ key }) => {
+        const candidate = assignments[key];
+        const id = typeof candidate === "string" ? candidate : candidate?.habitId;
+        return transaction.get(habitRef(uid, id));
+      }),
+    ]);
+    const selectedHabits = habitSnaps.map((snap, index) => {
+      const candidate = assignments[DAILY_DIMENSIONS[index].key];
+      const id = typeof candidate === "string" ? candidate : candidate?.habitId;
+      return { uuid: id, ...(snap.data() || {}) };
+    });
+    if (habitSnaps.some((snap, index) => !snap.exists() || selectedHabits[index].deleted)) {
+      throw new Error("daily_assignment_habit_unavailable");
+    }
+    const normalized = normalizeDailyAssignments(assignments, selectedHabits);
+    const oldSnapshot = daySnap.exists() ? daySnap.data() : null;
+    const hasActivity = DAILY_DIMENSIONS.some(({ key }) => oldSnapshot?.dimensions?.[key]?.completed
+      || oldSnapshot?.dimensions?.[key]?.linkedRecords?.length);
+    const effectiveDate = hasActivity ? nextLocalDate(date) : date;
+    transaction.set(configRef, {
+      schemaVersion: 1,
+      assignments: normalized,
+      effectiveDate,
+      updatedAt: serverTimestamp(),
+    }, { merge: true });
+    if (oldSnapshot && !hasActivity) {
+      transaction.set(dayRef, {
+        ...replaceDailyAssignments(oldSnapshot, { assignments: normalized, habits: selectedHabits }),
+        score: 0,
+        configured: true,
+      });
+    }
+    return { ok: true, effectiveDate };
+  });
+}
+
+export async function setDailyExecutionCompleted(date, dimensionKey, completed) {
+  const uid = getUid();
+  const loaded = await getDailyExecution(date);
+  if (!loaded.configured) throw new Error("daily_execution_not_configured");
+  const dayRef = dailySnapshotRef(uid, date);
+
+  return runTransaction(db, async (transaction) => {
+    const daySnap = await transaction.get(dayRef);
+    if (!daySnap.exists()) throw new Error("daily_execution_missing");
+    const snapshot = daySnap.data();
+    const dimension = snapshot.dimensions?.[dimensionKey];
+    if (!dimension?.habitId) throw new Error("daily_dimension_not_configured");
+    const recordRef = habitRecordRef(uid, dimension.habitId, date);
+    const next = updateDailyDimension(snapshot, dimensionKey, completed);
+    transaction.set(dayRef, { ...next, score: dailyExecutionScore(next), configured: true });
+    transaction.set(recordRef, {
+      habitId: dimension.habitId,
+      date,
+      completion: completed ? "DONE" : "MISSED",
+      dailyDimension: dimensionKey,
+      dailyHabitName: dimension.habitName,
+      dailyExecutionDate: date,
+      recorded_at: serverTimestamp(),
+    }, { merge: true });
+    return { ...next, score: dailyExecutionScore(next), configured: true };
+  });
 }
 
 export async function recordHabit(uuid, date = todayISO()) {

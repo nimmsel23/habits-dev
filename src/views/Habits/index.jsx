@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
-import { Star, CalendarDays, Activity, PenLine, LayoutGrid, Smartphone, Bell } from "lucide-react";
+import { Star, CalendarDays, Activity, PenLine, LayoutGrid, Smartphone, Bell, Grid2X2 } from "lucide-react";
 import {
   getHabits, recordHabit, unrecordHabit, addHabit, deleteHabit,
   updateHabit, getHabitRecordsForDate, getHabitJournal, saveHabitJournal, getHabitJournalHistory,
-  saveHabitOrder
+  saveHabitOrder, getDailyExecution, getDailyExecutionConfig, saveDailyExecutionAssignments,
+  getDailyFitnessSessionOptions, linkDailyFitnessSession, getDailyNutritionLogOptions,
+  getDailyRelaxSessionOptions, linkDailySkillRecord, setDailyExecutionCompleted,
 } from "@habits-db";
 import { localToday } from "@utils";
 import { ICON_COMPONENTS_MAP, DEFAULT_FREQUENCY } from "./utils";
@@ -28,10 +30,11 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import Core4Layout from "./Core4Layout";
+import DailyFourLayout from "./DailyFourLayout.jsx";
 import PushSettingsModal from "./PushSettingsModal";
 import { usePushNotifications } from "./usePushNotifications";
 
-export default function Habits({ user = null, selectedDate: controlledDate = null, onSelectedDateChange = null }) {
+export default function Habits({ user = null, selectedDate: controlledDate = null, onSelectedDateChange = null, onOpenSkill = null }) {
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newHabit, setNewHabit] = useState("");
@@ -51,7 +54,11 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
   const [isJournalSaving, setIsJournalSaving] = useState(false);
   const [journalModalOpen, setJournalModalOpen] = useState(false);
   const [memoirWrittenIds, setMemoirWrittenIds] = useState(new Set());
-  const [layoutMode, setLayoutMode] = useState(() => localStorage.getItem("habits-layout-mode") || "v1");
+  const [layoutMode, setLayoutMode] = useState(() => localStorage.getItem("habits-layout-mode") || "daily-four");
+  const [dailyExecution, setDailyExecution] = useState(null);
+  const [dailyConfig, setDailyConfig] = useState(null);
+  const [dailyError, setDailyError] = useState("");
+  const [dailySaving, setDailySaving] = useState(false);
   const [pushModalOpen, setPushModalOpen] = useState(false);
   const push = usePushNotifications(user);
 
@@ -131,6 +138,23 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
   useEffect(() => { load(); }, [selectedDate]);
 
   useEffect(() => {
+    if (layoutMode !== "daily-four") return undefined;
+    let live = true;
+    setDailyError("");
+    Promise.all([getDailyExecution(selectedDate), getDailyExecutionConfig()])
+      .then(([execution, config]) => {
+        if (!live) return;
+        setDailyExecution(execution);
+        setDailyConfig(config);
+      })
+      .catch((error) => {
+        if (!live) return;
+        setDailyError(error?.message || "Tagesübersicht konnte nicht geladen werden.");
+      });
+    return () => { live = false; };
+  }, [layoutMode, selectedDate]);
+
+  useEffect(() => {
     setSelectedSidebarDate(selectedDate);
   }, [selectedDate]);
 
@@ -166,6 +190,76 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
       await recordHabit(h.uuid, selectedDate);
     }
     load();
+  }
+
+  async function saveDailyAssignments(assignments) {
+    if (selectedDate !== localToday()) throw new Error("daily_assignments_change_today_only");
+    setDailySaving(true);
+    try {
+      const result = await saveDailyExecutionAssignments(assignments, habits, selectedDate);
+      const [execution, config] = await Promise.all([getDailyExecution(selectedDate), getDailyExecutionConfig()]);
+      setDailyExecution(execution);
+      setDailyConfig(config);
+      return result;
+    } finally {
+      setDailySaving(false);
+    }
+  }
+
+  async function toggleDailyCompletion(dimension, completed) {
+    setDailySaving(true);
+    setDailyError("");
+    try {
+      setDailyExecution(await setDailyExecutionCompleted(selectedDate, dimension, completed));
+      await load();
+    } catch (error) {
+      setDailyError(error?.message || "Tagesstatus konnte nicht gespeichert werden.");
+    } finally {
+      setDailySaving(false);
+    }
+  }
+
+  async function loadDailyFitnessSessions(date) {
+    return getDailyFitnessSessionOptions(date);
+  }
+
+  async function linkFitnessSession(dimension, session) {
+    setDailySaving(true);
+    setDailyError("");
+    try {
+      const next = await linkDailyFitnessSession(selectedDate, dimension, session.recordId);
+      setDailyExecution(next);
+      await load();
+      return next;
+    } catch (error) {
+      setDailyError(error?.message || "Trainingseinheit konnte nicht verknüpft werden.");
+      throw error;
+    } finally {
+      setDailySaving(false);
+    }
+  }
+
+  async function loadDailySkillRecords(date, skill) {
+    if (skill === "fuel") return getDailyNutritionLogOptions(date);
+    if (skill === "relax") return getDailyRelaxSessionOptions(date);
+    return [];
+  }
+
+  async function linkSkillRecord(dimension, skill, record) {
+    setDailySaving(true);
+    setDailyError("");
+    try {
+      const canonicalSkill = skill === "fuel" ? "nutrition" : skill;
+      const next = await linkDailySkillRecord(selectedDate, dimension, canonicalSkill, record.recordId);
+      setDailyExecution(next);
+      await load();
+      return next;
+    } catch (error) {
+      setDailyError(error?.message || "Der Eintrag konnte nicht verknüpft werden.");
+      throw error;
+    } finally {
+      setDailySaving(false);
+    }
   }
 
   async function toggleSidebarDone(habitId, date) {
@@ -246,6 +340,53 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
     load();
   };
 
+  if (layoutMode === "daily-four") {
+    return (
+      <div className="pb-32 px-2 sm:px-4 lg:px-6">
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <h1 className="text-2xl font-black text-slate-100 sm:text-3xl">VitalOS · Dein Tag</h1>
+          <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-900 px-3 py-2 shadow-xl">
+            <button type="button" onClick={() => { setLayoutMode("v1"); localStorage.setItem("habits-layout-mode", "v1"); }} className="rounded-xl border border-white/10 p-2 text-slate-400 hover:text-white" title="Alle Habits"><LayoutGrid size={16} /></button>
+            <button type="button" onClick={() => { setLayoutMode("core4"); localStorage.setItem("habits-layout-mode", "core4"); }} className="rounded-xl border border-white/10 p-2 text-slate-400 hover:text-white" title="Bisherige Core4-Ansicht"><Smartphone size={16} /></button>
+            <button type="button" onClick={() => setPushModalOpen(true)} className={`rounded-xl border border-white/10 p-2 ${push.settings?.enabled ? "text-orange-300" : "text-slate-400"}`} title="Erinnerungen"><Bell size={16} /></button>
+          </div>
+        </div>
+        <DailyFourLayout
+          date={selectedDate}
+          habits={habits}
+          config={dailyConfig}
+          execution={dailyExecution}
+          error={dailyError}
+          saving={dailySaving}
+          onSaveAssignments={saveDailyAssignments}
+          onToggleCompletion={toggleDailyCompletion}
+          onLoadFitnessSessions={loadDailyFitnessSessions}
+          onLinkFitnessSession={linkFitnessSession}
+          onLoadSkillRecords={loadDailySkillRecords}
+          onLinkSkillRecord={linkSkillRecord}
+          onOpenSkill={onOpenSkill}
+          onOpenAllHabits={() => { setLayoutMode("v1"); localStorage.setItem("habits-layout-mode", "v1"); }}
+          onOpenJournal={(habit) => {
+            setSelectedHabitId(habit.uuid);
+            setSelectedSidebarDate(selectedDate);
+            setJournalModalOpen(true);
+          }}
+        />
+        <HabitJournalModal
+          open={journalModalOpen}
+          onClose={() => setJournalModalOpen(false)}
+          habit={habits.find((habit) => habit.uuid === selectedHabitId)}
+          date={selectedSidebarDate}
+          journalText={journalText}
+          setJournalText={setJournalText}
+          isJournalSaving={isJournalSaving}
+          onSaveJournal={onSaveJournal}
+        />
+        <PushSettingsModal open={pushModalOpen} onClose={() => setPushModalOpen(false)} settings={push.settings} permission={push.permission} busy={push.busy} onEnable={push.enable} onDisable={push.disable} onReminderTimeChange={push.updateReminderTime} />
+      </div>
+    );
+  }
+
   if (layoutMode === "core4") {
     return (
       <div className="pb-32 px-2 sm:px-4 lg:px-6">
@@ -265,6 +406,13 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
               title="Core4 Minimal-Ansicht"
             >
               <Smartphone size={16} />
+            </button>
+            <button
+              onClick={() => { setLayoutMode("daily-four"); localStorage.setItem("habits-layout-mode", "daily-four"); }}
+              className="rounded-xl border border-white/10 p-1.5 text-slate-400 transition-all hover:border-orange-400 hover:text-orange-300"
+              title="Daily Execution · vier Ebenen"
+            >
+              <Grid2X2 size={16} />
             </button>
             <button
               onClick={() => setPushModalOpen(true)}
@@ -358,6 +506,13 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
               title="Core4 Minimal-Ansicht"
             >
               <Smartphone size={16} />
+            </button>
+            <button
+              onClick={() => { setLayoutMode("daily-four"); localStorage.setItem("habits-layout-mode", "daily-four"); }}
+              className="p-1.5 rounded-xl border border-white/10 text-slate-400 transition-all hover:border-orange-400 hover:text-orange-300"
+              title="Daily Execution · vier Ebenen"
+            >
+              <Grid2X2 size={16} />
             </button>
             <button
               onClick={() => setPushModalOpen(true)}
