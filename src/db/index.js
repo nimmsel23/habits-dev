@@ -254,6 +254,84 @@ export async function linkDailyFitnessSession(date, dimensionKey, recordId) {
   });
 }
 
+const DAILY_LINK_SKILLS = Object.freeze({
+  nutrition: { collection: "nutrition", emptyError: "daily_nutrition_record_empty" },
+  relax: { collection: "relax", emptyError: "daily_relax_record_empty" },
+});
+
+export async function getDailyNutritionLogOptions(date = todayISO()) {
+  const snap = await getDoc(doc(db, "nutrition", getUid(), "logs", date));
+  if (!snap.exists()) return [];
+  const log = snap.data() || {};
+  const meals = Array.isArray(log.meals) ? log.meals : [];
+  const water = Number(log.water_ml) || 0;
+  if (!meals.length && water <= 0) return [];
+  const descriptions = meals.slice(0, 3).map((meal) => String(meal.description || "Mahlzeit").slice(0, 80));
+  const detail = [meals.length ? `${meals.length} Mahlzeit${meals.length === 1 ? "" : "en"}` : null,
+    water > 0 ? `${water} ml Wasser` : null].filter(Boolean).join(" · ");
+  return [{ recordId: date, date, title: descriptions.join(", ") || "Ernährungseintrag", detail }];
+}
+
+export async function getDailyRelaxSessionOptions(date = todayISO()) {
+  const snap = await getDoc(doc(db, "relax", getUid(), "sessions", date));
+  if (!snap.exists()) return [];
+  const record = snap.data() || {};
+  const items = Array.isArray(record.items) ? record.items.filter((item) => item && (
+    String(item.technique || "").trim() || Number(item.minutes) > 0 || String(item.note || "").trim()
+      || String(item.reflection || "").trim() || String(item.focus || "").trim()
+  )) : [];
+  if (!items.length) return [];
+  return [{
+    recordId: date,
+    date,
+    title: items.slice(0, 2).map((item) => String(item.technique || "Relax-Praxis").slice(0, 80)).join(", "),
+    detail: `${items.length} Praxis${items.length === 1 ? "" : "en"}${items.some((item) => Number(item.minutes) > 0)
+      ? ` · ${items.reduce((sum, item) => sum + (Number(item.minutes) > 0 ? Number(item.minutes) : 0), 0)} Min.` : ""}`,
+  }];
+}
+
+export async function linkDailySkillRecord(date, dimensionKey, skill, recordId) {
+  const config = DAILY_LINK_SKILLS[skill];
+  if (!config || recordId !== date) throw new Error("daily_link_record_invalid");
+  const uid = getUid();
+  const dayRef = dailySnapshotRef(uid, date);
+  const sourceRef = doc(db, config.collection, uid, skill === "nutrition" ? "logs" : "sessions", recordId);
+  const loaded = await getDailyExecution(date);
+  if (!loaded.configured) throw new Error("daily_execution_not_configured");
+
+  return runTransaction(db, async (transaction) => {
+    const [daySnap, sourceSnap] = await Promise.all([transaction.get(dayRef), transaction.get(sourceRef)]);
+    if (!daySnap.exists() || !sourceSnap.exists()) throw new Error("daily_link_record_missing");
+    const source = sourceSnap.data() || {};
+    if (source.date && source.date !== date) throw new Error("daily_link_record_date_mismatch");
+    if (skill === "nutrition") {
+      const meals = Array.isArray(source.meals) ? source.meals : [];
+      if (!meals.length && !(Number(source.water_ml) > 0)) throw new Error(config.emptyError);
+    } else if (!Array.isArray(source.items) || !source.items.some((item) => item && (
+      String(item.technique || "").trim() || Number(item.minutes) > 0 || String(item.note || "").trim()
+        || String(item.reflection || "").trim() || String(item.focus || "").trim()
+    ))) {
+      throw new Error(config.emptyError);
+    }
+    const label = skill === "nutrition" ? "Ernährungseintrag" : "Relax-Praxis";
+    const next = applyDailyRecordLink(daySnap.data(), dimensionKey, { skill, recordId, date, title: label });
+    const score = dailyExecutionScore(next);
+    transaction.set(dayRef, { ...next, score, configured: true });
+    const assigned = next.dimensions?.[dimensionKey];
+    transaction.set(habitRecordRef(uid, assigned.habitId, date), {
+      habitId: assigned.habitId,
+      date,
+      completion: "DONE",
+      dailyDimension: dimensionKey,
+      dailyHabitName: assigned.habitName,
+      dailyExecutionDate: date,
+      linkedRecords: assigned.linkedRecords,
+      recorded_at: serverTimestamp(),
+    }, { merge: true });
+    return { ...next, score, configured: true };
+  });
+}
+
 export async function saveDailyExecutionAssignments(assignments, habits, date = todayISO()) {
   const uid = getUid();
   const configRef = dailyConfigRef(uid);

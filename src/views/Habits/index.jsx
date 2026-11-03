@@ -4,7 +4,8 @@ import {
   getHabits, recordHabit, unrecordHabit, addHabit, deleteHabit,
   updateHabit, getHabitRecordsForDate, getHabitJournal, saveHabitJournal, getHabitJournalHistory,
   saveHabitOrder, getDailyExecution, getDailyExecutionConfig, saveDailyExecutionAssignments,
-  getDailyFitnessSessionOptions, linkDailyFitnessSession, setDailyExecutionCompleted,
+  getDailyFitnessSessionOptions, linkDailyFitnessSession, getDailyNutritionLogOptions,
+  getDailyRelaxSessionOptions, linkDailySkillRecord, setDailyExecutionCompleted,
 } from "@habits-db";
 import { localToday } from "@utils";
 import { ICON_COMPONENTS_MAP, DEFAULT_FREQUENCY } from "./utils";
@@ -238,6 +239,29 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
     }
   }
 
+  async function loadDailySkillRecords(date, skill) {
+    if (skill === "fuel") return getDailyNutritionLogOptions(date);
+    if (skill === "relax") return getDailyRelaxSessionOptions(date);
+    return [];
+  }
+
+  async function linkSkillRecord(dimension, skill, record) {
+    setDailySaving(true);
+    setDailyError("");
+    try {
+      const canonicalSkill = skill === "fuel" ? "nutrition" : skill;
+      const next = await linkDailySkillRecord(selectedDate, dimension, canonicalSkill, record.recordId);
+      setDailyExecution(next);
+      await load();
+      return next;
+    } catch (error) {
+      setDailyError(error?.message || "Der Eintrag konnte nicht verknüpft werden.");
+      throw error;
+    } finally {
+      setDailySaving(false);
+    }
+  }
+
   async function toggleSidebarDone(habitId, date) {
     const h = habits.find(x => x.uuid === habitId);
     const isDone = h?.records?.some(r => r.date === date && r.completion === 'DONE');
@@ -338,6 +362,8 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
           onToggleCompletion={toggleDailyCompletion}
           onLoadFitnessSessions={loadDailyFitnessSessions}
           onLinkFitnessSession={linkFitnessSession}
+          onLoadSkillRecords={loadDailySkillRecords}
+          onLinkSkillRecord={linkSkillRecord}
           onOpenSkill={onOpenSkill}
           onOpenAllHabits={() => { setLayoutMode("v1"); localStorage.setItem("habits-layout-mode", "v1"); }}
           onOpenJournal={(habit) => {

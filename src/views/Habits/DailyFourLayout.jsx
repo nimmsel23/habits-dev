@@ -31,6 +31,8 @@ export default function DailyFourLayout({
   onToggleCompletion,
   onLoadFitnessSessions,
   onLinkFitnessSession,
+  onLoadSkillRecords,
+  onLinkSkillRecord,
   onOpenSkill,
   onOpenJournal,
   onOpenAllHabits,
@@ -41,6 +43,9 @@ export default function DailyFourLayout({
   const [fitnessChooserFor, setFitnessChooserFor] = useState(null);
   const [fitnessSessions, setFitnessSessions] = useState([]);
   const [fitnessSessionsLoading, setFitnessSessionsLoading] = useState(false);
+  const [skillChooserFor, setSkillChooserFor] = useState(null);
+  const [skillRecords, setSkillRecords] = useState([]);
+  const [skillRecordsLoading, setSkillRecordsLoading] = useState(false);
   const activeHabits = useMemo(() => (habits || []).filter((habit) => !habit.deleted), [habits]);
 
   useEffect(() => {
@@ -88,6 +93,27 @@ export default function DailyFourLayout({
       setFitnessChooserFor(null);
     } catch (cause) {
       setMessage(cause?.message || "Die Trainingseinheit konnte nicht verknüpft werden.");
+    }
+  };
+
+  const toggleSkillChooser = async (dimension, skill) => {
+    const key = `${dimension}:${skill}`;
+    if (skillChooserFor === key) { setSkillChooserFor(null); return; }
+    setSkillChooserFor(key);
+    setSkillRecords([]);
+    setSkillRecordsLoading(true);
+    try { setSkillRecords(await onLoadSkillRecords?.(date, skill) || []); }
+    catch (cause) { setMessage(cause?.message || "Einträge konnten nicht geladen werden."); }
+    finally { setSkillRecordsLoading(false); }
+  };
+
+  const linkSkillRecord = async (dimension, skill, record) => {
+    try {
+      await onLinkSkillRecord?.(dimension, skill, record);
+      setMessage(`${record.title} ist mit der Gewohnheit verknüpft. Der Tagespunkt zählt weiterhin nur einmal.`);
+      setSkillChooserFor(null);
+    } catch (cause) {
+      setMessage(cause?.message || "Der Eintrag konnte nicht verknüpft werden.");
     }
   };
 
@@ -146,6 +172,28 @@ export default function DailyFourLayout({
                       <div className="mt-3 flex flex-wrap gap-2">
                         {skill && <button type="button" onClick={() => onOpenSkill?.(skill, { date, dimension: key, habitId: item.habitId, habitName: item.habitName })} className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">{skillLabel} öffnen <ArrowUpRight size={14} /></button>}
                         {item.skillLinks?.includes("fitness") && <button type="button" disabled={saving || fitnessSessionsLoading} onClick={() => toggleFitnessChooser(key)} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">{fitnessChooserFor === key ? "Auswahl schließen" : "Erfasste Trainingseinheit verknüpfen"}</button>}
+                        {["fuel", "relax"].filter((linkedSkill) => item.skillLinks?.includes(linkedSkill)).map((linkedSkill) => {
+                          const chooserKey = `${key}:${linkedSkill}`;
+                          const canonicalSkill = linkedSkill === "fuel" ? "nutrition" : linkedSkill;
+                          const linkedLabel = linkedSkill === "fuel" ? "Ernährung" : "Relax";
+                          return <span key={linkedSkill} className="contents">
+                            <button type="button" disabled={saving || skillRecordsLoading} onClick={() => toggleSkillChooser(key, linkedSkill)} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">
+                              {skillChooserFor === chooserKey ? "Auswahl schließen" : `${linkedLabel}-Eintrag verknüpfen`}
+                            </button>
+                            {skillChooserFor === chooserKey && <span className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 p-3" aria-label={`${linkedLabel}-Einträge`}>
+                              <span className="block text-xs text-slate-400">Wähle einen gespeicherten {linkedLabel}-Eintrag vom {date}. Die Fachdaten bleiben im Tracker.</span>
+                              {skillRecordsLoading ? <span className="mt-2 block text-sm text-slate-400">Lade Einträge …</span>
+                                : skillRecords.length ? <span className="mt-2 flex flex-wrap gap-2">{skillRecords.map((record) => {
+                                  const alreadyLinked = item.linkedRecords?.some((entry) => entry.skill === canonicalSkill && entry.recordId === record.recordId);
+                                  return <button key={record.recordId} type="button" disabled={saving || alreadyLinked} onClick={() => linkSkillRecord(key, linkedSkill, record)} className="rounded-lg border border-white/10 px-3 py-2 text-left text-sm text-slate-200 disabled:opacity-50">
+                                    <span className="block font-semibold">{alreadyLinked ? "✓ Verknüpft · " : "Als Beleg verwenden · "}{record.title}</span>
+                                    {record.detail && <span className="block text-xs text-slate-400">{record.detail}</span>}
+                                  </button>;
+                                })}</span>
+                                : <span className="mt-2 block text-sm text-slate-400">Für diesen Tag ist noch kein Eintrag mit Daten gespeichert.</span>}
+                            </span>}
+                          </span>;
+                        })}
                         <button type="button" onClick={() => onOpenJournal?.({ uuid: item.habitId, name: item.habitName })} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">Habit-Notiz</button>
                       </div>
                       {fitnessChooserFor === key && <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3" aria-label="Erfasste Trainingseinheiten">

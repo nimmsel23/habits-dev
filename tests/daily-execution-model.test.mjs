@@ -90,3 +90,16 @@ test("multiple existing Fitness records link to one habit point without duplicat
   assert.equal(linkDailyExecutionRecord(twiceLinked, "doing", record), twiceLinked);
   assert.throws(() => linkDailyExecutionRecord(snapshot, "doing", { ...record, date: "2026-11-02" }), /daily_linked_record_invalid/);
 });
+
+test("nutrition and Relax references can share a dimension without increasing its single point", () => {
+  const snapshot = createDailyExecutionSnapshot({ date: "2026-11-03", assignments, habits });
+  const nutrition = linkDailyExecutionRecord(snapshot, "doing", {
+    skill: "nutrition", recordId: "2026-11-03", date: "2026-11-03", title: "Ernährungseintrag",
+  });
+  const withRelax = linkDailyExecutionRecord(nutrition, "doing", {
+    skill: "relax", recordId: "2026-11-03", date: "2026-11-03", title: "Relax-Praxis",
+  });
+  assert.equal(dailyExecutionScore(withRelax), 1);
+  assert.deepEqual(withRelax.dimensions.doing.linkedRecords.map((record) => record.skill), ["nutrition", "relax"]);
+  assert.equal(linkDailyExecutionRecord(withRelax, "doing", withRelax.dimensions.doing.linkedRecords[0]), withRelax);
+});
