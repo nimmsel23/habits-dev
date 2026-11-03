@@ -186,13 +186,9 @@ export async function getDailyExecution(date = todayISO()) {
 
     const normalized = normalizeDailyAssignments(config.assignments, habits);
     const snapshot = createDailyExecutionSnapshot({ date, assignments: normalized, habits });
-    const recordSnaps = await Promise.all(selectedIds.map((id) => transaction.get(habitRecordRef(uid, id, date))));
-    recordSnaps.forEach((recordSnap, index) => {
-      if (recordSnap.exists() && recordSnap.get("completion") === "DONE") {
-        snapshot.dimensions[DAILY_DIMENSIONS[index].key].completed = true;
-        snapshot.dimensions[DAILY_DIMENSIONS[index].key].completedAt = recordSnap.get("recorded_at")?.toDate?.().toISOString?.() || snapshot.createdAt;
-      }
-    });
+    // A legacy habit record can come from Smart Logging or another tracker.
+    // Daily Four points require the explicit Daily Four confirmation below;
+    // never infer them while creating a day's first snapshot.
     transaction.set(dayRef, { ...snapshot, score: dailyExecutionScore(snapshot), configured: true });
     return { ...snapshot, score: dailyExecutionScore(snapshot), configured: true };
   });
