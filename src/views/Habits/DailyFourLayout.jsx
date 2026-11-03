@@ -29,6 +29,8 @@ export default function DailyFourLayout({
   saving,
   onSaveAssignments,
   onToggleCompletion,
+  onLoadFitnessSessions,
+  onLinkFitnessSession,
   onOpenSkill,
   onOpenJournal,
   onOpenAllHabits,
@@ -36,6 +38,9 @@ export default function DailyFourLayout({
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState({});
   const [message, setMessage] = useState("");
+  const [fitnessChooserFor, setFitnessChooserFor] = useState(null);
+  const [fitnessSessions, setFitnessSessions] = useState([]);
+  const [fitnessSessionsLoading, setFitnessSessionsLoading] = useState(false);
   const activeHabits = useMemo(() => (habits || []).filter((habit) => !habit.deleted), [habits]);
 
   useEffect(() => {
@@ -64,6 +69,25 @@ export default function DailyFourLayout({
       setEditing(false);
     } catch (cause) {
       setMessage(cause?.message || "Die Zuordnungen konnten nicht gespeichert werden.");
+    }
+  };
+
+  const toggleFitnessChooser = async (dimension) => {
+    if (fitnessChooserFor === dimension) { setFitnessChooserFor(null); return; }
+    setFitnessChooserFor(dimension);
+    setFitnessSessionsLoading(true);
+    try { setFitnessSessions(await onLoadFitnessSessions?.(date) || []); }
+    catch (cause) { setMessage(cause?.message || "Trainingseinheiten konnten nicht geladen werden."); }
+    finally { setFitnessSessionsLoading(false); }
+  };
+
+  const linkFitnessSession = async (dimension, session) => {
+    try {
+      await onLinkFitnessSession?.(dimension, session);
+      setMessage(`${session.title} ist mit der Gewohnheit verknüpft. Der Tagespunkt zählt weiterhin nur einmal.`);
+      setFitnessChooserFor(null);
+    } catch (cause) {
+      setMessage(cause?.message || "Die Trainingseinheit konnte nicht verknüpft werden.");
     }
   };
 
@@ -120,9 +144,22 @@ export default function DailyFourLayout({
                         Details <ChevronDown size={14} />
                       </summary>
                       <div className="mt-3 flex flex-wrap gap-2">
-                        {skill && <button type="button" onClick={() => onOpenSkill?.(skill)} className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">{skillLabel} öffnen <ArrowUpRight size={14} /></button>}
+                        {skill && <button type="button" onClick={() => onOpenSkill?.(skill, { date, dimension: key, habitId: item.habitId, habitName: item.habitName })} className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">{skillLabel} öffnen <ArrowUpRight size={14} /></button>}
+                        {item.skillLinks?.includes("fitness") && <button type="button" disabled={saving || fitnessSessionsLoading} onClick={() => toggleFitnessChooser(key)} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">{fitnessChooserFor === key ? "Auswahl schließen" : "Erfasste Trainingseinheit verknüpfen"}</button>}
                         <button type="button" onClick={() => onOpenJournal?.({ uuid: item.habitId, name: item.habitName })} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">Habit-Notiz</button>
                       </div>
+                      {fitnessChooserFor === key && <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3" aria-label="Erfasste Trainingseinheiten">
+                        <p className="text-xs text-slate-400">Wähle eine bereits erfasste Einheit für „{item.habitName}“. Der Trainingsdatensatz bleibt im Fitness-Tracker.</p>
+                        {fitnessSessionsLoading ? <p className="mt-2 text-sm text-slate-400">Lade Trainingseinheiten …</p>
+                          : fitnessSessions.length ? <div className="mt-2 flex flex-wrap gap-2">{fitnessSessions.map((session) => {
+                            const alreadyLinked = item.linkedRecords?.some((record) => record.skill === "fitness" && record.recordId === session.recordId);
+                            return <button key={session.recordId} type="button" disabled={saving || alreadyLinked} onClick={() => linkFitnessSession(key, session)} className="rounded-lg border border-white/10 px-3 py-2 text-left text-sm text-slate-200 disabled:opacity-50">
+                              <span className="block font-semibold">{alreadyLinked ? "✓ Verknüpft · " : "Als Beleg verwenden · "}{session.title}</span>
+                              {session.detail && <span className="block text-xs text-slate-400">{session.detail}</span>}
+                            </button>;
+                          })}</div>
+                          : <p className="mt-2 text-sm text-slate-400">Für diesen Tag ist noch keine Einheit mit Trainingsdetails gespeichert.</p>}
+                      </div>}
                       <p className="mt-3 text-xs">Als ausgeführt gilt diese Gewohnheit, wenn du sie hier ausdrücklich bestätigst. Ein Eintrag oder ein Vorsatz im Journal setzt keinen Punkt.</p>
                     </details>
                   </div>

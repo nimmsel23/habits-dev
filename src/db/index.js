@@ -24,6 +24,7 @@ import {
   where,
 } from "firebase/firestore";
 import { addDoc, getDoc, getDocs, setDoc, writeBatch } from "../lib/offline.js";
+import { listSessionsForDate as listFitnessSessionsForDate } from "@fitness-db/index.firestore.js";
 
 export * from "@fitness-db/index.firestore.js";
 import { db, getUid } from "@fitness-db/index.firestore.js";
@@ -32,6 +33,7 @@ import {
   DAILY_DIMENSIONS,
   createDailyExecutionSnapshot,
   dailyExecutionScore,
+  linkDailyExecutionRecord as applyDailyRecordLink,
   normalizeDailyAssignments,
   replaceDailyAssignments,
   setDailyDimensionCompleted as updateDailyDimension,
@@ -191,6 +193,64 @@ export async function getDailyExecution(date = todayISO()) {
     // never infer them while creating a day's first snapshot.
     transaction.set(dayRef, { ...snapshot, score: dailyExecutionScore(snapshot), configured: true });
     return { ...snapshot, score: dailyExecutionScore(snapshot), configured: true };
+  });
+}
+
+export async function getDailyFitnessSessionOptions(date = todayISO()) {
+  const sessions = await listFitnessSessionsForDate(date);
+  return (sessions || []).flatMap((session) => {
+    const duration = Number(session.duration || session.activity?.duration || session.activity?.minutes) || 0;
+    const exerciseCount = Array.isArray(session.exercises) ? session.exercises.length : 0;
+    const hasDetail = exerciseCount > 0 || duration > 0 || (session.activityAddons || []).length > 0;
+    if (!hasDetail) return [];
+    const recordId = session.session_id || session.id ? `${date}__${session.session_id || session.id}` : date;
+    const title = String(session.block || session.activity?.type || session.trainingsart || "Training").slice(0, 120);
+    const detail = [duration ? `${duration} Min.` : null, exerciseCount ? `${exerciseCount} Übungen` : null].filter(Boolean).join(" · ");
+    return [{ recordId, date, title, detail }];
+  });
+}
+
+export async function linkDailyFitnessSession(date, dimensionKey, recordId) {
+  if (typeof recordId !== "string" || !recordId || recordId.length > 180 || recordId.includes("/")) {
+    throw new Error("daily_fitness_record_invalid");
+  }
+  const uid = getUid();
+  const dayRef = dailySnapshotRef(uid, date);
+  const sessionRef = doc(db, "fitness", uid, "sessions", recordId);
+  const loaded = await getDailyExecution(date);
+  if (!loaded.configured) throw new Error("daily_execution_not_configured");
+
+  return runTransaction(db, async (transaction) => {
+    const [daySnap, sessionSnap] = await Promise.all([transaction.get(dayRef), transaction.get(sessionRef)]);
+    if (!daySnap.exists() || !sessionSnap.exists()) throw new Error("daily_fitness_record_missing");
+    const snapshot = daySnap.data();
+    const session = sessionSnap.data() || {};
+    if (session.date !== date) throw new Error("daily_fitness_record_date_mismatch");
+    const exerciseCount = Array.isArray(session.exercises) ? session.exercises.length : 0;
+    const duration = Number(session.duration || session.activity?.duration || session.activity?.minutes) || 0;
+    if (!exerciseCount && !duration && !(session.activityAddons || []).length) throw new Error("daily_fitness_record_empty");
+
+    const title = String(session.block || session.activity?.type || session.trainingsart || "Training").slice(0, 120);
+    const next = applyDailyRecordLink(snapshot, dimensionKey, {
+      skill: "fitness",
+      recordId,
+      date,
+      title,
+    });
+    const score = dailyExecutionScore(next);
+    transaction.set(dayRef, { ...next, score, configured: true });
+    const assigned = next.dimensions?.[dimensionKey];
+    transaction.set(habitRecordRef(uid, assigned.habitId, date), {
+      habitId: assigned.habitId,
+      date,
+      completion: "DONE",
+      dailyDimension: dimensionKey,
+      dailyHabitName: assigned.habitName,
+      dailyExecutionDate: date,
+      linkedRecords: assigned.linkedRecords,
+      recorded_at: serverTimestamp(),
+    }, { merge: true });
+    return { ...next, score, configured: true };
   });
 }
 

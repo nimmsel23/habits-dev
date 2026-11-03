@@ -4,6 +4,7 @@ import {
   DAILY_DIMENSIONS,
   createDailyExecutionSnapshot,
   dailyExecutionScore,
+  linkDailyExecutionRecord,
   normalizeDailyAssignments,
   replaceDailyAssignments,
   setDailyDimensionCompleted,
@@ -73,4 +74,19 @@ test("daily score is capped at four regardless of external detail records", () =
   done.dimensions.doing.linkedRecords.push("fitness-session-1", "fitness-session-2");
   assert.equal(dailyExecutionScore(done), 4);
   assert.equal(dailyExecutionScore({ dimensions: { doing: { completed: true } } }), 0);
+});
+
+test("multiple existing Fitness records link to one habit point without duplicating their detail data", () => {
+  const snapshot = createDailyExecutionSnapshot({ date: "2026-11-03", assignments, habits });
+  const record = { skill: "fitness", recordId: "2026-11-03__session-1", date: snapshot.date, title: "Krafttraining" };
+  const linked = linkDailyExecutionRecord(snapshot, "doing", record, { at: "2026-11-03T18:00:00Z" });
+  assert.equal(linked.dimensions.doing.completed, true);
+  assert.deepEqual(linked.dimensions.doing.linkedRecords, [record]);
+  assert.equal(dailyExecutionScore(linked), 1);
+  const secondRecord = { ...record, recordId: "2026-11-03__session-2", title: "Spazieren" };
+  const twiceLinked = linkDailyExecutionRecord(linked, "doing", secondRecord);
+  assert.equal(twiceLinked.dimensions.doing.linkedRecords.length, 2);
+  assert.equal(dailyExecutionScore(twiceLinked), 1);
+  assert.equal(linkDailyExecutionRecord(twiceLinked, "doing", record), twiceLinked);
+  assert.throws(() => linkDailyExecutionRecord(snapshot, "doing", { ...record, date: "2026-11-02" }), /daily_linked_record_invalid/);
 });

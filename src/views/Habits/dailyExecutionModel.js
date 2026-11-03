@@ -93,6 +93,21 @@ export function setDailyDimensionCompleted(snapshot, dimensionKey, completed, { 
   };
 }
 
+export function linkDailyExecutionRecord(snapshot, dimensionKey, record, { at = new Date().toISOString() } = {}) {
+  if (!DIMENSION_KEYS.has(dimensionKey)) throw new Error("daily_dimension_unknown");
+  if (!record || typeof record.skill !== "string" || !record.skill
+      || typeof record.recordId !== "string" || !record.recordId
+      || record.date !== snapshot?.date) throw new Error("daily_linked_record_invalid");
+  const dimension = snapshot?.dimensions?.[dimensionKey];
+  if (!dimension?.habitId) throw new Error("daily_dimension_not_configured");
+  const linkedRecords = Array.isArray(dimension.linkedRecords) ? dimension.linkedRecords : [];
+  if (linkedRecords.some((item) => item.skill === record.skill && item.recordId === record.recordId)) return snapshot;
+  return setDailyDimensionCompleted(snapshot, dimensionKey, true, {
+    at,
+    linkedRecords: [...linkedRecords, { ...record }],
+  });
+}
+
 export function dailyExecutionScore(snapshot) {
   return DAILY_DIMENSIONS.reduce((score, { key }) => {
     const dimension = snapshot?.dimensions?.[key];

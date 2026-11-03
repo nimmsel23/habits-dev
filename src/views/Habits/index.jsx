@@ -4,7 +4,7 @@ import {
   getHabits, recordHabit, unrecordHabit, addHabit, deleteHabit,
   updateHabit, getHabitRecordsForDate, getHabitJournal, saveHabitJournal, getHabitJournalHistory,
   saveHabitOrder, getDailyExecution, getDailyExecutionConfig, saveDailyExecutionAssignments,
-  setDailyExecutionCompleted,
+  getDailyFitnessSessionOptions, linkDailyFitnessSession, setDailyExecutionCompleted,
 } from "@habits-db";
 import { localToday } from "@utils";
 import { ICON_COMPONENTS_MAP, DEFAULT_FREQUENCY } from "./utils";
@@ -218,6 +218,26 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
     }
   }
 
+  async function loadDailyFitnessSessions(date) {
+    return getDailyFitnessSessionOptions(date);
+  }
+
+  async function linkFitnessSession(dimension, session) {
+    setDailySaving(true);
+    setDailyError("");
+    try {
+      const next = await linkDailyFitnessSession(selectedDate, dimension, session.recordId);
+      setDailyExecution(next);
+      await load();
+      return next;
+    } catch (error) {
+      setDailyError(error?.message || "Trainingseinheit konnte nicht verknüpft werden.");
+      throw error;
+    } finally {
+      setDailySaving(false);
+    }
+  }
+
   async function toggleSidebarDone(habitId, date) {
     const h = habits.find(x => x.uuid === habitId);
     const isDone = h?.records?.some(r => r.date === date && r.completion === 'DONE');
@@ -316,6 +336,8 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
           saving={dailySaving}
           onSaveAssignments={saveDailyAssignments}
           onToggleCompletion={toggleDailyCompletion}
+          onLoadFitnessSessions={loadDailyFitnessSessions}
+          onLinkFitnessSession={linkFitnessSession}
           onOpenSkill={onOpenSkill}
           onOpenAllHabits={() => { setLayoutMode("v1"); localStorage.setItem("habits-layout-mode", "v1"); }}
           onOpenJournal={(habit) => {
