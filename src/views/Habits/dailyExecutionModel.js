@@ -62,8 +62,13 @@ export function createDailyExecutionSnapshot({ date, assignments, habits, existi
   return { schemaVersion: 1, date, createdAt: now, updatedAt: now, dimensions };
 }
 
+export function dailyAssignmentsLocked(snapshot) {
+  return Boolean(snapshot?.assignmentsLocked || DAILY_DIMENSIONS.some(({ key }) =>
+    snapshot?.dimensions?.[key]?.completed || snapshot?.dimensions?.[key]?.linkedRecords?.length));
+}
+
 export function replaceDailyAssignments(snapshot, { assignments, habits, now = new Date().toISOString() }) {
-  if (DAILY_DIMENSIONS.some(({ key }) => snapshot?.dimensions?.[key]?.completed || snapshot?.dimensions?.[key]?.linkedRecords?.length)) {
+  if (dailyAssignmentsLocked(snapshot)) {
     throw new Error("daily_assignments_locked_after_completion");
   }
   const replacement = createDailyExecutionSnapshot({
@@ -88,6 +93,7 @@ export function setDailyDimensionCompleted(snapshot, dimensionKey, completed, { 
   };
   return {
     ...snapshot,
+    assignmentsLocked: dailyAssignmentsLocked(snapshot) || Boolean(completed),
     updatedAt: at,
     dimensions: { ...snapshot.dimensions, [dimensionKey]: nextDimension },
   };

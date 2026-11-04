@@ -103,3 +103,17 @@ test("nutrition and Relax references can share a dimension without increasing it
   assert.deepEqual(withRelax.dimensions.doing.linkedRecords.map((record) => record.skill), ["nutrition", "relax"]);
   assert.equal(linkDailyExecutionRecord(withRelax, "doing", withRelax.dimensions.doing.linkedRecords[0]), withRelax);
 });
+
+test('removing a completion does not unlock its historical habit assignment', () => {
+  const snapshot = createDailyExecutionSnapshot({ date: '2026-11-03', assignments, habits });
+  const done = setDailyDimensionCompleted(snapshot, 'doing', true);
+  const undone = setDailyDimensionCompleted(done, 'doing', false);
+  assert.equal(dailyExecutionScore(undone), 0);
+  assert.equal(undone.assignmentsLocked, true);
+  assert.throws(() => replaceDailyAssignments(undone, {
+    assignments: { ...assignments, doing: 'h2', thinking: 'h1' }, habits,
+  }), /daily_assignments_locked_after_completion/);
+  const legacyDone = { ...done };
+  delete legacyDone.assignmentsLocked;
+  assert.equal(setDailyDimensionCompleted(legacyDone, 'doing', false).assignmentsLocked, true);
+});

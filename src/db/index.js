@@ -32,6 +32,7 @@ import { todayISO } from "@fitness-db/shared/utils.js";
 import {
   DAILY_DIMENSIONS,
   createDailyExecutionSnapshot,
+  dailyAssignmentsLocked,
   dailyExecutionScore,
   linkDailyExecutionRecord as applyDailyRecordLink,
   normalizeDailyAssignments,
@@ -337,8 +338,7 @@ export async function saveDailyExecutionAssignments(assignments, habits, date = 
     }
     const normalized = normalizeDailyAssignments(assignments, selectedHabits);
     const oldSnapshot = daySnap.exists() ? daySnap.data() : null;
-    const hasActivity = DAILY_DIMENSIONS.some(({ key }) => oldSnapshot?.dimensions?.[key]?.completed
-      || oldSnapshot?.dimensions?.[key]?.linkedRecords?.length);
+    const hasActivity = dailyAssignmentsLocked(oldSnapshot);
     const effectiveDate = hasActivity ? nextLocalDate(date) : date;
     transaction.set(configRef, {
       schemaVersion: 1,
