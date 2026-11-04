@@ -160,14 +160,14 @@ export default function DailyFourLayout({
             <h2 className="text-2xl font-black">Dein Tag in vier Ebenen</h2>
             <p className="mt-1 text-sm text-slate-400">Eine selbst gewählte Gewohnheit je Ebene. Jede zählt höchstens einmal.</p>
           </div>
-          <div className="shrink-0 text-right" aria-label={`${score} von 4 Punkten`}>
-            <span className="text-3xl font-black text-orange-300">{score}</span>
+          <div className="shrink-0 text-right" aria-label={configured ? `${score} von 4 Punkten` : "Kein Tagesstand gespeichert"}>
+            <span className="text-3xl font-black text-orange-300">{configured ? score : "–"}</span>
             <span className="text-lg text-slate-500"> / 4</span>
           </div>
         </div>
-        <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
+        {configured && <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
           <div className="h-full rounded-full bg-orange-300 transition-[width]" style={{ width: `${score * 25}%` }} />
-        </div>
+        </div>}
       </header>
 
       {error && <p className="rounded-xl border border-rose-400/30 bg-rose-950/30 p-3 text-sm text-rose-200" role="alert">{error}</p>}
