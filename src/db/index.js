@@ -391,7 +391,7 @@ export async function recordHabit(uuid, date = todayISO()) {
     date,
     completion: "DONE",
     recorded_at: serverTimestamp(),
-  });
+  }, { merge: true });
   return { ok: true };
 }
 
