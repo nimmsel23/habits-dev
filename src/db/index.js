@@ -25,6 +25,7 @@ import {
 } from "firebase/firestore";
 import { addDoc, getDoc, getDocs, setDoc, writeBatch } from "../lib/offline.js";
 import { listSessionsForDate as listFitnessSessionsForDate } from "@fitness-db/index.firestore.js";
+import { applyManualHabitTransaction } from "../views/Habits/manualHabitTransaction.js";
 
 export * from "@fitness-db/index.firestore.js";
 import { db, getUid } from "@fitness-db/index.firestore.js";
@@ -393,6 +394,12 @@ export async function recordHabit(uuid, date = todayISO()) {
     recorded_at: serverTimestamp(),
   }, { merge: true });
   return { ok: true };
+}
+
+export async function setHabitCompletionFromHabits(uuid, date, completed) {
+  const uid = getUid();
+  return applyManualHabitTransaction({ db, dayRef: dailySnapshotRef(uid, date), recordRef: habitRecordRef(uid, uuid, date),
+    habitId: uuid, date, completed, runTransaction, serverTimestamp });
 }
 
 export async function unrecordHabit(uuid, date = todayISO()) {

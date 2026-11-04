@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Star, CalendarDays, Activity, PenLine, LayoutGrid, Smartphone, Bell, Grid2X2 } from "lucide-react";
 import {
-  getHabits, recordHabit, unrecordHabit, addHabit, deleteHabit,
+  getHabits, setHabitCompletionFromHabits, addHabit, deleteHabit,
   updateHabit, getHabitRecordsForDate, getHabitJournal, saveHabitJournal, getHabitJournalHistory,
   saveHabitOrder, getDailyExecution, getDailyExecutionConfig, saveDailyExecutionAssignments,
   getDailyFitnessSessionOptions, linkDailyFitnessSession, getDailyNutritionLogOptions,
@@ -58,6 +58,7 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
   const [dailyExecution, setDailyExecution] = useState(null);
   const [dailyConfig, setDailyConfig] = useState(null);
   const [dailyError, setDailyError] = useState("");
+  const [habitSaveError, setHabitSaveError] = useState("");
   const [dailySaving, setDailySaving] = useState(false);
   const [pushModalOpen, setPushModalOpen] = useState(false);
   const push = usePushNotifications(user);
@@ -184,12 +185,19 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
   }, [editingHabitId, habits]);
 
   async function toggleCheck(h) {
-    if (h.isDoneForSelectedDate) {
-      await unrecordHabit(h.uuid, selectedDate);
-    } else {
-      await recordHabit(h.uuid, selectedDate);
+    await updateManualHabit(h.uuid, selectedDate, !h.isDoneForSelectedDate);
+  }
+
+  async function updateManualHabit(habitId, date, completed) {
+    setHabitSaveError("");
+    try {
+      const execution = await setHabitCompletionFromHabits(habitId, date, completed);
+      if (execution && date === selectedDate) setDailyExecution(execution);
+      await load();
+    } catch (error) {
+      setHabitSaveError("Die Änderung konnte nicht gespeichert werden. Bitte prüfe deine Verbindung und versuche es erneut.");
+      console.error("Habit-Änderung fehlgeschlagen:", error);
     }
-    load();
   }
 
   async function saveDailyAssignments(assignments) {
@@ -265,12 +273,7 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
   async function toggleSidebarDone(habitId, date) {
     const h = habits.find(x => x.uuid === habitId);
     const isDone = h?.records?.some(r => r.date === date && r.completion === 'DONE');
-    if (isDone) {
-      await unrecordHabit(habitId, date);
-    } else {
-      await recordHabit(habitId, date);
-    }
-    load();
+    await updateManualHabit(habitId, date, !isDone);
   }
 
   async function onSaveJournal(textOverride = null) {
@@ -390,6 +393,7 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
   if (layoutMode === "core4") {
     return (
       <div className="pb-32 px-2 sm:px-4 lg:px-6">
+        {habitSaveError && <p role="alert">{habitSaveError}</p>}
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-black text-slate-100">Deine Habits</h1>
           <div className="flex items-center gap-2 bg-slate-900 border border-white/10 px-3 py-2 rounded-2xl shadow-xl">
@@ -476,6 +480,7 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
 
   return (
     <div className="pb-32 px-2 sm:px-4 lg:px-6">
+      {habitSaveError && <p role="alert">{habitSaveError}</p>}
       <div className="mb-10 flex flex-col gap-6">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div className="flex-1">
