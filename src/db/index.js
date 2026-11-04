@@ -180,7 +180,8 @@ export async function getDailyExecution(date = todayISO()) {
   return runTransaction(db, async (transaction) => {
     const [daySnap, configSnap] = await Promise.all([transaction.get(dayRef), transaction.get(configRef)]);
     if (daySnap.exists()) return { ...daySnap.data(), configured: true };
-    if (date > todayISO()) return emptyDailyExecution(date);
+    // Never invent history using today's habit names or current assignments.
+    if (date !== todayISO()) return emptyDailyExecution(date);
 
     const config = configSnap.exists() ? configSnap.data() || {} : {};
     if (!config.assignments || !DAILY_DIMENSIONS.every(({ key }) => config.assignments[key])

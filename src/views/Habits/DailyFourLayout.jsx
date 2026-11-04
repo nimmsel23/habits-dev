@@ -149,6 +149,7 @@ export default function DailyFourLayout({
   const score = Number.isInteger(execution?.score) ? execution.score : 0;
   const configured = Boolean(execution?.configured);
   const futureDay = date > localToday();
+  const todayDay = date === localToday();
 
   return (
     <section className="mx-auto max-w-3xl space-y-5 text-slate-100" aria-label="Tägliche vier Gewohnheiten">
@@ -250,7 +251,9 @@ export default function DailyFourLayout({
         </div>
       )}
 
-      {(!configured || editing) && (
+      {!configured && !todayDay && <p className="text-sm text-slate-400">Für diesen Tag ist kein Daily-Four-Stand gespeichert.</p>}
+
+      {todayDay && (!configured || editing) && (
         <section className="rounded-3xl border border-white/10 bg-slate-950 p-5 sm:p-7" aria-label="Vier tägliche Gewohnheiten festlegen">
           <h3 className="text-lg font-bold">Vier Gewohnheiten festlegen</h3>
           <p className="mt-1 text-sm text-slate-400">Wähle vier verschiedene bestehende Habits. Die Zuordnung ist unabhängig von Body, Being, Balance und Business.</p>
@@ -283,7 +286,7 @@ export default function DailyFourLayout({
         </section>
       )}
 
-      {configured && !editing && <button type="button" onClick={() => setEditing(true)} className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-orange-200"><Settings2 size={16} /> Zuweisungen ändern</button>}
+      {todayDay && configured && !editing && <button type="button" onClick={() => setEditing(true)} className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-orange-200"><Settings2 size={16} /> Zuweisungen ändern</button>}
     </section>
   );
 }
