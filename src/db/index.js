@@ -177,6 +177,10 @@ export async function getDailyExecution(date = todayISO()) {
   const uid = getUid();
   const dayRef = dailySnapshotRef(uid, date);
   const configRef = dailyConfigRef(uid);
+  // Existing days can be read from the persistent cache. Creation and every
+  // modification still use a server transaction to protect concurrent writes.
+  const existing = await getDoc(dayRef);
+  if (existing.exists()) return { ...existing.data(), configured: true, fromCache: existing.metadata?.fromCache === true };
   return runTransaction(db, async (transaction) => {
     const [daySnap, configSnap] = await Promise.all([transaction.get(dayRef), transaction.get(configRef)]);
     if (daySnap.exists()) return { ...daySnap.data(), configured: true };

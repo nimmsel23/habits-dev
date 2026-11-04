@@ -170,6 +170,7 @@ export default function DailyFourLayout({
         </div>}
       </header>
 
+      {execution?.fromCache && <p className="text-sm text-slate-400" role="status">Zwischengespeicherter Stand. Änderungen benötigen eine Verbindung und werden erst nach Bestätigung angezeigt.</p>}
       {error && <p className="rounded-xl border border-rose-400/30 bg-rose-950/30 p-3 text-sm text-rose-200" role="alert">{error}</p>}
       {futureDay && <p className="text-sm text-slate-400">Zukünftige Gewohnheiten können noch nicht als ausgeführt markiert werden.</p>}
       {message && <p className="rounded-xl border border-white/10 bg-slate-900 p-3 text-sm text-slate-200" role="status">{message}</p>}
