@@ -212,7 +212,7 @@ export async function getDailyExecution(date = todayISO()) {
 export async function getDailyFitnessSessionOptions(date = todayISO()) {
   const sessions = await listFitnessSessionsForDate(date);
   return (sessions || []).flatMap((session) => {
-    const duration = Number(session.duration || session.activity?.duration || session.activity?.minutes) || 0;
+    const duration = Number(session.duration || session.duration_minutes || session.activity?.duration || session.activity?.minutes) || 0;
     const exerciseCount = Array.isArray(session.exercises) ? session.exercises.length : 0;
     const hasDetail = exerciseCount > 0 || duration > 0 || (session.activityAddons || []).length > 0;
     if (!hasDetail) return [];
@@ -241,7 +241,7 @@ export async function linkDailyFitnessSession(date, dimensionKey, recordId) {
     const session = sessionSnap.data() || {};
     if (session.date !== date) throw new Error("daily_fitness_record_date_mismatch");
     const exerciseCount = Array.isArray(session.exercises) ? session.exercises.length : 0;
-    const duration = Number(session.duration || session.activity?.duration || session.activity?.minutes) || 0;
+    const duration = Number(session.duration || session.duration_minutes || session.activity?.duration || session.activity?.minutes) || 0;
     if (!exerciseCount && !duration && !(session.activityAddons || []).length) throw new Error("daily_fitness_record_empty");
 
     const title = String(session.block || session.activity?.type || session.trainingsart || "Training").slice(0, 120);
