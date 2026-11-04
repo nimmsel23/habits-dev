@@ -145,16 +145,14 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
     if (layoutMode !== "daily-four") return undefined;
     let live = true;
     setDailyError("");
-    Promise.all([getDailyExecution(selectedDate), getDailyExecutionConfig()])
-      .then(([execution, config]) => {
-        if (!live) return;
-        setDailyExecution(execution);
-        setDailyConfig(config);
-      })
-      .catch((error) => {
-        if (!live) return;
-        setDailyError(error?.message || "Tagesübersicht konnte nicht geladen werden.");
-      });
+    setDailyConfig(null);
+    // A missing/slow settings read must not hide an already cached day.
+    getDailyExecution(selectedDate)
+      .then((execution) => { if (live) setDailyExecution(execution); })
+      .catch(() => { if (live) setDailyError("Tagesübersicht konnte nicht geladen werden. Bitte prüfe deine Verbindung."); });
+    getDailyExecutionConfig()
+      .then((config) => { if (live) setDailyConfig(config); })
+      .catch(() => { if (live) setDailyError("Zuordnungen sind gerade nicht verfügbar. Ein gespeicherter Tagesstand bleibt sichtbar."); });
     return () => { live = false; };
   }, [layoutMode, selectedDate]);
 
