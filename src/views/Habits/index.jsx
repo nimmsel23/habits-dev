@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Star, CalendarDays, Activity, PenLine, LayoutGrid, Smartphone, Bell, Grid2X2 } from "lucide-react";
 import {
   getHabits, setHabitCompletionFromHabits, addHabit, deleteHabit,
@@ -43,6 +43,8 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
   const [selectedFrequency, setSelectedFrequency] = useState(DEFAULT_FREQUENCY);
   const [saving, setSaving] = useState(false);
   const [selectedDate, setSelectedDateState] = useState(controlledDate || localToday());
+  const selectedDateRef = useRef(selectedDate);
+  selectedDateRef.current = selectedDate;
   const [editingHabitId, setEditingHabitId] = useState(null);
   const [editingIcon, setEditingIcon] = useState(null);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -117,6 +119,7 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
     try {
       const allHabits = await getHabits();
       const completedHabitIdsForSelectedDate = await getHabitRecordsForDate(selectedDate);
+      if (selectedDateRef.current !== selectedDate) return;
 
       const habitsWithStatus = allHabits
         .filter(h => !h.deleted)
@@ -130,9 +133,9 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
       const journalChecks = await Promise.all(
         doneHabits.map(h => getHabitJournal(h.uuid, selectedDate).then(j => ({ uuid: h.uuid, has: !!(j?.text?.trim()) })))
       );
-      setMemoirWrittenIds(new Set(journalChecks.filter(x => x.has).map(x => x.uuid)));
+      if (selectedDateRef.current === selectedDate) setMemoirWrittenIds(new Set(journalChecks.filter(x => x.has).map(x => x.uuid)));
     } finally {
-      setLoading(false);
+      if (selectedDateRef.current === selectedDate) setLoading(false);
     }
   }
 
@@ -192,7 +195,7 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
     setHabitSaveError("");
     try {
       const execution = await setHabitCompletionFromHabits(habitId, date, completed);
-      if (execution && date === selectedDate) setDailyExecution(execution);
+      if (execution && date === selectedDateRef.current) setDailyExecution(execution);
       await load();
     } catch (error) {
       setHabitSaveError("Die Änderung konnte nicht gespeichert werden. Bitte prüfe deine Verbindung und versuche es erneut.");
@@ -206,7 +209,7 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
     try {
       const result = await saveDailyExecutionAssignments(assignments, habits, selectedDate);
       const [execution, config] = await Promise.all([getDailyExecution(selectedDate), getDailyExecutionConfig()]);
-      setDailyExecution(execution);
+      if (execution.date === selectedDateRef.current) setDailyExecution(execution);
       setDailyConfig(config);
       return result;
     } finally {
@@ -218,7 +221,8 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
     setDailySaving(true);
     setDailyError("");
     try {
-      setDailyExecution(await setDailyExecutionCompleted(selectedDate, dimension, completed));
+      const next = await setDailyExecutionCompleted(selectedDate, dimension, completed);
+      if (next.date === selectedDateRef.current) setDailyExecution(next);
       await load();
     } catch (error) {
       setDailyError(error?.message || "Tagesstatus konnte nicht gespeichert werden.");
@@ -236,7 +240,7 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
     setDailyError("");
     try {
       const next = await linkDailyFitnessSession(selectedDate, dimension, session.recordId);
-      setDailyExecution(next);
+      if (next.date === selectedDateRef.current) setDailyExecution(next);
       await load();
       return next;
     } catch (error) {
@@ -259,7 +263,7 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
     try {
       const canonicalSkill = skill === "fuel" ? "nutrition" : skill;
       const next = await linkDailySkillRecord(selectedDate, dimension, canonicalSkill, record.recordId);
-      setDailyExecution(next);
+      if (next.date === selectedDateRef.current) setDailyExecution(next);
       await load();
       return next;
     } catch (error) {
@@ -358,7 +362,7 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
           date={selectedDate}
           habits={habits}
           config={dailyConfig}
-          execution={dailyExecution}
+          execution={dailyExecution?.date === selectedDate ? dailyExecution : null}
           error={dailyError}
           saving={dailySaving}
           onSaveAssignments={saveDailyAssignments}
