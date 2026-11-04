@@ -180,6 +180,7 @@ export async function getDailyExecution(date = todayISO()) {
   return runTransaction(db, async (transaction) => {
     const [daySnap, configSnap] = await Promise.all([transaction.get(dayRef), transaction.get(configRef)]);
     if (daySnap.exists()) return { ...daySnap.data(), configured: true };
+    if (date > todayISO()) return emptyDailyExecution(date);
 
     const config = configSnap.exists() ? configSnap.data() || {} : {};
     if (!config.assignments || !DAILY_DIMENSIONS.every(({ key }) => config.assignments[key])
@@ -218,6 +219,7 @@ export async function getDailyFitnessSessionOptions(date = todayISO()) {
 }
 
 export async function linkDailyFitnessSession(date, dimensionKey, recordId) {
+  if (date > todayISO()) throw new Error("daily_future_completion_not_allowed");
   if (typeof recordId !== "string" || !recordId || recordId.length > 180 || recordId.includes("/")) {
     throw new Error("daily_fitness_record_invalid");
   }
@@ -281,6 +283,7 @@ export async function getDailyRelaxSessionOptions(date = todayISO()) {
 }
 
 export async function linkDailySkillRecord(date, dimensionKey, skill, recordId) {
+  if (date > todayISO()) throw new Error("daily_future_completion_not_allowed");
   const config = DAILY_LINK_SKILLS[skill];
   if (!config || recordId !== date) throw new Error("daily_link_record_invalid");
   const uid = getUid();
@@ -359,6 +362,7 @@ export async function saveDailyExecutionAssignments(assignments, habits, date = 
 }
 
 export async function setDailyExecutionCompleted(date, dimensionKey, completed) {
+  if (completed && date > todayISO()) throw new Error("daily_future_completion_not_allowed");
   const uid = getUid();
   const loaded = await getDailyExecution(date);
   if (!loaded.configured) throw new Error("daily_execution_not_configured");
@@ -397,6 +401,7 @@ export async function recordHabit(uuid, date = todayISO()) {
 }
 
 export async function setHabitCompletionFromHabits(uuid, date, completed) {
+  if (completed && date > todayISO()) throw new Error("daily_future_completion_not_allowed");
   const uid = getUid();
   return applyManualHabitTransaction({ db, dayRef: dailySnapshotRef(uid, date), recordRef: habitRecordRef(uid, uuid, date),
     configRef: dailyConfigRef(uid), habitRef: (id) => habitRef(uid, id),

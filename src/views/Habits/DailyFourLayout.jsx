@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Check, ChevronDown, Settings2 } from "lucide-react";
 import { DAILY_DIMENSIONS } from "./dailyExecutionModel.js";
+import { localToday } from "@utils";
 
 const SKILLS = [
   ["fitness", "Fitness"],
@@ -147,6 +148,7 @@ export default function DailyFourLayout({
 
   const score = Number.isInteger(execution?.score) ? execution.score : 0;
   const configured = Boolean(execution?.configured);
+  const futureDay = date > localToday();
 
   return (
     <section className="mx-auto max-w-3xl space-y-5 text-slate-100" aria-label="Tägliche vier Gewohnheiten">
@@ -168,6 +170,7 @@ export default function DailyFourLayout({
       </header>
 
       {error && <p className="rounded-xl border border-rose-400/30 bg-rose-950/30 p-3 text-sm text-rose-200" role="alert">{error}</p>}
+      {futureDay && <p className="text-sm text-slate-400">Zukünftige Gewohnheiten können noch nicht als ausgeführt markiert werden.</p>}
       {message && <p className="rounded-xl border border-white/10 bg-slate-900 p-3 text-sm text-slate-200" role="status">{message}</p>}
 
       {configured && !editing && (
@@ -184,7 +187,7 @@ export default function DailyFourLayout({
                     type="button"
                     aria-pressed={item.completed}
                     aria-label={`${label}: ${item.completed ? "Ausführung zurücknehmen" : "Als ausgeführt markieren"}`}
-                    disabled={saving}
+                    disabled={saving || (futureDay && !item.completed)}
                     onClick={() => onToggleCompletion(key, !item.completed)}
                     className={`mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${item.completed ? "border-emerald-300 bg-emerald-300 text-slate-950" : "border-white/20 text-slate-500 hover:border-orange-300 hover:text-orange-200"}`}
                   >
@@ -199,13 +202,13 @@ export default function DailyFourLayout({
                       </summary>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {skill && <button type="button" onClick={() => onOpenSkill?.(skill, { date, dimension: key, habitId: item.habitId, habitName: item.habitName })} className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">{skillLabel} öffnen <ArrowUpRight size={14} /></button>}
-                        {item.skillLinks?.includes("fitness") && <button type="button" disabled={saving || fitnessSessionsLoading} onClick={() => toggleFitnessChooser(key)} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">{fitnessChooserFor === key ? "Auswahl schließen" : "Erfasste Trainingseinheit verknüpfen"}</button>}
+                        {item.skillLinks?.includes("fitness") && <button type="button" disabled={saving || futureDay || fitnessSessionsLoading} onClick={() => toggleFitnessChooser(key)} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">{fitnessChooserFor === key ? "Auswahl schließen" : "Erfasste Trainingseinheit verknüpfen"}</button>}
                         {["fuel", "relax"].filter((linkedSkill) => item.skillLinks?.includes(linkedSkill)).map((linkedSkill) => {
                           const chooserKey = `${key}:${linkedSkill}`;
                           const canonicalSkill = linkedSkill === "fuel" ? "nutrition" : linkedSkill;
                           const linkedLabel = linkedSkill === "fuel" ? "Ernährung" : "Relax";
                           return <span key={linkedSkill} className="contents">
-                            <button type="button" disabled={saving || skillRecordsLoading} onClick={() => toggleSkillChooser(key, linkedSkill)} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">
+                            <button type="button" disabled={saving || futureDay || skillRecordsLoading} onClick={() => toggleSkillChooser(key, linkedSkill)} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">
                               {skillChooserFor === chooserKey ? "Auswahl schließen" : `${linkedLabel}-Eintrag verknüpfen`}
                             </button>
                             {skillChooserFor === chooserKey && <span className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 p-3" aria-label={`${linkedLabel}-Einträge`}>
