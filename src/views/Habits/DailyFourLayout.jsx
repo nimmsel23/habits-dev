@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Check, ChevronDown, Settings2 } from "lucide-react";
 import { DAILY_DIMENSIONS } from "./dailyExecutionModel.js";
 
@@ -46,7 +46,23 @@ export default function DailyFourLayout({
   const [skillChooserFor, setSkillChooserFor] = useState(null);
   const [skillRecords, setSkillRecords] = useState([]);
   const [skillRecordsLoading, setSkillRecordsLoading] = useState(false);
+  const currentDate = useRef(date);
+  const chooserGeneration = useRef(0);
+  if (currentDate.current !== date) {
+    currentDate.current = date;
+    chooserGeneration.current += 1;
+  }
   const activeHabits = useMemo(() => (habits || []).filter((habit) => !habit.deleted), [habits]);
+
+  useEffect(() => {
+    setFitnessChooserFor(null);
+    setFitnessSessions([]);
+    setFitnessSessionsLoading(false);
+    setSkillChooserFor(null);
+    setSkillRecords([]);
+    setSkillRecordsLoading(false);
+    setMessage("");
+  }, [date]);
 
   useEffect(() => {
     setDraft(Object.fromEntries(DAILY_DIMENSIONS.map(({ key }) => [key, assignmentFor(config, execution, key)])));
@@ -79,11 +95,17 @@ export default function DailyFourLayout({
 
   const toggleFitnessChooser = async (dimension) => {
     if (fitnessChooserFor === dimension) { setFitnessChooserFor(null); return; }
+    const generation = chooserGeneration.current;
     setFitnessChooserFor(dimension);
     setFitnessSessionsLoading(true);
-    try { setFitnessSessions(await onLoadFitnessSessions?.(date) || []); }
-    catch (cause) { setMessage(cause?.message || "Trainingseinheiten konnten nicht geladen werden."); }
-    finally { setFitnessSessionsLoading(false); }
+    try {
+      const sessions = await onLoadFitnessSessions?.(date) || [];
+      if (chooserGeneration.current === generation) setFitnessSessions(sessions);
+    } catch (cause) {
+      if (chooserGeneration.current === generation) setMessage(cause?.message || "Trainingseinheiten konnten nicht geladen werden.");
+    } finally {
+      if (chooserGeneration.current === generation) setFitnessSessionsLoading(false);
+    }
   };
 
   const linkFitnessSession = async (dimension, session) => {
@@ -99,12 +121,18 @@ export default function DailyFourLayout({
   const toggleSkillChooser = async (dimension, skill) => {
     const key = `${dimension}:${skill}`;
     if (skillChooserFor === key) { setSkillChooserFor(null); return; }
+    const generation = chooserGeneration.current;
     setSkillChooserFor(key);
     setSkillRecords([]);
     setSkillRecordsLoading(true);
-    try { setSkillRecords(await onLoadSkillRecords?.(date, skill) || []); }
-    catch (cause) { setMessage(cause?.message || "Einträge konnten nicht geladen werden."); }
-    finally { setSkillRecordsLoading(false); }
+    try {
+      const records = await onLoadSkillRecords?.(date, skill) || [];
+      if (chooserGeneration.current === generation) setSkillRecords(records);
+    } catch (cause) {
+      if (chooserGeneration.current === generation) setMessage(cause?.message || "Einträge konnten nicht geladen werden.");
+    } finally {
+      if (chooserGeneration.current === generation) setSkillRecordsLoading(false);
+    }
   };
 
   const linkSkillRecord = async (dimension, skill, record) => {
