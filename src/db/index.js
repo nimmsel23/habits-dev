@@ -319,12 +319,14 @@ export async function linkDailySkillRecord(date, dimensionKey, skill, recordId) 
 }
 
 export async function saveDailyExecutionAssignments(assignments, habits, date = todayISO()) {
+  if (date !== todayISO()) throw new Error("daily_assignments_change_today_only");
   const uid = getUid();
   const configRef = dailyConfigRef(uid);
   const dayRef = dailySnapshotRef(uid, date);
   normalizeDailyAssignments(assignments, habits);
 
   return runTransaction(db, async (transaction) => {
+    if (date !== todayISO()) throw new Error("daily_assignments_change_today_only");
     const [daySnap, ...habitSnaps] = await Promise.all([
       transaction.get(dayRef),
       ...DAILY_DIMENSIONS.map(({ key }) => {
