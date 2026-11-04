@@ -59,6 +59,7 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
   const [layoutMode, setLayoutMode] = useState(() => localStorage.getItem("habits-layout-mode") || "daily-four");
   const [dailyExecution, setDailyExecution] = useState(null);
   const [dailyConfig, setDailyConfig] = useState(null);
+  const [dailyRetry, setDailyRetry] = useState(0);
   const [dailyError, setDailyError] = useState("");
   const [habitSaveError, setHabitSaveError] = useState("");
   const [dailySaving, setDailySaving] = useState(false);
@@ -154,7 +155,14 @@ export default function Habits({ user = null, selectedDate: controlledDate = nul
       .then((config) => { if (live) setDailyConfig(config); })
       .catch(() => { if (live) setDailyError("Zuordnungen sind gerade nicht verfügbar. Ein gespeicherter Tagesstand bleibt sichtbar."); });
     return () => { live = false; };
-  }, [layoutMode, selectedDate]);
+  }, [layoutMode, selectedDate, dailyRetry]);
+
+  useEffect(() => {
+    if (dailyConfig || layoutMode !== "daily-four") return undefined;
+    const retry = () => setDailyRetry((value) => value + 1);
+    window.addEventListener("online", retry);
+    return () => window.removeEventListener("online", retry);
+  }, [dailyConfig, layoutMode]);
 
   useEffect(() => {
     setSelectedSidebarDate(selectedDate);
