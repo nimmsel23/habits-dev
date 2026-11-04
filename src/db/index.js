@@ -399,7 +399,8 @@ export async function recordHabit(uuid, date = todayISO()) {
 export async function setHabitCompletionFromHabits(uuid, date, completed) {
   const uid = getUid();
   return applyManualHabitTransaction({ db, dayRef: dailySnapshotRef(uid, date), recordRef: habitRecordRef(uid, uuid, date),
-    habitId: uuid, date, completed, runTransaction, serverTimestamp });
+    configRef: dailyConfigRef(uid), habitRef: (id) => habitRef(uid, id),
+    habitId: uuid, date, today: todayISO(), completed, runTransaction, serverTimestamp });
 }
 
 export async function unrecordHabit(uuid, date = todayISO()) {

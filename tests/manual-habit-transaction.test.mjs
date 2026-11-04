@@ -39,3 +39,19 @@ test('an unrelated habit or a day without snapshot does not create a daily point
     assert.equal(output.writes[0][0], 'record');
   }
 });
+
+test('first manual completion today creates its snapshot from the active configuration', async () => {
+  const data = new Map([['config', { assignments, effectiveDate: date }], ...habits.map((habit) => [habit.uuid, habit])]);
+  const writes = [];
+  const call = (today) => applyManualHabitTransaction({ db: {}, dayRef: 'day', recordRef: 'record', configRef: 'config', habitRef: (id) => id,
+    habitId: 'h1', date, today, completed: true, serverTimestamp: () => 'time',
+    runTransaction: async (_db, fn) => fn({ get: async (key) => ({ exists: () => data.has(key), data: () => data.get(key) }), set: (...args) => writes.push(args) }),
+  });
+  const result = await call(date);
+  assert.equal(result.score, 1);
+  assert.equal(result.dimensions.doing.habitId, 'h1');
+  assert.deepEqual(writes.map(([ref]) => ref), ['day', 'record']);
+  writes.length = 0;
+  assert.equal(await call('2026-11-04'), null);
+  assert.deepEqual(writes.map(([ref]) => ref), ['record']);
+});
