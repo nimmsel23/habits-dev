@@ -84,6 +84,10 @@ jobs:
             echo "::endgroup::"
           done
 
+      - name: Install Submodule habits-dev/journal (eigenes Lockfile)
+        working-directory: habits-dev/journal
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
       - name: Fitness-KB-Daten erzeugen (transitive Abhängigkeit über @fitness-db)
         working-directory: fitness-dev
         run: pnpm run build:kb-data
