@@ -48,9 +48,11 @@ export default function DailyFourLayout({
   const [skillRecords, setSkillRecords] = useState([]);
   const [skillRecordsLoading, setSkillRecordsLoading] = useState(false);
   const currentDate = useRef(date);
+  const draftDirty = useRef(false);
   const chooserGeneration = useRef(0);
   if (currentDate.current !== date) {
     currentDate.current = date;
+    draftDirty.current = false;
     chooserGeneration.current += 1;
   }
   const activeHabits = useMemo(() => (habits || []).filter((habit) => !habit.deleted), [habits]);
@@ -66,15 +68,19 @@ export default function DailyFourLayout({
   }, [date]);
 
   useEffect(() => {
+    // A delayed snapshot or settings response must not overwrite choices the
+    // user has already made while the day was loading.
+    if (draftDirty.current) return;
     setDraft(Object.fromEntries(DAILY_DIMENSIONS.map(({ key }) => [key, assignmentFor(config, execution, key)])));
     setEditing(!execution?.configured);
-  }, [config, execution]);
+  }, [date, config, execution]);
 
   const selectedIds = DAILY_DIMENSIONS.map(({ key }) => draft[key]?.habitId).filter(Boolean);
   const assignmentsValid = DAILY_DIMENSIONS.every(({ key }) => draft[key]?.habitId)
     && new Set(selectedIds).size === DAILY_DIMENSIONS.length;
 
   const updateAssignment = (dimension, patch) => {
+    draftDirty.current = true;
     setDraft((current) => ({
       ...current,
       [dimension]: { ...(current[dimension] || { habitId: "", skillLinks: [] }), ...patch },
@@ -85,6 +91,7 @@ export default function DailyFourLayout({
   const save = async () => {
     try {
       const result = await onSaveAssignments(draft);
+      draftDirty.current = false;
       setMessage(result?.effectiveDate && result.effectiveDate > date
         ? "Die neuen Zuordnungen gelten ab morgen. Der heutige Tagesstand bleibt erhalten."
         : "Deine vier Gewohnheiten sind gespeichert.");
@@ -281,7 +288,7 @@ export default function DailyFourLayout({
           </div>
           <div className="mt-5 flex flex-wrap gap-2">
             <button type="button" disabled={!assignmentsValid || saving} onClick={save} className="rounded-xl bg-orange-300 px-4 py-3 font-bold text-slate-950 disabled:cursor-not-allowed disabled:opacity-40">{saving ? "Speichere …" : "Vier Gewohnheiten speichern"}</button>
-            {configured && <button type="button" disabled={saving} onClick={() => setEditing(false)} className="rounded-xl border border-white/10 px-4 py-3 text-slate-300">Abbrechen</button>}
+            {configured && <button type="button" disabled={saving} onClick={() => { draftDirty.current = false; setDraft(Object.fromEntries(DAILY_DIMENSIONS.map(({ key }) => [key, assignmentFor(config, execution, key)]))); setEditing(false); }} className="rounded-xl border border-white/10 px-4 py-3 text-slate-300">Abbrechen</button>}
           </div>
           {selectedIds.length > new Set(selectedIds).size && <p className="mt-3 text-sm text-amber-200">Jede Ebene braucht eine andere Gewohnheit.</p>}
         </section>
