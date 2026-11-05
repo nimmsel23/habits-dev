@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Check, ChevronDown, Settings2 } from "lucide-react";
 import { DAILY_DIMENSIONS } from "./dailyExecutionModel.js";
+import { localToday } from "@utils";
 
 const SKILLS = [
   ["fitness", "Fitness"],
@@ -46,18 +47,40 @@ export default function DailyFourLayout({
   const [skillChooserFor, setSkillChooserFor] = useState(null);
   const [skillRecords, setSkillRecords] = useState([]);
   const [skillRecordsLoading, setSkillRecordsLoading] = useState(false);
+  const currentDate = useRef(date);
+  const draftDirty = useRef(false);
+  const chooserGeneration = useRef(0);
+  if (currentDate.current !== date) {
+    currentDate.current = date;
+    draftDirty.current = false;
+    chooserGeneration.current += 1;
+  }
   const activeHabits = useMemo(() => (habits || []).filter((habit) => !habit.deleted), [habits]);
 
   useEffect(() => {
+    setFitnessChooserFor(null);
+    setFitnessSessions([]);
+    setFitnessSessionsLoading(false);
+    setSkillChooserFor(null);
+    setSkillRecords([]);
+    setSkillRecordsLoading(false);
+    setMessage("");
+  }, [date]);
+
+  useEffect(() => {
+    // A delayed snapshot or settings response must not overwrite choices the
+    // user has already made while the day was loading.
+    if (draftDirty.current) return;
     setDraft(Object.fromEntries(DAILY_DIMENSIONS.map(({ key }) => [key, assignmentFor(config, execution, key)])));
     setEditing(!execution?.configured);
-  }, [config, execution]);
+  }, [date, config, execution]);
 
   const selectedIds = DAILY_DIMENSIONS.map(({ key }) => draft[key]?.habitId).filter(Boolean);
   const assignmentsValid = DAILY_DIMENSIONS.every(({ key }) => draft[key]?.habitId)
     && new Set(selectedIds).size === DAILY_DIMENSIONS.length;
 
   const updateAssignment = (dimension, patch) => {
+    draftDirty.current = true;
     setDraft((current) => ({
       ...current,
       [dimension]: { ...(current[dimension] || { habitId: "", skillLinks: [] }), ...patch },
@@ -68,6 +91,7 @@ export default function DailyFourLayout({
   const save = async () => {
     try {
       const result = await onSaveAssignments(draft);
+      draftDirty.current = false;
       setMessage(result?.effectiveDate && result.effectiveDate > date
         ? "Die neuen Zuordnungen gelten ab morgen. Der heutige Tagesstand bleibt erhalten."
         : "Deine vier Gewohnheiten sind gespeichert.");
@@ -79,11 +103,17 @@ export default function DailyFourLayout({
 
   const toggleFitnessChooser = async (dimension) => {
     if (fitnessChooserFor === dimension) { setFitnessChooserFor(null); return; }
+    const generation = chooserGeneration.current;
     setFitnessChooserFor(dimension);
     setFitnessSessionsLoading(true);
-    try { setFitnessSessions(await onLoadFitnessSessions?.(date) || []); }
-    catch (cause) { setMessage(cause?.message || "Trainingseinheiten konnten nicht geladen werden."); }
-    finally { setFitnessSessionsLoading(false); }
+    try {
+      const sessions = await onLoadFitnessSessions?.(date) || [];
+      if (chooserGeneration.current === generation) setFitnessSessions(sessions);
+    } catch (cause) {
+      if (chooserGeneration.current === generation) setMessage(cause?.message || "Trainingseinheiten konnten nicht geladen werden.");
+    } finally {
+      if (chooserGeneration.current === generation) setFitnessSessionsLoading(false);
+    }
   };
 
   const linkFitnessSession = async (dimension, session) => {
@@ -99,12 +129,18 @@ export default function DailyFourLayout({
   const toggleSkillChooser = async (dimension, skill) => {
     const key = `${dimension}:${skill}`;
     if (skillChooserFor === key) { setSkillChooserFor(null); return; }
+    const generation = chooserGeneration.current;
     setSkillChooserFor(key);
     setSkillRecords([]);
     setSkillRecordsLoading(true);
-    try { setSkillRecords(await onLoadSkillRecords?.(date, skill) || []); }
-    catch (cause) { setMessage(cause?.message || "Einträge konnten nicht geladen werden."); }
-    finally { setSkillRecordsLoading(false); }
+    try {
+      const records = await onLoadSkillRecords?.(date, skill) || [];
+      if (chooserGeneration.current === generation) setSkillRecords(records);
+    } catch (cause) {
+      if (chooserGeneration.current === generation) setMessage(cause?.message || "Einträge konnten nicht geladen werden.");
+    } finally {
+      if (chooserGeneration.current === generation) setSkillRecordsLoading(false);
+    }
   };
 
   const linkSkillRecord = async (dimension, skill, record) => {
@@ -119,6 +155,8 @@ export default function DailyFourLayout({
 
   const score = Number.isInteger(execution?.score) ? execution.score : 0;
   const configured = Boolean(execution?.configured);
+  const futureDay = date > localToday();
+  const todayDay = date === localToday();
 
   return (
     <section className="mx-auto max-w-3xl space-y-5 text-slate-100" aria-label="Tägliche vier Gewohnheiten">
@@ -129,17 +167,19 @@ export default function DailyFourLayout({
             <h2 className="text-2xl font-black">Dein Tag in vier Ebenen</h2>
             <p className="mt-1 text-sm text-slate-400">Eine selbst gewählte Gewohnheit je Ebene. Jede zählt höchstens einmal.</p>
           </div>
-          <div className="shrink-0 text-right" aria-label={`${score} von 4 Punkten`}>
-            <span className="text-3xl font-black text-orange-300">{score}</span>
+          <div className="shrink-0 text-right" aria-label={configured ? `${score} von 4 Punkten` : "Kein Tagesstand gespeichert"}>
+            <span className="text-3xl font-black text-orange-300">{configured ? score : "–"}</span>
             <span className="text-lg text-slate-500"> / 4</span>
           </div>
         </div>
-        <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
+        {configured && <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
           <div className="h-full rounded-full bg-orange-300 transition-[width]" style={{ width: `${score * 25}%` }} />
-        </div>
+        </div>}
       </header>
 
+      {execution?.fromCache && <p className="text-sm text-slate-400" role="status">Zwischengespeicherter Stand. Änderungen benötigen eine Verbindung und werden erst nach Bestätigung angezeigt.</p>}
       {error && <p className="rounded-xl border border-rose-400/30 bg-rose-950/30 p-3 text-sm text-rose-200" role="alert">{error}</p>}
+      {futureDay && <p className="text-sm text-slate-400">Zukünftige Gewohnheiten können noch nicht als ausgeführt markiert werden.</p>}
       {message && <p className="rounded-xl border border-white/10 bg-slate-900 p-3 text-sm text-slate-200" role="status">{message}</p>}
 
       {configured && !editing && (
@@ -156,7 +196,7 @@ export default function DailyFourLayout({
                     type="button"
                     aria-pressed={item.completed}
                     aria-label={`${label}: ${item.completed ? "Ausführung zurücknehmen" : "Als ausgeführt markieren"}`}
-                    disabled={saving}
+                    disabled={saving || (futureDay && !item.completed)}
                     onClick={() => onToggleCompletion(key, !item.completed)}
                     className={`mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${item.completed ? "border-emerald-300 bg-emerald-300 text-slate-950" : "border-white/20 text-slate-500 hover:border-orange-300 hover:text-orange-200"}`}
                   >
@@ -171,13 +211,13 @@ export default function DailyFourLayout({
                       </summary>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {skill && <button type="button" onClick={() => onOpenSkill?.(skill, { date, dimension: key, habitId: item.habitId, habitName: item.habitName })} className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">{skillLabel} öffnen <ArrowUpRight size={14} /></button>}
-                        {item.skillLinks?.includes("fitness") && <button type="button" disabled={saving || fitnessSessionsLoading} onClick={() => toggleFitnessChooser(key)} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">{fitnessChooserFor === key ? "Auswahl schließen" : "Erfasste Trainingseinheit verknüpfen"}</button>}
+                        {item.skillLinks?.includes("fitness") && <button type="button" disabled={saving || futureDay || fitnessSessionsLoading} onClick={() => toggleFitnessChooser(key)} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">{fitnessChooserFor === key ? "Auswahl schließen" : "Erfasste Trainingseinheit verknüpfen"}</button>}
                         {["fuel", "relax"].filter((linkedSkill) => item.skillLinks?.includes(linkedSkill)).map((linkedSkill) => {
                           const chooserKey = `${key}:${linkedSkill}`;
                           const canonicalSkill = linkedSkill === "fuel" ? "nutrition" : linkedSkill;
                           const linkedLabel = linkedSkill === "fuel" ? "Ernährung" : "Relax";
                           return <span key={linkedSkill} className="contents">
-                            <button type="button" disabled={saving || skillRecordsLoading} onClick={() => toggleSkillChooser(key, linkedSkill)} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">
+                            <button type="button" disabled={saving || futureDay || skillRecordsLoading} onClick={() => toggleSkillChooser(key, linkedSkill)} className="rounded-lg border border-white/10 px-3 py-2 text-slate-200 hover:border-orange-300">
                               {skillChooserFor === chooserKey ? "Auswahl schließen" : `${linkedLabel}-Eintrag verknüpfen`}
                             </button>
                             {skillChooserFor === chooserKey && <span className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 p-3" aria-label={`${linkedLabel}-Einträge`}>
@@ -219,7 +259,9 @@ export default function DailyFourLayout({
         </div>
       )}
 
-      {(!configured || editing) && (
+      {!configured && !todayDay && <p className="text-sm text-slate-400">Für diesen Tag ist kein Daily-Four-Stand gespeichert.</p>}
+
+      {todayDay && config && (!configured || editing) && (
         <section className="rounded-3xl border border-white/10 bg-slate-950 p-5 sm:p-7" aria-label="Vier tägliche Gewohnheiten festlegen">
           <h3 className="text-lg font-bold">Vier Gewohnheiten festlegen</h3>
           <p className="mt-1 text-sm text-slate-400">Wähle vier verschiedene bestehende Habits. Die Zuordnung ist unabhängig von Body, Being, Balance und Business.</p>
@@ -246,13 +288,13 @@ export default function DailyFourLayout({
           </div>
           <div className="mt-5 flex flex-wrap gap-2">
             <button type="button" disabled={!assignmentsValid || saving} onClick={save} className="rounded-xl bg-orange-300 px-4 py-3 font-bold text-slate-950 disabled:cursor-not-allowed disabled:opacity-40">{saving ? "Speichere …" : "Vier Gewohnheiten speichern"}</button>
-            {configured && <button type="button" disabled={saving} onClick={() => setEditing(false)} className="rounded-xl border border-white/10 px-4 py-3 text-slate-300">Abbrechen</button>}
+            {configured && <button type="button" disabled={saving} onClick={() => { draftDirty.current = false; setDraft(Object.fromEntries(DAILY_DIMENSIONS.map(({ key }) => [key, assignmentFor(config, execution, key)]))); setEditing(false); }} className="rounded-xl border border-white/10 px-4 py-3 text-slate-300">Abbrechen</button>}
           </div>
           {selectedIds.length > new Set(selectedIds).size && <p className="mt-3 text-sm text-amber-200">Jede Ebene braucht eine andere Gewohnheit.</p>}
         </section>
       )}
 
-      {configured && !editing && <button type="button" onClick={() => setEditing(true)} className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-orange-200"><Settings2 size={16} /> Zuweisungen ändern</button>}
+      {todayDay && config && configured && !editing && <button type="button" onClick={() => setEditing(true)} className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-orange-200"><Settings2 size={16} /> Zuweisungen ändern</button>}
     </section>
   );
 }
