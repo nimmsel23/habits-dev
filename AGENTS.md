@@ -1,3 +1,7 @@
+# Entwicklungsquelle seit 2026-11-06
+
+Neue Änderungen gehören nach `~/dev/journal-dev` (`apps/habits` und gemeinsame Quellen). Dieser Checkout ist ein Kompatibilitäts-/Release-Stand. Siehe `MIGRATED.md`.
+
 # AGENTS.md — Habits
 
 <!-- release-weg:start -->
