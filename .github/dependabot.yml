@@ -7,7 +7,7 @@ updates:
     day: monday
     time: 07:00
     timezone: Europe/Vienna
-  open-pull-requests-limit: 5
+  open-pull-requests-limit: 0
   commit-message:
     prefix: ci
   directory: /
@@ -22,7 +22,7 @@ updates:
     day: monday
     time: 07:00
     timezone: Europe/Vienna
-  open-pull-requests-limit: 5
+  open-pull-requests-limit: 0
   commit-message:
     prefix: deps
   directory: /
