@@ -1,3 +1,9 @@
+## 2026-11-07 — Gemini CI-Agent installiert
+
+- CI-Agent fuer Check-Fehler, Dependabot-PRs und Merge-Konflikte ergänzt; Tailwind-/Paket-Upgrades bleiben erhalten.
+- Quellreparaturen werden auf den betroffenen Branch geschrieben; Zielbranch-Reparaturen erhalten einen PR und werden erst nach gruenem Check gemergt.
+- Gemini-API und `SYNC_TOKEN` muessen als Actions-Secrets vorhanden sein. Nachweis: erster erfolgreicher automatischer Reparatur- und Deploy-Lauf steht aus.
+
 ## 2026-10-22 — Erweitertes Habits v2 eingebunden
 
 Journal-Submodul auf f7f9e5f aktualisiert: Bearbeiten von Name/Kategorie/Frequenz,
