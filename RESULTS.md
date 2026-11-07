@@ -1,3 +1,9 @@
+## 2026-11-07 — Gemini CI-Agent auf master aktiviert
+
+- Beobachtet Check, Preview, Deploy, Merge-Konflikte und Dependabot-PRs. Der Agent bewahrt beabsichtigte Upgrades und schreibt bei unsicherem Fehler keine Reparatur.
+- Reparatur-PRs werden erst nach grünem Check gemergt; keine PRs werden geschlossen.
+- Actions-Secrets und ein echter Fehler→Reparatur→Check→Deploy-Rundlauf sind noch zu verifizieren.
+
 ## 2026-10-22 — Erweitertes Habits v2 eingebunden
 
 Journal-Submodul auf f7f9e5f aktualisiert: Bearbeiten von Name/Kategorie/Frequenz,
