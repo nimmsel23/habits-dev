@@ -1,3 +1,14 @@
+## 2026-11-07 — CI-Agent-Deploy-Routing und No-op-Ausgänge korrigiert
+
+- Reale Modul-Deploy-/Preview-Workflownamen ergänzt; grüne Deploy-Läufe lösen keine Merges aus. Ohne sichere Quellreparatur endet der Agent ohne Commit.
+- Tailwind-4- und Dependabot-Upgrades bleiben erhalten; Gemini schreibt keine Lockfiles um.
+- Actions-Secrets und ein echter Fehler→Reparatur→Check→Deploy-Rundlauf sind noch zu verifizieren.
+
+## 2026-11-07 — Gemini CI-Agent installiert
+
+- CI-Agent fuer Check-Fehler, Dependabot-PRs und Merge-Konflikte ergänzt; Tailwind-/Paket-Upgrades bleiben erhalten.
+- Quellreparaturen werden auf den betroffenen Branch geschrieben; Zielbranch-Reparaturen erhalten einen PR und werden erst nach gruenem Check gemergt.
+- Gemini-API und `SYNC_TOKEN` muessen als Actions-Secrets vorhanden sein. Nachweis: erster erfolgreicher automatischer Reparatur- und Deploy-Lauf steht aus.
 ## 2026-11-07 — Gemini CI-Agent auf master aktiviert
 
 - Beobachtet Check, Preview, Deploy, Merge-Konflikte und Dependabot-PRs. Der Agent bewahrt beabsichtigte Upgrades und schreibt bei unsicherem Fehler keine Reparatur.

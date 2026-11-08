@@ -11,6 +11,8 @@ const apiKey = process.env.GEMINI_API_KEY;
 const run = event.workflow_run;
 const prEvent = event.pull_request;
 
+if (run?.head_commit?.message?.includes("[ci-agent]")) stop("CI-Agent-Commit erkannt; Reparaturschleife gestoppt.");
+
 function git(args, { allowFailure = false, encoding = "utf8" } = {}) {
   try {
     return execFileSync("git", args, { cwd, encoding, maxBuffer: 16 * 1024 * 1024 }).trim();
@@ -50,8 +52,9 @@ function fetchRefs(...refs) {
 }
 
 function prFor(branch, base, sha) {
-  const candidates = ghJson(["pr", "list", "-R", repo, "--head", branch, "--state", "open", "--json", "number,headRefName,headRefOid,baseRefName,headRepository,baseRepository,state"]);
-  return candidates.find((p) => p.headRefOid === sha && p.baseRefName === base && p.headRepository?.nameWithOwner === repo && p.baseRepository?.nameWithOwner === repo);
+  const owner = repo.split("/")[0];
+  const candidates = ghJson(["pr", "list", "-R", repo, "--head", `${owner}:${branch}`, "--state", "open", "--json", "number,headRefName,headRefOid,baseRefName"]);
+  return candidates.find((p) => p.headRefName === branch && p.headRefOid === sha && p.baseRefName === base);
 }
 
 function sameRepoPullRequest(candidate) {
