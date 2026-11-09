@@ -1,7 +1,7 @@
 # Auto-Merge bei grünem Check (Muster aus fitness-dev, dort die Referenz):
 #   - Release-PR dev -> master (vos-release-pr): Merge-Commit (kein Squash, sonst driftet dev),
 #     Kein Deploy hier: die Live-Veröffentlichung läuft über den Pointer-Bump im Meta-Repo
-#     vitalos (siehe vitalos/docs/CI-DEPLOY-PR-FLOW.md).
+#     master (siehe ~/vitalos/docs/DEPLOYMENT.md).
 # Rot bleibt liegen. Läuft als workflow_run im Kontext des Default-Branch und checkt nie
 # PR-Code aus. Wirkt deshalb erst, wenn diese Datei im Default-Branch des Repos liegt.
 
