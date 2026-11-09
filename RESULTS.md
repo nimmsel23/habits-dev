@@ -1,3 +1,8 @@
+## 2026-11-09 — CI: Auto-Promote + fitness@dev Neighbor
+
+- `automerge.yml`: Auto-Promote wie Journal (PR-Auto-Merge blieb auf Push-Checks wirkungslos).
+- Live-Deploy: `fitness-dev` von `dev` (Bulk-Fix), bis master den Fix hat; master in dev gemergt.
+
 ## 2026-11-09 — Remote-vitalos gelöscht; Pre-Push ohne vitalos-Deploy
 
 - **CI:** Live-Deploy nur noch `fitness-dev`+`fuel-dev`+Journal-Submodul; relax/6pack/plan/skills raus. KB-Mount+`build:kb-data` bleiben (gitignored generated.js via `@fitness-db`).
