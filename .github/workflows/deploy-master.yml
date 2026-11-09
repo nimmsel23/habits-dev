@@ -1,9 +1,10 @@
 # FROZEN (Owner 2026-11-07): Quelle habits→journal-dev / learn→fitness-dev.
 # Deploy bleibt nur als Freeze-Stand-Monitoring; keine Feature-Arbeit hier.
 # Standalone-Prod Habits: Push auf master deployt live (nur CI).
-# Echte Nachbarn: fitness-dev (@fitness-db/hooks) + fuel-dev (@fuel history) + journal-Submodul.
-# Kein relax/6pack/plan/skills. generated.js via build:exercise-data (+ coaching-notes),
-# nicht volles build:kb-data (das plan/6pack-Nachbarn erzwingt).
+# Nachbarn: fitness-dev + fuel-dev (+ exercise-data/coaching-notes), journal-Submodul,
+# 6pack-dev + plan-dev (miniAppSubmodulePlugin), privates backend (fuel src/shared).
+# Kein relax/skills. generated.js via build:exercise-data (+ coaching-notes),
+# nicht volles build:kb-data.
 #
 # Auslöser: push auf master und workflow_dispatch (automerge.yml) -> baut und deployt live (nur master).
 # Push auf `ci-test/**` -> reiner Build-Test (Nachbarn von dev), KEIN Deploy.
@@ -54,6 +55,24 @@ jobs:
           echo "fitness-dev @ $(git -C fitness-dev rev-parse --short HEAD) (dev)"
           git clone --depth 1 --branch "$NEIGHBOR_REF" "https://github.com/nimmsel23/fuel-dev.git" fuel-dev
           echo "fuel-dev @ $(git -C fuel-dev rev-parse --short HEAD)"
+          # fitness Views SixPack|Plan nur via miniAppSubmodulePlugin (wie journal-dev).
+          git clone --depth 1 --branch "$NEIGHBOR_REF" "https://github.com/nimmsel23/6pack-dev.git" 6pack-dev
+          echo "6pack-dev @ $(git -C 6pack-dev rev-parse --short HEAD)"
+          test -f 6pack-dev/workoutDoc.js
+          git clone --depth 1 --branch "$NEIGHBOR_REF" "https://github.com/nimmsel23/plan-dev.git" plan-dev
+          echo "plan-dev @ $(git -C plan-dev rev-parse --short HEAD)"
+          test -f plan-dev/src/views/Plan/lib/planVersions.js
+
+      - name: Checkout backend (fuel shared SOT)
+        uses: actions/checkout@v4
+        with:
+          repository: nimmsel23/backend
+          ref: dev
+          path: backend
+          token: ${{ secrets.SYNC_TOKEN }}
+
+      - name: Verify backend fuel shared
+        run: test -f backend/fuel/src/shared/utils/validation.mjs
 
       # fitness-dev hat das Python-Paket/KB entfernt — SOT ist nimmsel23/fitness.
       - name: Checkout fitness KB (SOT)
