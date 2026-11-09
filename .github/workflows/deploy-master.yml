@@ -1,7 +1,7 @@
 # Standalone-Prod Habits: Push auf master deployt live (nur CI).
 # Echte Nachbarn: fitness-dev (@fitness-db/hooks) + fuel-dev (@fuel history) + journal-Submodul.
-# Kein relax/6pack/plan/skills. KB-Daten (gitignored generated.js) via build:kb-data nötig,
-# weil habits `export * from @fitness-db/index.firestore.js` zieht (inkl. kb.js).
+# Kein relax/6pack/plan/skills. generated.js via build:exercise-data (+ coaching-notes),
+# nicht volles build:kb-data (das plan/6pack-Nachbarn erzwingt).
 #
 # Auslöser: push auf master und workflow_dispatch (automerge.yml) -> baut und deployt live (nur master).
 # Push auf `ci-test/**` -> reiner Build-Test (Nachbarn von dev), KEIN Deploy.
@@ -47,7 +47,7 @@ jobs:
       - name: Checkout Nachbarn (${{ env.NEIGHBOR_REF }})
         run: |
           set -euo pipefail
-          for repo in fitness-dev fuel-dev 6pack-dev; do
+          for repo in fitness-dev fuel-dev; do
             git clone --depth 1 --branch "$NEIGHBOR_REF" "https://github.com/nimmsel23/${repo}.git" "$repo"
             echo "$repo @ $(git -C "$repo" rev-parse --short HEAD)"
           done
@@ -88,7 +88,7 @@ jobs:
       - name: Install Nachbarn (je eigener Lockfile)
         run: |
           set -euo pipefail
-          for repo in fitness-dev fuel-dev 6pack-dev; do
+          for repo in fitness-dev fuel-dev; do
             echo "::group::$repo"
             if [ -f "$repo/pnpm-lock.yaml" ]; then
               if grep -q '^overrides:' "$repo/pnpm-lock.yaml" && [ ! -f "$repo/pnpm-workspace.yaml" ]; then
@@ -106,9 +106,9 @@ jobs:
         working-directory: habits-dev/journal
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Fitness-KB-Daten erzeugen (transitive Abhängigkeit über @fitness-db)
+      - name: Fitness generated.js (exercise-data, ohne plan/6pack)
         working-directory: fitness-dev
-        run: pnpm run build:kb-data
+        run: pnpm run build:exercise-data && pnpm run build:coaching-notes
 
       - name: Build Habits
         working-directory: habits-dev
