@@ -7,24 +7,21 @@ Neue Änderungen gehören nach `~/dev/journal-dev` (`apps/habits` und gemeinsame
 <!-- release-weg:start -->
 ## Release-Weg und Branches (Habits)
 
-Stand 2026-10-29. Ausführlich: `~/vitalos/docs/DEPLOYMENT.md` (GitHub: nimmsel23/vitalos, `docs/DEPLOYMENT.md`).
+Stand 2026-11-09. Ausführlich: `~/vitalos/docs/DEPLOYMENT.md`.
 
-**dev → master → vitalos**
+**dev → master** (+ Shell-Pin auf `origin/master`)
 
 | Branch | Rolle | Lokal |
 |---|---|---|
 | `dev` | Edits und Previews (Preview-Channel `dev`, PR-Channel je PR) | ja — dieser Klon steht fest auf `dev` |
-| `master` | **Standalone-Prod** (eigene Hosting-Site (siehe `firebase.json`/`.firebaserc`)); deployt nur per CI (`Live Deploy (Habits master)`) | nein, muss nicht existieren |
-| `vitalos` | Stand für die Shell (`~/vitalos/habit-app`); darf hinter `master` liegen | nur als `-app`-Checkout im Meta-Repo |
+| `master` | **Standalone-Prod** (eigene Hosting-Site (siehe `firebase.json`/`.firebaserc`)); deployt nur per CI (`Live Deploy (Habits master)`) | nein, lokal nicht nötig |
+| `vitalos` | **Legacy** (darf remote noch existieren) — kein Pin-Ziel mehr | nicht für Shell nutzen |
 
-- Release: `vos-release-pr habits` öffnet den PR `dev → master`. `Check (Habits)` läuft, bei Grün mergt der Auto-Merge
-  (Merge-Commit) und startet den Live-Deploy per Dispatch. Nie von Hand auf `master` pushen, außer Hotfix.
-- Shell: `vos-release habits` merged `origin/master` nach `vitalos` und bumpt den Pointer im Meta-Repo (deployt die Shell).
-  Vorher `vos-overview`.
-- `master` wird nie lokal ausgecheckt; `git fetch` genügt. Das Meta-Repo `vitalos` deployt nur noch die Shell.
-- Nicht auf `dev` im Hauptordner arbeiten, wenn ein Agent-/Feature-Branch nötig ist: Worktree
-  (`git worktree add .worktrees/<name> <branch>`).
-- Default-Branch des Repos ist `master`; die `.github/workflows/*.yml` auf `master` bestimmen das Live-Verhalten.
+- Release (automatisch): `dev` committen und pushen. Nach grünem Check promotet `automerge.yml` nach `master` und startet den Live-Deploy. Direkte Pushes auf `master` vermeiden; Hotfixes über `dev`.
+- Shell: `vos-release` / `vos-ship` pinnt `origin/master` (detached im `*-app`) und bumpt den Meta-Pointer → `deploy-shell.yml`. Vorher `vos-overview`.
+- `.gitmodules` im Meta-Repo: `branch = master`. Kein Auto-Vorspulen eines App-Branches `vitalos` mehr.
+- Parallel-Branches/Worktrees nur mit Owner-Ausnahme.
+- Default-Branch des Repos ist `master`; die Workflows auf `master` bestimmen das Live-Verhalten.
 <!-- release-weg:end -->
 
 ## Org-Taskwarrior (global) — gilt fuer alle Agenten der VitalOS-Org

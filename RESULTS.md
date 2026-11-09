@@ -1,3 +1,8 @@
+## 2026-11-09 — Shell-Pin auf origin/master (CI/AGENTS)
+
+CI: kein Auto-Vorspulen von `vitalos` mehr; Merge-Agent nur `master`; PR-Checks
+auf `[master, dev]`. AGENTS Release-Weg: `dev → master` + Shell-Pin.
+
 ## 2026-11-07 — CI-Agent-Deploy-Routing und No-op-Ausgänge korrigiert
 
 - Reale Modul-Deploy-/Preview-Workflownamen ergänzt; grüne Deploy-Läufe lösen keine Merges aus. Ohne sichere Quellreparatur endet der Agent ohne Commit.
