@@ -47,7 +47,7 @@ jobs:
       - name: Checkout Nachbarn (${{ env.NEIGHBOR_REF }})
         run: |
           set -euo pipefail
-          for repo in fitness-dev fuel-dev; do
+          for repo in fitness-dev fuel-dev 6pack-dev; do
             git clone --depth 1 --branch "$NEIGHBOR_REF" "https://github.com/nimmsel23/${repo}.git" "$repo"
             echo "$repo @ $(git -C "$repo" rev-parse --short HEAD)"
           done
@@ -88,7 +88,7 @@ jobs:
       - name: Install Nachbarn (je eigener Lockfile)
         run: |
           set -euo pipefail
-          for repo in fitness-dev fuel-dev; do
+          for repo in fitness-dev fuel-dev 6pack-dev; do
             echo "::group::$repo"
             if [ -f "$repo/pnpm-lock.yaml" ]; then
               if grep -q '^overrides:' "$repo/pnpm-lock.yaml" && [ ! -f "$repo/pnpm-workspace.yaml" ]; then
