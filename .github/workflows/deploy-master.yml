@@ -68,6 +68,7 @@ jobs:
           rm -rf fitness-dev/fitness/catalog/kb
           ln -sfn "$GITHUB_WORKSPACE/fitness-kb" fitness-dev/fitness/catalog/kb
           test -d fitness-dev/fitness/catalog/kb/exercises/6pack
+          test -f fitness-dev/fitness/catalog/kb/vendor/free-exercise-db/dist/exercises.json
           echo "KB @ $(git -C fitness-kb rev-parse --short HEAD)"
 
       - uses: pnpm/action-setup@v4
