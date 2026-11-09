@@ -1,5 +1,6 @@
 ## 2026-11-09 — Remote-vitalos gelöscht; Pre-Push ohne vitalos-Deploy
 
+- **CI:** Live-Deploy nur noch `fitness-dev`+`fuel-dev`+Journal-Submodul; relax/6pack/plan/skills raus. KB-Mount+`build:kb-data` bleiben (gitignored generated.js via `@fitness-db`).
 `origin/vitalos` entfernt. Pre-Push: kein lokaler Firebase-Deploy mehr auf Branch vitalos; Reminder/Build auf `dev`.
 
 ## 2026-11-09 — Shell-Pin auf origin/master (CI/AGENTS)
