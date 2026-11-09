@@ -66,6 +66,16 @@ jobs:
       - name: Install pinned Journal dependencies
         run: pnpm --dir habit-app/journal install --frozen-lockfile --ignore-scripts
 
+      - name: Smoke test
+        run: pnpm --filter ./habit-app test
+
+      - name: Tooling (Biome format scripts/)
+        run: pnpm --filter ./habit-app run tooling:biome
+
+      - name: Tooling (knip report)
+        continue-on-error: true
+        run: pnpm --filter ./habit-app run tooling:knip
+
       - name: Firebase config bereitstellen (gitignored, Platzhalter genügt zum Bauen)
         run: |
           if [ ! -f habit-app/firebase.config.js ]; then
