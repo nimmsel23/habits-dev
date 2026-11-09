@@ -1,41 +1,16 @@
+# FROZEN (Owner 2026-11-07): Pflege an der Quelle
+#   habits → journal-dev (apps/habits)
+#   learn  → fitness-dev
+# Dieses Repo ist kein aktives Dev-Ziel mehr. Push-CI aus; nur workflow_dispatch.
 name: Gemini CI Agent
 
 on:
-  workflow_run:
-    workflows:
-      - Check
-      - Check (6Pack)
-      - Check (Fitness)
-      - Check (Fuel)
-      - Check (Habits)
-      - Check (Journal)
-      - Check (Learn)
-      - Check (Plan)
-      - Check (Relax)
-      - Check (Skills)
-      - 6Pack deploy (preview + standalone)
-      - Live Deploy (Fitness master)
-      - Live Deploy (Fuel master)
-      - Live Deploy (Fuel Mini-Apps je Tab)
-      - Live Deploy (Habits master)
-      - Live Deploy (Journal master)
-      - Live Deploy (Learn master)
-      - Live Deploy (Plan master)
-      - Live Deploy (Relax master)
-      - Live Deploy (Skills master)
-      - Preview (Habits dev)
-      - Preview (Journal dev)
-      - Preview (Learn dev)
-      - Preview (Fuel dev)
-      - Preview (vos-skills)
-      - Deploy Firebase Hosting
-      - Preview Firebase Hosting
-      - Deploy
-      - Deploy Firebase
-    types: [completed]
-  pull_request_target:
-    types: [opened, reopened, synchronize]
-
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Nur manuell — Repo ist eingefroren'
+        required: false
+        default: 'frozen'
 permissions:
   contents: read
   actions: read

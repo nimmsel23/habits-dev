@@ -1,3 +1,7 @@
+# FROZEN (Owner 2026-11-07): Pflege an der Quelle
+#   habits → journal-dev (apps/habits)
+#   learn  → fitness-dev
+# Dieses Repo ist kein aktives Dev-Ziel mehr. Push-CI aus; nur workflow_dispatch.
 # PR-AutoMerge: geoeffnete Dependabot-PRs (-> dev) werden bei gruenem `check` gesquasht.
 # Danach laeuft die gewohnte Kette automatisch weiter: check.yml (Dispatch auf dem
 # neuen dev-Stand) -> Auto-Promote (automerge.yml) -> Live-Deploy (deploy-master.yml).
@@ -13,13 +17,12 @@
 name: PR-AutoMerge (Dependabot -> dev)
 
 on:
-  workflow_run:
-    workflows: ["Check (Habits)"]
-    types: [completed]
-  schedule:
-    - cron: '35 * * * *'
   workflow_dispatch:
-
+    inputs:
+      reason:
+        description: 'Nur manuell — Repo ist eingefroren'
+        required: false
+        default: 'frozen'
 permissions:
   contents: write
   pull-requests: write

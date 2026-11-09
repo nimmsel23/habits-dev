@@ -54,3 +54,7 @@ Verbindlich fuer alle Agenten (Vibe, Claude, Codex, Gemini) in Org-Kontexten
 8. Uebersicht/Rang: `TASKRC=~/.local/state/vitalos-org/taskrc \
    ~/.org/venv/bin/python ~/aos/bin/aos door plan quadrants --json`
    (Eisenhower-Sicht Q1–Q4).
+
+## FROZEN — nicht mehr entwickeln
+
+Owner 2026-11-07: dieses Repo ist ausgelaufen. Habits → `journal-dev` (`apps/habits`). Learn → `fitness-dev`. Keine Features/Tooling/Checks hier; `habit-app`/`learn-app` in vitalos sind stale Pins.

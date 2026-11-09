@@ -1,3 +1,7 @@
+# FROZEN (Owner 2026-11-07): Pflege an der Quelle
+#   habits → journal-dev (apps/habits)
+#   learn  → fitness-dev
+# Dieses Repo ist kein aktives Dev-Ziel mehr. Push-CI aus; nur workflow_dispatch.
 # Preview-Deploy für Habits: dev-Push → 24h-Channel "dev", PR → eigener PR-Channel.
 #
 # Warum vitalos-Checkout: Die Vite-Configs aliassen Nachbar-Repos
@@ -10,27 +14,11 @@ name: Preview (Habits dev)
 
 on:
   workflow_dispatch:
-  push:
-    branches: [dev]
-    paths:
-      - 'src/**'
-      - 'journal'
-      - '.gitmodules'
-      - 'vite.config.cjs'
-      - 'tailwind.config.cjs'
-      - 'scripts/**'
-      - '.github/workflows/**'
-  pull_request:
-    branches: [master, dev]
-    paths:
-      - 'src/**'
-      - 'journal'
-      - '.gitmodules'
-      - 'vite.config.cjs'
-      - 'tailwind.config.cjs'
-      - 'scripts/**'
-      - '.github/workflows/**'
-
+    inputs:
+      reason:
+        description: 'Nur manuell — Repo ist eingefroren'
+        required: false
+        default: 'frozen'
 jobs:
   preview:
     runs-on: ubuntu-latest

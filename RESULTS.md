@@ -1,3 +1,8 @@
+## 2026-11-09 — Push-CI eingefroren (Owner-Freeze)
+
+- Check/Preview/Auto-Promote/Gemini nur noch `workflow_dispatch`.
+- Keine Tooling-Pflege; Quelle habits→journal / learn→fitness.
+
 ## 2026-11-09 — Node Tooling (Biome/knip/engines/smoke)
 
 - `engines.node: >=22.13`, Scripts `tooling:biome|knip|check`.

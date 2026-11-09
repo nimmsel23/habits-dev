@@ -1,3 +1,7 @@
+# FROZEN (Owner 2026-11-07): Pflege an der Quelle
+#   habits → journal-dev (apps/habits)
+#   learn  → fitness-dev
+# Dieses Repo ist kein aktives Dev-Ziel mehr. Push-CI aus; nur workflow_dispatch.
 # Check für Habits: Build auf jedem PR/dev-Push, ohne Deploy und ohne Firebase-Secrets.
 #
 # Gleicher Aufbau wie preview-dev.yml (Meta-Repo vitalos liefert die Nachbar-Repos, dieses
@@ -8,11 +12,11 @@ name: Check (Habits)
 
 on:
   workflow_dispatch:
-  push:
-    branches: [dev]
-  pull_request:
-    branches: [master, dev]
-
+    inputs:
+      reason:
+        description: 'Nur manuell — Repo ist eingefroren'
+        required: false
+        default: 'frozen'
 concurrency:
   group: check-${{ github.ref }}
   cancel-in-progress: true

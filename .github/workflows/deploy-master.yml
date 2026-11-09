@@ -1,3 +1,5 @@
+# FROZEN (Owner 2026-11-07): Quelle habits→journal-dev / learn→fitness-dev.
+# Deploy bleibt nur als Freeze-Stand-Monitoring; keine Feature-Arbeit hier.
 # Standalone-Prod Habits: Push auf master deployt live (nur CI).
 # Echte Nachbarn: fitness-dev (@fitness-db/hooks) + fuel-dev (@fuel history) + journal-Submodul.
 # Kein relax/6pack/plan/skills. generated.js via build:exercise-data (+ coaching-notes),
