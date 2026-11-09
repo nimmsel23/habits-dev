@@ -1,3 +1,9 @@
+## 2026-11-09 — Live-Deploy Nachbarn = Journal (6pack/plan/backend)
+
+- Freeze bleibt; nur Deploy-Monitoring: `deploy-master.yml` wie journal-dev
+  um `6pack-dev` + `plan-dev` + `backend@dev` (`SYNC_TOKEN`) ergänzt.
+- Grund: Habits-Build braucht miniAppSubmodulePlugin + fuel shared Stubs.
+
 ## 2026-11-09 — Push-CI eingefroren (Owner-Freeze)
 
 - Check/Preview/Auto-Promote/Gemini nur noch `workflow_dispatch`.
