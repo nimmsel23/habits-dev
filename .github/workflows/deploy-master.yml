@@ -1,14 +1,10 @@
-# Standalone-Prod Habits: Push auf master deployt live (nur CI) — aus den MASTER-Checkouts der
-# eigenen Repos, OHNE das Meta-Repo vitalos (gleiches Muster wie fitness-dev/deploy-master.yml).
-#
-# Layout (Geschwister nebeneinander, wie lokal unter ~/dev): habits-dev/ (dieser Commit) und
-# fitness-dev fuel-dev relax-dev 6pack-dev plan-dev skills-dev jeweils `master`. Jedes Repo installiert mit
-# seinem EIGENEN Lockfile (--frozen-lockfile, --ignore-scripts). Die Vite-Configs lösen die Nachbarn über
-# resolveSibling()/siblingDir() auf (`<x>-app` oder `<x>-dev` daneben).
+# Standalone-Prod Habits: Push auf master deployt live (nur CI).
+# Echte Nachbarn: fitness-dev (@fitness-db/hooks) + fuel-dev (@fuel history) + journal-Submodul.
+# Kein relax/6pack/plan/skills. KB-Daten (gitignored generated.js) via build:kb-data nötig,
+# weil habits `export * from @fitness-db/index.firestore.js` zieht (inkl. kb.js).
 #
 # Auslöser: push auf master und workflow_dispatch (automerge.yml) -> baut und deployt live (nur master).
 # Push auf `ci-test/**` -> reiner Build-Test (Nachbarn von dev), KEIN Deploy.
-# Shell-Pin im Meta-Repo bleibt bewusst: Pointer-Bump via vos-release/vos-ship, kein Auto-Push auf einen vitalos-Branch.
 
 name: Live Deploy (Habits master)
 
@@ -51,7 +47,7 @@ jobs:
       - name: Checkout Nachbarn (${{ env.NEIGHBOR_REF }})
         run: |
           set -euo pipefail
-          for repo in fitness-dev fuel-dev relax-dev 6pack-dev plan-dev skills-dev; do
+          for repo in fitness-dev fuel-dev; do
             git clone --depth 1 --branch "$NEIGHBOR_REF" "https://github.com/nimmsel23/${repo}.git" "$repo"
             echo "$repo @ $(git -C "$repo" rev-parse --short HEAD)"
           done
@@ -90,11 +86,9 @@ jobs:
       - name: Install Nachbarn (je eigener Lockfile)
         run: |
           set -euo pipefail
-          for repo in fitness-dev fuel-dev relax-dev 6pack-dev plan-dev skills-dev; do
+          for repo in fitness-dev fuel-dev; do
             echo "::group::$repo"
             if [ -f "$repo/pnpm-lock.yaml" ]; then
-              # Ein overrides-Block im Lockfile (z. B. @grpc/grpc-js) muss auch in der Konfiguration stehen; pnpm 11 liest
-              # overrides nur aus pnpm-workspace.yaml. Flüchtig aus dem Lockfile erzeugt, passt also immer dazu.
               if grep -q '^overrides:' "$repo/pnpm-lock.yaml" && [ ! -f "$repo/pnpm-workspace.yaml" ]; then
                 sed -n '/^overrides:/,/^$/p' "$repo/pnpm-lock.yaml" > "$repo/pnpm-workspace.yaml"
               fi
@@ -128,6 +122,3 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" \
             npx firebase-tools@latest deploy --only hosting \
             --project fitness-aos --non-interactive
-
-
-
