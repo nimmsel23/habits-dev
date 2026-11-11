@@ -1,3 +1,9 @@
+## 2026-11-11 — CI Simplicity: remove Gemini/Merge-Agent
+
+- Removed: gemini-ci-repair.yml
+- Spine bleibt: Check → automerge-pr (Dependabot) → automerge (dev→master) → Deploy.
+- Owner: complexity only in vitalos/prod (CI.md Kopf).
+
 ## 2026-11-09 — Live-Deploy Nachbarn = Journal (6pack/plan/backend)
 
 - Freeze bleibt; nur Deploy-Monitoring: `deploy-master.yml` wie journal-dev
