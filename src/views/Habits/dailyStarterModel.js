@@ -16,7 +16,7 @@ const sameName = (a, b) => String(a || "").trim().toLocaleLowerCase("de") === St
 // werden wiederverwendet, damit ein wiederholter Klick (z. B. nach einem
 // Verbindungsabbruch) nichts doppelt anlegt.
 export function planStarterHabits(habits) {
-  const active = (habits || []).filter((habit) => habit && !habit.deleted);
+  const active = (habits || []).filter((habit) => habit && !habit.deleted && !habit.hidden);
   const taken = new Set();
   return STARTER_HABITS.map((starter) => {
     const existing = active.find((habit) => !taken.has(habit.uuid) && sameName(habit.name, starter.name));
