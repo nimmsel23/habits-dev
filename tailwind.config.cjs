@@ -1,19 +1,15 @@
-const path = require("path");
-const JOURNAL_GLOB = path.resolve(__dirname, "journal/src/**/*.{js,jsx}");
+const path = require('path')
+const JOURNAL_GLOB = path.resolve(__dirname, 'journal/src/**/*.{js,jsx}')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,jsx}",
-    JOURNAL_GLOB,
-  ],
+  content: ['./index.html', './src/**/*.{js,jsx}', JOURNAL_GLOB],
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
     },
   },
   plugins: [],
-};
+}

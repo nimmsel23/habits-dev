@@ -1,0 +1,19 @@
+{
+  "repo": "habits-dev",
+  "apps": [
+    {
+      "id": "habit-vos",
+      "kind": "main",
+      "name": "habit-vos",
+      "short": "habit-vos",
+      "description": "",
+      "accent": "#888",
+      "site": "habit-vos",
+      "url": "https://habit-vos.web.app",
+      "tab": null,
+      "bundledAuthDomain": "fitness-aos.firebaseapp.com"
+    }
+  ],
+  "pages": "https://nimmsel23.github.io/habits-dev/",
+  "bundledAuthDomain": "fitness-aos.firebaseapp.com"
+}
