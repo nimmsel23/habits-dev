@@ -1,0 +1,374 @@
+{
+ "evidence": {
+  "generated_at": "2026-11-13T00:09:01+00:00",
+  "repo": "nimmsel23/habits-dev",
+  "meta": {
+   "name": "habits-dev",
+   "description": "VOS Habits PWA",
+   "html_url": "https://github.com/nimmsel23/habits-dev",
+   "pushed_at": "2026-11-13T00:08:41Z",
+   "default_branch": "master",
+   "visibility": "public",
+   "pages_url": null
+  },
+  "package": {
+   "name": "@vos/habits",
+   "version": "0.1.0"
+  },
+  "branches": {
+   "main": "master",
+   "has_dev": true,
+   "dev_behind": 0,
+   "dev_ahead": 1,
+   "oldest_unpromoted": "2026-11-13T01:08:39+01:00",
+   "dev_head": "349895e 2026-11-13T01:08:39+01:00",
+   "master_head": "0bf7d47 2026-11-12T11:19:14+01:00"
+  },
+  "commits": [
+   {
+    "sha": "349895e",
+    "date": "2026-11-13T01:08:39+01:00",
+    "author": "Alpha",
+    "subject": "feat(ci): Living Dashboard als GitHub Page"
+   },
+   {
+    "sha": "0bf7d47",
+    "date": "2026-11-12T11:19:14+01:00",
+    "author": "Alpha",
+    "subject": "fix(habits): Starter ignoriert versteckte Habits"
+   },
+   {
+    "sha": "87cf30e",
+    "date": "2026-11-12T11:18:28+01:00",
+    "author": "Alpha",
+    "subject": "refactor(habits): IS_STORE_BUILD per Einzelvergleich (Bundler faltet Zweig)"
+   },
+   {
+    "sha": "262133a",
+    "date": "2026-11-12T11:14:58+01:00",
+    "author": "Alpha",
+    "subject": "feat(habits): Store-Build Dein Tag deutsch, ohne 4B/Core4, Ein-Klick-Start mit vier Gewohnheiten"
+   },
+   {
+    "sha": "6448337",
+    "date": "2026-11-12T02:19:52+01:00",
+    "author": "Alpha",
+    "subject": "ci: restore Gemini repair + Merge-Agent (full automation)"
+   },
+   {
+    "sha": "0f14099",
+    "date": "2026-11-11T19:11:54+01:00",
+    "author": "Alpha",
+    "subject": "ci: drop Gemini repair and Merge-Agent (simplicity)"
+   },
+   {
+    "sha": "193aae4",
+    "date": "2026-11-09T22:53:48+01:00",
+    "author": "Alpha",
+    "subject": "fix(ci): Live-Deploy Nachbarn wie Journal (6pack/plan/backend)"
+   },
+   {
+    "sha": "2d0cb52",
+    "date": "2026-11-09T22:53:48+01:00",
+    "author": "Alpha",
+    "subject": "docs: auto-update RESULTS.md"
+   },
+   {
+    "sha": "675c43b",
+    "date": "2026-11-09T22:37:04+01:00",
+    "author": "Alpha",
+    "subject": "ci: freeze Push-CI — Repo ausgelaufen (Quelle journal-dev)"
+   },
+   {
+    "sha": "6b97c4b",
+    "date": "2026-11-09T22:22:21+01:00",
+    "author": "Alpha",
+    "subject": "chore(tooling): engines, Biome scripts-format, knip, smoke in Check"
+   },
+   {
+    "sha": "822d74a",
+    "date": "2026-11-09T20:55:02+01:00",
+    "author": "Alpha",
+    "subject": "merge origin/master (undiverge after rebase dropped merge)"
+   },
+   {
+    "sha": "bcd742f",
+    "date": "2026-11-09T20:47:48+01:00",
+    "author": "Alpha",
+    "subject": "ci: Auto-Promote wie Journal; master in dev gemergt"
+   },
+   {
+    "sha": "703edad",
+    "date": "2026-11-09T20:47:48+01:00",
+    "author": "Alpha",
+    "subject": "docs: auto-update RESULTS.md"
+   },
+   {
+    "sha": "5a4122b",
+    "date": "2026-11-09T20:31:38+01:00",
+    "author": "Alpha",
+    "subject": "fix(ci): fitness-dev Neighbor von dev (Bulk-Fix noch nicht auf master)"
+   },
+   {
+    "sha": "5e77efd",
+    "date": "2026-11-09T20:25:59+01:00",
+    "author": "Alpha",
+    "subject": "fix(ci): nur exercise-data statt build:kb-data (kein plan/6pack)"
+   },
+   {
+    "sha": "ed85a45",
+    "date": "2026-11-09T20:23:20+01:00",
+    "author": "Alpha",
+    "subject": "fix(ci): 6pack-dev-Nachbar für fitness build:kb-data"
+   },
+   {
+    "sha": "5766801",
+    "date": "2026-11-09T20:21:12+01:00",
+    "author": "Alpha",
+    "subject": "fix(ci): KB-Mount prüft Yuhonas-Vendor-Datei"
+   },
+   {
+    "sha": "53598af",
+    "date": "2026-11-09T20:18:51+01:00",
+    "author": "Alpha",
+    "subject": "fix(ci): Fitness-KB Checkout mit submodules (Yuhonas vendor)"
+   },
+   {
+    "sha": "a0ac8bc",
+    "date": "2026-11-09T20:16:24+01:00",
+    "author": "Alpha",
+    "subject": "docs: RESULTS — CI Deploy-Cleanup 2026-11-09"
+   },
+   {
+    "sha": "2655ff8",
+    "date": "2026-11-09T20:15:47+01:00",
+    "author": "Alpha",
+    "subject": "fix(ci): Live-Deploy nur fitness+fuel+journal; tote Nachbarn weg"
+   }
+  ],
+  "activity": [
+   {
+    "day": "2026-10-24",
+    "n": 0
+   },
+   {
+    "day": "2026-10-25",
+    "n": 0
+   },
+   {
+    "day": "2026-10-26",
+    "n": 3
+   },
+   {
+    "day": "2026-10-27",
+    "n": 0
+   },
+   {
+    "day": "2026-10-28",
+    "n": 3
+   },
+   {
+    "day": "2026-10-29",
+    "n": 9
+   },
+   {
+    "day": "2026-10-30",
+    "n": 0
+   },
+   {
+    "day": "2026-10-31",
+    "n": 4
+   },
+   {
+    "day": "2026-11-01",
+    "n": 1
+   },
+   {
+    "day": "2026-11-02",
+    "n": 2
+   },
+   {
+    "day": "2026-11-03",
+    "n": 7
+   },
+   {
+    "day": "2026-11-04",
+    "n": 14
+   },
+   {
+    "day": "2026-11-05",
+    "n": 18
+   },
+   {
+    "day": "2026-11-06",
+    "n": 6
+   },
+   {
+    "day": "2026-11-07",
+    "n": 13
+   },
+   {
+    "day": "2026-11-08",
+    "n": 4
+   },
+   {
+    "day": "2026-11-09",
+    "n": 17
+   },
+   {
+    "day": "2026-11-10",
+    "n": 0
+   },
+   {
+    "day": "2026-11-11",
+    "n": 1
+   },
+   {
+    "day": "2026-11-12",
+    "n": 4
+   },
+   {
+    "day": "2026-11-13",
+    "n": 1
+   }
+  ],
+  "workflows": [
+   {
+    "name": "Live Deploy (Habits master)",
+    "branch": "master",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-11-12T11:29:48Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43209632404",
+    "sha": "0bf7d47"
+   },
+   {
+    "name": "Auto-Promote dev -> master (Check (Habits))",
+    "branch": "master",
+    "event": "schedule",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-12T08:25:10Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43182772045",
+    "sha": "6b97c4b"
+   },
+   {
+    "name": "PR-AutoMerge (Dependabot -> dev)",
+    "branch": "master",
+    "event": "schedule",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-12T04:05:00Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43152420225",
+    "sha": "6b97c4b"
+   },
+   {
+    "name": "Preview (Habits dev)",
+    "branch": "dev",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-09T21:22:26Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42701882219",
+    "sha": "6b97c4b"
+   },
+   {
+    "name": "Check (Habits)",
+    "branch": "dev",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-09T21:22:26Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42701882159",
+    "sha": "6b97c4b"
+   },
+   {
+    "name": "Auto-Merge (grüner Check Habits)",
+    "branch": "master",
+    "event": "workflow_run",
+    "status": "completed",
+    "conclusion": "skipped",
+    "created_at": "2026-11-09T19:57:21Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42688278174",
+    "sha": "1995f1a"
+   },
+   {
+    "name": "Gemini CI Agent",
+    "branch": "master",
+    "event": "workflow_run",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-08T07:14:17Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42457956849",
+    "sha": "1995f1a"
+   },
+   {
+    "name": "Gemini CI Agent",
+    "branch": "dev",
+    "event": "pull_request_target",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-11-08T07:12:54Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42457858048",
+    "sha": "6cd0c0e"
+   }
+  ],
+  "issues": [],
+  "pulls": [],
+  "live_sites": [
+   "https://habit-vos.web.app"
+  ]
+ },
+ "assessment": {
+  "status": "red",
+  "signals": [
+   {
+    "level": "red",
+    "key": "ci:Live Deploy (Habits master):master",
+    "text": "„Live Deploy (Habits master)“ auf master ist rot (failure, 0bf7d47)",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43209632404"
+   },
+   {
+    "level": "red",
+    "key": "ci:Gemini CI Agent:dev",
+    "text": "„Gemini CI Agent“ auf dev ist rot (failure, 6cd0c0e)",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42457858048"
+   }
+  ],
+  "ai": {
+   "headline": "CI-Fehler auf Master und Dev blockieren Deploy und Agent",
+   "lage": "Zwei kritische CI-Workflows sind fehlgeschlagen: `Live Deploy (Habits master)` auf `master` (Commit `0bf7d47`) und `Gemini CI Agent` auf `dev` (Commit `6cd0c0e`). Der `dev`-Branch ist einen Commit vor `master`, wobei der neueste `dev`-Commit `349895e` keinen zugehörigen Workflow-Lauf zeigt.",
+   "auffaelligkeiten": [
+    {
+     "level": "hoch",
+     "text": "Der `Live Deploy (Habits master)`-Workflow auf `master` ist mit Commit `0bf7d47` fehlgeschlagen."
+    },
+    {
+     "level": "hoch",
+     "text": "Der `Gemini CI Agent`-Workflow auf `dev` ist mit Commit `6cd0c0e` fehlgeschlagen."
+    },
+    {
+     "level": "mittel",
+     "text": "Der neueste Commit `349895e` auf `dev` (\"feat(ci): Living Dashboard als GitHub Page\") hat keinen aufgeführten CI-Lauf."
+    },
+    {
+     "level": "info",
+     "text": "`NEXT.md` erwähnt die Prüfung des `GEMINI_API_KEY` und die Beobachtung eines vollständigen Fehler->Reparatur->Deploy-Zyklus, was auf die Relevanz des `Gemini CI Agent`-Fehlers hindeutet."
+    }
+   ],
+   "naechste_schritte": [
+    "Untersuchen: Fehlerursache des `Live Deploy (Habits master)`-Workflows für Commit `0bf7d47`.",
+    "Untersuchen: Fehlerursache des `Gemini CI Agent`-Workflows für Commit `6cd0c0e` auf `dev`.",
+    "Prüfen: Ob für Commit `349895e` auf `dev` ein Workflow-Lauf erwartet wird oder manuell gestartet werden sollte."
+   ],
+   "veraendert": "Erste Einschätzung der Lage.",
+   "fragen": [
+    "Soll die Behebung des `Gemini CI Agent`-Fehlers auf `dev` priorisiert werden, um die in `NEXT.md` beschriebene Automatisierung zu validieren?",
+    "Ist der fehlgeschlagene `Live Deploy` auf `master` ein unmittelbarer Blocker für geplante Veröffentlichungen?"
+   ],
+   "model": "gemini-2.5-flash"
+  },
+  "ai_at": "2026-11-13T00:09:04+00:00"
+ }
+}
