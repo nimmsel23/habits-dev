@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-14T22:20:22+00:00",
+  "generated_at": "2026-11-14T22:30:02+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-14T22:20:08Z",
+   "pushed_at": "2026-11-14T22:29:44Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -19,12 +19,18 @@
    "main": "master",
    "has_dev": true,
    "dev_behind": 0,
-   "dev_ahead": 2,
-   "oldest_unpromoted": "2026-11-14T23:14:02+01:00",
-   "dev_head": "9c5f1b8 2026-11-14T23:20:02+01:00",
-   "master_head": "ec5d418 2026-11-13T01:12:15+01:00"
+   "dev_ahead": 1,
+   "oldest_unpromoted": "2026-11-14T23:29:38+01:00",
+   "dev_head": "f19d72f 2026-11-14T23:29:38+01:00",
+   "master_head": "9c5f1b8 2026-11-14T23:20:02+01:00"
   },
   "commits": [
+   {
+    "sha": "f19d72f",
+    "date": "2026-11-14T23:29:38+01:00",
+    "author": "Alpha",
+    "subject": "chore(portal): Registry nach Release aktualisiert (vos-portal)"
+   },
    {
     "sha": "9c5f1b8",
     "date": "2026-11-14T23:20:02+01:00",
@@ -138,12 +144,6 @@
     "date": "2026-11-09T20:23:20+01:00",
     "author": "Alpha",
     "subject": "fix(ci): 6pack-dev-Nachbar für fitness build:kb-data"
-   },
-   {
-    "sha": "5766801",
-    "date": "2026-11-09T20:21:12+01:00",
-    "author": "Alpha",
-    "subject": "fix(ci): KB-Mount prüft Yuhonas-Vendor-Datei"
    }
   ],
   "activity": [
@@ -229,7 +229,7 @@
    },
    {
     "day": "2026-11-14",
-    "n": 2
+    "n": 3
    }
   ],
   "workflows": [
@@ -238,10 +238,10 @@
     "branch": "master",
     "event": "push",
     "status": "completed",
-    "conclusion": "failure",
-    "created_at": "2026-11-14T22:12:39Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43646878438",
-    "sha": "ec5d418"
+    "conclusion": "success",
+    "created_at": "2026-11-14T22:21:24Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43647658227",
+    "sha": "9c5f1b8"
    },
    {
     "name": "Auto-Promote dev -> master (Check (Habits))",
@@ -319,7 +319,7 @@
     "number": 17,
     "title": "Dashboard-Lage: rot",
     "created_at": "2026-11-13T00:09:18Z",
-    "updated_at": "2026-11-14T22:14:41Z",
+    "updated_at": "2026-11-14T22:20:34Z",
     "labels": [
      "dashboard"
     ],
@@ -337,43 +337,37 @@
   "signals": [
    {
     "level": "red",
-    "key": "ci:Live Deploy (Habits master):master",
-    "text": "„Live Deploy (Habits master)“ auf master ist rot (failure, ec5d418)",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43646878438"
-   },
-   {
-    "level": "red",
     "key": "ci:Gemini CI Agent:dev",
     "text": "„Gemini CI Agent“ auf dev ist rot (failure, 6cd0c0e)",
     "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42457858048"
    }
   ],
   "ai": {
-   "headline": "CI-Fehler auf Master und Dev; zwei neue Dev-Commits ungeprüft",
-   "lage": "Der Workflow `Live Deploy (Habits master)` auf `master` ist für Commit `ec5d418` fehlgeschlagen. Ebenso ist der `Gemini CI Agent` auf `dev` für Commit `6cd0c0e` weiterhin rot. Der `dev`-Branch ist mit den Commits `c325de1` und `9c5f1b8` zwei Commits voraus, für die keine Workflow-Läufe in der Evidenz existieren.",
+   "headline": "CI-Fehler auf Dev persistent; Master ist grün",
+   "lage": "Der Workflow `Gemini CI Agent` auf `dev` ist weiterhin rot für Commit `6cd0c0e`. Der `master`-Branch ist mit dem `Live Deploy (Habits master)`-Workflow für Commit `9c5f1b8` erfolgreich. Der `dev`-Branch ist mit Commit `f19d72f` einen Commit voraus, für den kein Workflow-Lauf in der Evidenz existiert. Issue #17 \"Dashboard-Lage: rot\" ist offen und wurde kürzlich aktualisiert.",
    "auffaelligkeiten": [
     {
      "level": "hoch",
-     "text": "„Live Deploy (Habits master)“ auf master ist rot (failure, ec5d418)"
-    },
-    {
-     "level": "hoch",
-     "text": "„Gemini CI Agent“ auf dev ist rot (failure, 6cd0c0e)"
+     "text": "Der Workflow `Gemini CI Agent` auf `dev` ist für Commit `6cd0c0e` fehlgeschlagen (https://github.com/nimmsel23/habits-dev/actions/runs/42457858048)."
     },
     {
      "level": "mittel",
-     "text": "Die neuesten `dev`-Commits `c325de1` und `9c5f1b8` wurden nicht durch CI geprüft."
+     "text": "Für den aktuellen `dev`-Head `f19d72f` existiert kein Workflow-Lauf in der Evidenz."
+    },
+    {
+     "level": "info",
+     "text": "Issue #17 \"Dashboard-Lage: rot\" ist offen und wurde am 2026-11-14T22:20:34Z aktualisiert."
     }
    ],
    "naechste_schritte": [
-    "Analysieren: Fehlerursache des `Live Deploy (Habits master)`-Workflows für Commit `ec5d418`.",
     "Analysieren: Fehlerursache des `Gemini CI Agent`-Workflows für Commit `6cd0c0e` auf `dev`.",
-    "Starten: Workflows für die neuesten `dev`-Commits `c325de1` und `9c5f1b8` manuell auslösen."
+    "Starten: Workflows für den neuesten `dev`-Commit `f19d72f` manuell auslösen.",
+    "Prüfen: Zusammenhang zwischen Issue #17 und dem `Gemini CI Agent`-Fehler."
    ],
-   "veraendert": "Der `dev`-Branch ist nun zwei Commits (`c325de1`, `9c5f1b8`) vor `master`, statt nur einem (`c325de1`) wie in der letzten Einschätzung.",
+   "veraendert": "Der `Live Deploy (Habits master)`-Workflow auf `master` ist nun für Commit `9c5f1b8` erfolgreich, und der `dev`-Branch ist nur noch einen Commit voraus.",
    "fragen": [],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-14T22:20:24+00:00"
+  "ai_at": "2026-11-14T22:30:04+00:00"
  }
 }
