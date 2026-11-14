@@ -131,6 +131,8 @@ module.exports = defineConfig(async ({ mode }) => {
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+          // Haupt-Bundle liegt bei ~3 MB (Fitness/Fuel/Journal-Quellen); Default 2 MiB würde es nicht precachen.
+          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
           navigateFallback: '/index.html',
           navigateFallbackDenylist: [/^\/api/, /^\/nutrition/, /^\/supplements/, /^\/fuel/, /^\/health/],
           runtimeCaching: [

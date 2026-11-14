@@ -29,6 +29,8 @@ export const db = alreadyInit
     });
 
 export const auth = getAuth(app);
+// fuel (core.js) importiert authDomain über die firebase.js-Umleitung; wie in der Shell: wie konfiguriert.
+export const authDomain = firebaseConfig.authDomain;
 export const googleProvider = new GoogleAuthProvider();
 
 let messagingPromise = null;
