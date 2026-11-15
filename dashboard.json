@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-14T22:30:02+00:00",
+  "generated_at": "2026-11-15T12:12:32+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-14T22:29:44Z",
+   "pushed_at": "2026-11-14T22:30:23Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -148,12 +148,8 @@
   ],
   "activity": [
    {
-    "day": "2026-10-25",
-    "n": 0
-   },
-   {
     "day": "2026-10-26",
-    "n": 3
+    "n": 0
    },
    {
     "day": "2026-10-27",
@@ -230,6 +226,10 @@
    {
     "day": "2026-11-14",
     "n": 3
+   },
+   {
+    "day": "2026-11-15",
+    "n": 0
    }
   ],
   "workflows": [
@@ -319,7 +319,7 @@
     "number": 17,
     "title": "Dashboard-Lage: rot",
     "created_at": "2026-11-13T00:09:18Z",
-    "updated_at": "2026-11-14T22:20:34Z",
+    "updated_at": "2026-11-14T22:30:21Z",
     "labels": [
      "dashboard"
     ],
@@ -344,30 +344,36 @@
   ],
   "ai": {
    "headline": "CI-Fehler auf Dev persistent; Master ist grün",
-   "lage": "Der Workflow `Gemini CI Agent` auf `dev` ist weiterhin rot für Commit `6cd0c0e`. Der `master`-Branch ist mit dem `Live Deploy (Habits master)`-Workflow für Commit `9c5f1b8` erfolgreich. Der `dev`-Branch ist mit Commit `f19d72f` einen Commit voraus, für den kein Workflow-Lauf in der Evidenz existiert. Issue #17 \"Dashboard-Lage: rot\" ist offen und wurde kürzlich aktualisiert.",
+   "lage": "Der Workflow „Gemini CI Agent“ auf `dev` ist weiterhin rot für Commit `6cd0c0e`. Der `master`-Branch ist mit dem `Live Deploy (Habits master)`-Workflow für Commit `9c5f1b8` erfolgreich. Der `dev`-Branch ist mit Commit `f19d72f` einen Commit voraus, für den kein Workflow-Lauf in der Evidenz existiert. Issue #17 \"Dashboard-Lage: rot\" ist offen und wurde kürzlich aktualisiert.",
    "auffaelligkeiten": [
     {
      "level": "hoch",
-     "text": "Der Workflow `Gemini CI Agent` auf `dev` ist für Commit `6cd0c0e` fehlgeschlagen (https://github.com/nimmsel23/habits-dev/actions/runs/42457858048)."
+     "text": "Der Workflow „Gemini CI Agent“ auf `dev` ist rot (failure, 6cd0c0e) gemäß Regelsignal."
     },
     {
      "level": "mittel",
-     "text": "Für den aktuellen `dev`-Head `f19d72f` existiert kein Workflow-Lauf in der Evidenz."
+     "text": "Für den neuesten `dev`-Commit `f19d72f` existiert kein Workflow-Lauf in der Evidenz."
     },
     {
      "level": "info",
-     "text": "Issue #17 \"Dashboard-Lage: rot\" ist offen und wurde am 2026-11-14T22:20:34Z aktualisiert."
+     "text": "Issue #17 \"Dashboard-Lage: rot\" ist offen und wurde am 2026-11-14T22:30:21Z aktualisiert."
+    },
+    {
+     "level": "info",
+     "text": "`NEXT.md` erwähnt die Prüfung von `GEMINI_API_KEY` und `SYNC_TOKEN` für den Gemini CI Agent."
     }
    ],
    "naechste_schritte": [
-    "Analysieren: Fehlerursache des `Gemini CI Agent`-Workflows für Commit `6cd0c0e` auf `dev`.",
+    "Analysieren: Fehlerursache des „Gemini CI Agent“-Workflows für Commit `6cd0c0e` auf `dev`.",
     "Starten: Workflows für den neuesten `dev`-Commit `f19d72f` manuell auslösen.",
-    "Prüfen: Zusammenhang zwischen Issue #17 und dem `Gemini CI Agent`-Fehler."
+    "Prüfen: `GEMINI_API_KEY` und `SYNC_TOKEN` gemäß `NEXT.md` für den Gemini CI Agent."
    ],
-   "veraendert": "Der `Live Deploy (Habits master)`-Workflow auf `master` ist nun für Commit `9c5f1b8` erfolgreich, und der `dev`-Branch ist nur noch einen Commit voraus.",
-   "fragen": [],
+   "veraendert": "Der „Gemini CI Agent“ auf `dev` ist weiterhin rot. Neu ist der Hinweis in `NEXT.md` zur Prüfung von `GEMINI_API_KEY` und `SYNC_TOKEN` im Kontext des Gemini CI Agent.",
+   "fragen": [
+    "Ist der `GEMINI_API_KEY` als Actions-Secret eingerichtet oder muss dies noch erfolgen?"
+   ],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-14T22:30:04+00:00"
+  "ai_at": "2026-11-15T12:12:34+00:00"
  }
 }
