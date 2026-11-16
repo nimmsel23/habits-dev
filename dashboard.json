@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-16T11:36:00+00:00",
+  "generated_at": "2026-11-16T13:05:24+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-16T11:35:38Z",
+   "pushed_at": "2026-11-16T11:36:20Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -232,94 +232,13 @@
     "n": 3
    }
   ],
-  "workflows": [
-   {
-    "name": "Live Deploy (Habits master)",
-    "branch": "master",
-    "event": "push",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-14T22:21:24Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43647658227",
-    "sha": "9c5f1b8"
-   },
-   {
-    "name": "Auto-Promote dev -> master (Check (Habits))",
-    "branch": "master",
-    "event": "schedule",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-12T08:25:10Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43182772045",
-    "sha": "6b97c4b"
-   },
-   {
-    "name": "PR-AutoMerge (Dependabot -> dev)",
-    "branch": "master",
-    "event": "schedule",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-12T04:05:00Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43152420225",
-    "sha": "6b97c4b"
-   },
-   {
-    "name": "Preview (Habits dev)",
-    "branch": "dev",
-    "event": "push",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-09T21:22:26Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42701882219",
-    "sha": "6b97c4b"
-   },
-   {
-    "name": "Check (Habits)",
-    "branch": "dev",
-    "event": "push",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-09T21:22:26Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42701882159",
-    "sha": "6b97c4b"
-   },
-   {
-    "name": "Auto-Merge (grüner Check Habits)",
-    "branch": "master",
-    "event": "workflow_run",
-    "status": "completed",
-    "conclusion": "skipped",
-    "created_at": "2026-11-09T19:57:21Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42688278174",
-    "sha": "1995f1a"
-   },
-   {
-    "name": "Gemini CI Agent",
-    "branch": "master",
-    "event": "workflow_run",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-08T07:14:17Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42457956849",
-    "sha": "1995f1a"
-   },
-   {
-    "name": "Gemini CI Agent",
-    "branch": "dev",
-    "event": "pull_request_target",
-    "status": "completed",
-    "conclusion": "failure",
-    "created_at": "2026-11-08T07:12:54Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42457858048",
-    "sha": "6cd0c0e"
-   }
-  ],
+  "workflows": [],
   "issues": [
    {
     "number": 17,
     "title": "Dashboard-Lage: rot",
     "created_at": "2026-11-13T00:09:18Z",
-    "updated_at": "2026-11-15T12:12:45Z",
+    "updated_at": "2026-11-16T11:36:18Z",
     "labels": [
      "dashboard"
     ],
@@ -333,50 +252,40 @@
   ]
  },
  "assessment": {
-  "status": "red",
+  "status": "yellow",
   "signals": [
-   {
-    "level": "red",
-    "key": "ci:Gemini CI Agent:dev",
-    "text": "„Gemini CI Agent“ auf dev ist rot (failure, 6cd0c0e)",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42457858048"
-   },
    {
     "level": "yellow",
     "key": "promote",
-    "text": "4 Commit(s) auf dev seit 1.5 Tagen nicht auf master promotet"
+    "text": "4 Commit(s) auf dev seit 1.6 Tagen nicht auf master promotet"
    }
   ],
   "ai": {
-   "headline": "CI-Fehler auf Dev persistent; 4 Commits unpromoted",
-   "lage": "Der Workflow „Gemini CI Agent“ auf `dev` ist weiterhin rot für Commit `6cd0c0e`. Der `dev`-Branch ist 4 Commits voraus, wobei die neuesten Commits (`1b5173c`, `382a515`, `5e2929d`, `f19d72f`) keine Workflow-Läufe in der Evidenz aufweisen. Der `master`-Branch ist mit dem `Live Deploy (Habits master)`-Workflow für Commit `9c5f1b8` erfolgreich.",
+   "headline": "4 Commits auf dev unpromoted; keine Workflow-Läufe in Evidenz",
+   "lage": "Der `dev`-Branch ist 4 Commits voraus, wobei der älteste unpromotete Commit `f19d72f` vom 14.11.2026 stammt. Es sind keine Workflow-Läufe in der aktuellen Evidenz enthalten, was eine Bewertung des CI-Status erschwert. Issue #17 \"Dashboard-Lage: rot\" ist weiterhin offen und wurde zuletzt am 16.11.2026 aktualisiert.",
    "auffaelligkeiten": [
     {
      "level": "hoch",
-     "text": "„Gemini CI Agent“ auf dev ist rot (failure, 6cd0c0e)"
+     "text": "Keine Workflow-Läufe in der Evidenz vorhanden, was eine Statusbeurteilung der CI verhindert."
+    },
+    {
+     "level": "hoch",
+     "text": "Der dev-Branch ist 4 Commits voraus (seit 1.6 Tagen unpromoted), beginnend mit Commit f19d72f."
     },
     {
      "level": "mittel",
-     "text": "4 Commit(s) auf dev seit 1.5 Tagen nicht auf master promotet"
-    },
-    {
-     "level": "info",
-     "text": "Die neuesten 4 Commits auf dev (`1b5173c`, `382a515`, `5e2929d`, `f19d72f`) haben keine zugehörigen Workflow-Läufe in der Evidenz."
-    },
-    {
-     "level": "info",
-     "text": "Issue #17 \"Dashboard-Lage: rot\" ist offen und wurde am 2026-11-15T12:12:45Z aktualisiert."
+     "text": "Issue #17 'Dashboard-Lage: rot' ist offen und wurde zuletzt am 16.11.2026 aktualisiert."
     }
    ],
    "naechste_schritte": [
-    "Analysieren: Fehlerursache des „Gemini CI Agent“-Workflows für Commit `6cd0c0e` auf `dev`.",
-    "Starten: Workflows für die neuesten `dev`-Commits (`1b5173c`, `382a515`, `5e2929d`, `f19d72f`) manuell auslösen.",
+    "Prüfen: Ursache für das Fehlen von Workflow-Läufen in der Evidenz.",
+    "Starten: Manuell Workflows für die neuesten `dev`-Commits (`1b5173c`, `382a515`, `5e2929d`, `f19d72f`) auslösen.",
     "Prüfen: `GEMINI_API_KEY` und `SYNC_TOKEN` gemäß `NEXT.md` für den Gemini CI Agent."
    ],
-   "veraendert": "Der `dev`-Branch ist um 3 Commits vorangekommen, und die Anzahl der unpromoteten Commits hat sich auf 4 erhöht, während der CI-Fehler auf `dev` für `6cd0c0e` weiterhin besteht.",
+   "veraendert": "Im Gegensatz zur letzten Einschätzung sind keine Workflow-Läufe mehr in der Evidenz enthalten, was eine direkte Analyse des CI-Status unmöglich macht.",
    "fragen": [],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-16T11:36:03+00:00"
+  "ai_at": "2026-11-16T13:05:34+00:00"
  }
 }
