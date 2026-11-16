@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-15T12:12:32+00:00",
+  "generated_at": "2026-11-16T11:36:00+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-14T22:30:23Z",
+   "pushed_at": "2026-11-16T11:35:38Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -19,12 +19,30 @@
    "main": "master",
    "has_dev": true,
    "dev_behind": 0,
-   "dev_ahead": 1,
+   "dev_ahead": 4,
    "oldest_unpromoted": "2026-11-14T23:29:38+01:00",
-   "dev_head": "f19d72f 2026-11-14T23:29:38+01:00",
+   "dev_head": "1b5173c 2026-11-16T11:35:34Z",
    "master_head": "9c5f1b8 2026-11-14T23:20:02+01:00"
   },
   "commits": [
+   {
+    "sha": "1b5173c",
+    "date": "2026-11-16T11:35:34Z",
+    "author": "Cursor Agent",
+    "subject": "dashboard: Check und Dashboard starten"
+   },
+   {
+    "sha": "382a515",
+    "date": "2026-11-16T11:33:29Z",
+    "author": "Cursor Agent",
+    "subject": "dashboard: Check und Dashboard auf dev starten"
+   },
+   {
+    "sha": "5e2929d",
+    "date": "2026-11-16T11:26:36Z",
+    "author": "Cursor Agent",
+    "subject": "dashboard: master-Push baut ebenfalls dev"
+   },
    {
     "sha": "f19d72f",
     "date": "2026-11-14T23:29:38+01:00",
@@ -126,31 +144,9 @@
     "date": "2026-11-09T20:47:48+01:00",
     "author": "Alpha",
     "subject": "docs: auto-update RESULTS.md"
-   },
-   {
-    "sha": "5a4122b",
-    "date": "2026-11-09T20:31:38+01:00",
-    "author": "Alpha",
-    "subject": "fix(ci): fitness-dev Neighbor von dev (Bulk-Fix noch nicht auf master)"
-   },
-   {
-    "sha": "5e77efd",
-    "date": "2026-11-09T20:25:59+01:00",
-    "author": "Alpha",
-    "subject": "fix(ci): nur exercise-data statt build:kb-data (kein plan/6pack)"
-   },
-   {
-    "sha": "ed85a45",
-    "date": "2026-11-09T20:23:20+01:00",
-    "author": "Alpha",
-    "subject": "fix(ci): 6pack-dev-Nachbar für fitness build:kb-data"
    }
   ],
   "activity": [
-   {
-    "day": "2026-10-26",
-    "n": 0
-   },
    {
     "day": "2026-10-27",
     "n": 0
@@ -230,6 +226,10 @@
    {
     "day": "2026-11-15",
     "n": 0
+   },
+   {
+    "day": "2026-11-16",
+    "n": 3
    }
   ],
   "workflows": [
@@ -319,7 +319,7 @@
     "number": 17,
     "title": "Dashboard-Lage: rot",
     "created_at": "2026-11-13T00:09:18Z",
-    "updated_at": "2026-11-14T22:30:21Z",
+    "updated_at": "2026-11-15T12:12:45Z",
     "labels": [
      "dashboard"
     ],
@@ -340,40 +340,43 @@
     "key": "ci:Gemini CI Agent:dev",
     "text": "„Gemini CI Agent“ auf dev ist rot (failure, 6cd0c0e)",
     "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42457858048"
+   },
+   {
+    "level": "yellow",
+    "key": "promote",
+    "text": "4 Commit(s) auf dev seit 1.5 Tagen nicht auf master promotet"
    }
   ],
   "ai": {
-   "headline": "CI-Fehler auf Dev persistent; Master ist grün",
-   "lage": "Der Workflow „Gemini CI Agent“ auf `dev` ist weiterhin rot für Commit `6cd0c0e`. Der `master`-Branch ist mit dem `Live Deploy (Habits master)`-Workflow für Commit `9c5f1b8` erfolgreich. Der `dev`-Branch ist mit Commit `f19d72f` einen Commit voraus, für den kein Workflow-Lauf in der Evidenz existiert. Issue #17 \"Dashboard-Lage: rot\" ist offen und wurde kürzlich aktualisiert.",
+   "headline": "CI-Fehler auf Dev persistent; 4 Commits unpromoted",
+   "lage": "Der Workflow „Gemini CI Agent“ auf `dev` ist weiterhin rot für Commit `6cd0c0e`. Der `dev`-Branch ist 4 Commits voraus, wobei die neuesten Commits (`1b5173c`, `382a515`, `5e2929d`, `f19d72f`) keine Workflow-Läufe in der Evidenz aufweisen. Der `master`-Branch ist mit dem `Live Deploy (Habits master)`-Workflow für Commit `9c5f1b8` erfolgreich.",
    "auffaelligkeiten": [
     {
      "level": "hoch",
-     "text": "Der Workflow „Gemini CI Agent“ auf `dev` ist rot (failure, 6cd0c0e) gemäß Regelsignal."
+     "text": "„Gemini CI Agent“ auf dev ist rot (failure, 6cd0c0e)"
     },
     {
      "level": "mittel",
-     "text": "Für den neuesten `dev`-Commit `f19d72f` existiert kein Workflow-Lauf in der Evidenz."
+     "text": "4 Commit(s) auf dev seit 1.5 Tagen nicht auf master promotet"
     },
     {
      "level": "info",
-     "text": "Issue #17 \"Dashboard-Lage: rot\" ist offen und wurde am 2026-11-14T22:30:21Z aktualisiert."
+     "text": "Die neuesten 4 Commits auf dev (`1b5173c`, `382a515`, `5e2929d`, `f19d72f`) haben keine zugehörigen Workflow-Läufe in der Evidenz."
     },
     {
      "level": "info",
-     "text": "`NEXT.md` erwähnt die Prüfung von `GEMINI_API_KEY` und `SYNC_TOKEN` für den Gemini CI Agent."
+     "text": "Issue #17 \"Dashboard-Lage: rot\" ist offen und wurde am 2026-11-15T12:12:45Z aktualisiert."
     }
    ],
    "naechste_schritte": [
     "Analysieren: Fehlerursache des „Gemini CI Agent“-Workflows für Commit `6cd0c0e` auf `dev`.",
-    "Starten: Workflows für den neuesten `dev`-Commit `f19d72f` manuell auslösen.",
+    "Starten: Workflows für die neuesten `dev`-Commits (`1b5173c`, `382a515`, `5e2929d`, `f19d72f`) manuell auslösen.",
     "Prüfen: `GEMINI_API_KEY` und `SYNC_TOKEN` gemäß `NEXT.md` für den Gemini CI Agent."
    ],
-   "veraendert": "Der „Gemini CI Agent“ auf `dev` ist weiterhin rot. Neu ist der Hinweis in `NEXT.md` zur Prüfung von `GEMINI_API_KEY` und `SYNC_TOKEN` im Kontext des Gemini CI Agent.",
-   "fragen": [
-    "Ist der `GEMINI_API_KEY` als Actions-Secret eingerichtet oder muss dies noch erfolgen?"
-   ],
+   "veraendert": "Der `dev`-Branch ist um 3 Commits vorangekommen, und die Anzahl der unpromoteten Commits hat sich auf 4 erhöht, während der CI-Fehler auf `dev` für `6cd0c0e` weiterhin besteht.",
+   "fragen": [],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-15T12:12:34+00:00"
+  "ai_at": "2026-11-16T11:36:03+00:00"
  }
 }
