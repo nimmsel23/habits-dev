@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-16T13:05:24+00:00",
+  "generated_at": "2026-11-17T13:48:12+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-16T11:36:20Z",
+   "pushed_at": "2026-11-16T13:05:56Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -148,10 +148,6 @@
   ],
   "activity": [
    {
-    "day": "2026-10-27",
-    "n": 0
-   },
-   {
     "day": "2026-10-28",
     "n": 3
    },
@@ -230,22 +226,85 @@
    {
     "day": "2026-11-16",
     "n": 3
-   }
-  ],
-  "workflows": [],
-  "issues": [
+   },
    {
-    "number": 17,
-    "title": "Dashboard-Lage: rot",
-    "created_at": "2026-11-13T00:09:18Z",
-    "updated_at": "2026-11-16T11:36:18Z",
-    "labels": [
-     "dashboard"
-    ],
-    "url": "https://github.com/nimmsel23/habits-dev/issues/17",
-    "author": "github-actions[bot]"
+    "day": "2026-11-17",
+    "n": 0
    }
   ],
+  "workflows": [
+   {
+    "name": "Live Deploy (Habits master)",
+    "branch": "master",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-14T22:21:24Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43647658227",
+    "sha": "9c5f1b8"
+   },
+   {
+    "name": "Auto-Promote dev -> master (Check (Habits))",
+    "branch": "master",
+    "event": "schedule",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-12T08:25:10Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43182772045",
+    "sha": "6b97c4b"
+   },
+   {
+    "name": "PR-AutoMerge (Dependabot -> dev)",
+    "branch": "master",
+    "event": "schedule",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-12T04:05:00Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43152420225",
+    "sha": "6b97c4b"
+   },
+   {
+    "name": "Preview (Habits dev)",
+    "branch": "dev",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-09T21:22:26Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42701882219",
+    "sha": "6b97c4b"
+   },
+   {
+    "name": "Check (Habits)",
+    "branch": "dev",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-09T21:22:26Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42701882159",
+    "sha": "6b97c4b"
+   },
+   {
+    "name": "Auto-Merge (grüner Check Habits)",
+    "branch": "master",
+    "event": "workflow_run",
+    "status": "completed",
+    "conclusion": "skipped",
+    "created_at": "2026-11-09T19:57:21Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42688278174",
+    "sha": "1995f1a"
+   },
+   {
+    "name": "Gemini CI Agent",
+    "branch": "master",
+    "event": "workflow_run",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-08T07:14:17Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42457956849",
+    "sha": "1995f1a"
+   }
+  ],
+  "issues": [],
   "pulls": [],
   "live_sites": [
    "https://habit-vos.web.app"
@@ -257,35 +316,34 @@
    {
     "level": "yellow",
     "key": "promote",
-    "text": "4 Commit(s) auf dev seit 1.6 Tagen nicht auf master promotet"
+    "text": "4 Commit(s) auf dev seit 2.6 Tagen nicht auf master promotet"
    }
   ],
   "ai": {
-   "headline": "4 Commits auf dev unpromoted; keine Workflow-Läufe in Evidenz",
-   "lage": "Der `dev`-Branch ist 4 Commits voraus, wobei der älteste unpromotete Commit `f19d72f` vom 14.11.2026 stammt. Es sind keine Workflow-Läufe in der aktuellen Evidenz enthalten, was eine Bewertung des CI-Status erschwert. Issue #17 \"Dashboard-Lage: rot\" ist weiterhin offen und wurde zuletzt am 16.11.2026 aktualisiert.",
+   "headline": "4 dev-Commits unpromoted; Workflows für neue Commits fehlen",
+   "lage": "Der `dev`-Branch ist 4 Commits voraus, wobei der älteste unpromotete Commit `f19d72f` vom 2026-11-14 stammt. Es sind keine Workflow-Läufe für die 4 neuesten `dev`-Commits in der Evidenz vorhanden, was eine Promotion verhindert. Issue #17 \"Dashboard-Lage: rot\" ist nicht mehr in der Evidenz aufgeführt.",
    "auffaelligkeiten": [
     {
      "level": "hoch",
-     "text": "Keine Workflow-Läufe in der Evidenz vorhanden, was eine Statusbeurteilung der CI verhindert."
-    },
-    {
-     "level": "hoch",
-     "text": "Der dev-Branch ist 4 Commits voraus (seit 1.6 Tagen unpromoted), beginnend mit Commit f19d72f."
+     "text": "4 Commits auf `dev` seit 2.6 Tagen nicht auf `master` promotet, beginnend mit `f19d72f` vom 2026-11-14."
     },
     {
      "level": "mittel",
-     "text": "Issue #17 'Dashboard-Lage: rot' ist offen und wurde zuletzt am 16.11.2026 aktualisiert."
+     "text": "Keine Workflow-Läufe für die 4 neuesten `dev`-Commits (`1b5173c`, `382a515`, `5e2929d`, `f19d72f`) in der Evidenz."
     }
    ],
    "naechste_schritte": [
-    "Prüfen: Ursache für das Fehlen von Workflow-Läufen in der Evidenz.",
-    "Starten: Manuell Workflows für die neuesten `dev`-Commits (`1b5173c`, `382a515`, `5e2929d`, `f19d72f`) auslösen.",
-    "Prüfen: `GEMINI_API_KEY` und `SYNC_TOKEN` gemäß `NEXT.md` für den Gemini CI Agent."
+    "Auslösen: Workflows für `dev`-Commits `1b5173c`, `382a515`, `5e2929d`, `f19d72f`.",
+    "Prüfen: `GEMINI_API_KEY` und `SYNC_TOKEN` gemäß `NEXT.md`.",
+    "Klären: Status von Issue #17, da es nicht mehr in der Evidenz ist."
    ],
-   "veraendert": "Im Gegensatz zur letzten Einschätzung sind keine Workflow-Läufe mehr in der Evidenz enthalten, was eine direkte Analyse des CI-Status unmöglich macht.",
-   "fragen": [],
+   "veraendert": "Im Gegensatz zur letzten Einschätzung sind Workflow-Läufe in der Evidenz vorhanden, jedoch fehlen spezifische Läufe für die neuen `dev`-Commits, und Issue #17 ist nicht mehr aufgeführt.",
+   "fragen": [
+    "Soll der `dev`-Branch nach erfolgreichen Workflow-Läufen manuell auf `master` promotet werden?",
+    "Ist Issue #17 \"Dashboard-Lage: rot\" geschlossen oder wurde es aus der Evidenz entfernt?"
+   ],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-16T13:05:34+00:00"
+  "ai_at": "2026-11-17T13:48:15+00:00"
  }
 }
