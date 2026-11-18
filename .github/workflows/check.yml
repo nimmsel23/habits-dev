@@ -115,6 +115,17 @@ jobs:
         working-directory: fitness-app
         run: pnpm run build:exercise-data && pnpm run build:coaching-notes
 
+      - name: Checkout backend (fuel shared SOT)
+        uses: actions/checkout@v4
+        with:
+          repository: nimmsel23/backend
+          ref: dev
+          path: backend
+          token: ${{ secrets.SYNC_TOKEN }}
+
+      - name: Verify backend fuel shared
+        run: test -f backend/fuel/src/shared/config/dach.mjs
+
       - name: Build Habits
         run: pnpm --filter ./habit-app run build:firebase
 
