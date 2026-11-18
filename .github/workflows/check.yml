@@ -94,6 +94,27 @@ jobs:
             cp firebase.config.js habit-app/firebase.config.js
           fi
 
+      - name: Checkout fitness KB (SOT)
+        uses: actions/checkout@v4
+        with:
+          repository: nimmsel23/fitness
+          ref: main
+          path: fitness-kb
+          submodules: recursive
+
+      - name: KB in fitness-app einhängen
+        run: |
+          set -euo pipefail
+          mkdir -p fitness-app/fitness/catalog
+          rm -rf fitness-app/fitness/catalog/kb
+          ln -sfn "$GITHUB_WORKSPACE/fitness-kb" fitness-app/fitness/catalog/kb
+          test -d fitness-app/fitness/catalog/kb/exercises/6pack
+          test -f fitness-app/fitness/catalog/kb/vendor/free-exercise-db/dist/exercises.json
+
+      - name: Fitness generated.js (exercise-data, ohne plan/6pack)
+        working-directory: fitness-app
+        run: pnpm run build:exercise-data && pnpm run build:coaching-notes
+
       - name: Build Habits
         run: pnpm --filter ./habit-app run build:firebase
 
