@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-18T07:53:16+00:00",
+  "generated_at": "2026-11-18T07:55:58+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-18T07:52:58Z",
+   "pushed_at": "2026-11-18T07:55:38Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -19,12 +19,18 @@
    "main": "master",
    "has_dev": true,
    "dev_behind": 0,
-   "dev_ahead": 8,
+   "dev_ahead": 9,
    "oldest_unpromoted": "2026-11-14T23:29:38+01:00",
-   "dev_head": "6f178d2 2026-11-18T07:52:58Z",
+   "dev_head": "4178245 2026-11-18T07:55:38Z",
    "master_head": "b480b89 2026-11-17T17:06:50+01:00"
   },
   "commits": [
+   {
+    "sha": "4178245",
+    "date": "2026-11-18T07:55:38Z",
+    "author": "Cursor Agent",
+    "subject": "ci: Check erzeugt fitness generated.js wie der Live-Deploy"
+   },
    {
     "sha": "6f178d2",
     "date": "2026-11-18T07:52:58Z",
@@ -138,12 +144,6 @@
     "date": "2026-11-09T22:53:48+01:00",
     "author": "Alpha",
     "subject": "fix(ci): Live-Deploy Nachbarn wie Journal (6pack/plan/backend)"
-   },
-   {
-    "sha": "2d0cb52",
-    "date": "2026-11-09T22:53:48+01:00",
-    "author": "Alpha",
-    "subject": "docs: auto-update RESULTS.md"
    }
   ],
   "activity": [
@@ -229,7 +229,7 @@
    },
    {
     "day": "2026-11-18",
-    "n": 4
+    "n": 5
    }
   ],
   "workflows": [
@@ -239,9 +239,9 @@
     "event": "push",
     "status": "in_progress",
     "conclusion": null,
-    "created_at": "2026-11-18T07:53:00Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/44262344888",
-    "sha": "6f178d2"
+    "created_at": "2026-11-18T07:55:41Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/44262694010",
+    "sha": "4178245"
    },
    {
     "name": "Live Deploy (Habits master)",
@@ -292,16 +292,6 @@
     "created_at": "2026-11-09T19:57:21Z",
     "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42688278174",
     "sha": "1995f1a"
-   },
-   {
-    "name": "Gemini CI Agent",
-    "branch": "master",
-    "event": "workflow_run",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-08T07:14:17Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42457956849",
-    "sha": "1995f1a"
    }
   ],
   "issues": [],
@@ -316,39 +306,31 @@
    {
     "level": "yellow",
     "key": "promote",
-    "text": "8 Commit(s) auf dev seit 3.4 Tagen nicht auf master promotet"
+    "text": "9 Commit(s) auf dev seit 3.4 Tagen nicht auf master promotet"
    }
   ],
   "ai": {
-   "headline": "8 dev-Commits unpromoted; Check-Workflow für Head läuft",
-   "lage": "Der `dev`-Branch ist 8 Commits voraus, wobei der älteste unpromotete Commit `f19d72f` vom 2026-11-14 stammt. Ein `Check (Habits)`-Workflow für den neuesten `dev`-Commit `6f178d2` läuft aktuell, jedoch fehlen für 7 vorherige `dev`-Commits Workflow-Läufe in der Evidenz.",
+   "headline": "9 dev-Commits unpromoted; Check-Workflow für 4178245 läuft",
+   "lage": "Der `dev`-Branch ist 9 Commits voraus, wobei der älteste unpromotete Commit `f19d72f` vom 2026-11-14 stammt. Ein `Check (Habits)`-Workflow für den neuesten `dev`-Commit `4178245` läuft aktuell, jedoch fehlen für die 8 vorherigen `dev`-Commits Workflow-Läufe in der Evidenz.",
    "auffaelligkeiten": [
     {
      "level": "hoch",
-     "text": "8 Commits auf `dev` sind seit 3.4 Tagen nicht auf `master` promotet, beginnend mit `f19d72f`."
+     "text": "9 Commit(s) auf dev seit 3.4 Tagen nicht auf master promotet."
     },
     {
      "level": "mittel",
-     "text": "Für 7 `dev`-Commits (`3fced2b`, `fcbc36b`, `daea6f6`, `1b5173c`, `382a515`, `5e2929d`, `f19d72f`) fehlen `Check (Habits)`-Workflow-Läufe in der Evidenz."
-    },
-    {
-     "level": "info",
-     "text": "Der `Check (Habits)`-Workflow für den aktuellen `dev`-Head `6f178d2` ist in Bearbeitung."
-    },
-    {
-     "level": "info",
-     "text": "Die Einrichtung/Prüfung von `GEMINI_API_KEY` und `SYNC_TOKEN` ist in `NEXT.md` noch offen."
+     "text": "Für 8 `dev`-Commits vor `4178245` sind keine `Check (Habits)`-Workflow-Läufe in der Evidenz."
     }
    ],
    "naechste_schritte": [
-    "Prüfen: Abschluss des `Check (Habits)`-Workflows für `6f178d2`.",
-    "Auslösen: `Check (Habits)`-Workflows für die 7 ungetesteten `dev`-Commits.",
+    "Prüfen: Abschluss des `Check (Habits)`-Workflows für `4178245`.",
+    "Auslösen: `Check (Habits)`-Workflows für die 8 ungetesteten `dev`-Commits.",
     "Prüfen: `GEMINI_API_KEY` und `SYNC_TOKEN` gemäß `NEXT.md`."
    ],
-   "veraendert": "Die Anzahl der unpromoteten `dev`-Commits ist von 7 auf 8 gestiegen, und der `Check (Habits)`-Workflow läuft nun für den neuen `dev`-Head `6f178d2` anstatt `3fced2b`.",
+   "veraendert": "Der `dev`-Branch ist nun 9 Commits voraus (vorher 8), und der `Check (Habits)`-Workflow läuft für den neuen Head `4178245`, während der vorherige Workflow für `6f178d2` nicht mehr in der Evidenz ist.",
    "fragen": [],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-18T07:53:18+00:00"
+  "ai_at": "2026-11-18T07:56:00+00:00"
  }
 }
