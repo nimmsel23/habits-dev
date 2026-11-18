@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-17T13:48:12+00:00",
+  "generated_at": "2026-11-18T07:47:44+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-16T13:05:56Z",
+   "pushed_at": "2026-11-18T07:47:25Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -19,12 +19,30 @@
    "main": "master",
    "has_dev": true,
    "dev_behind": 0,
-   "dev_ahead": 4,
+   "dev_ahead": 6,
    "oldest_unpromoted": "2026-11-14T23:29:38+01:00",
-   "dev_head": "1b5173c 2026-11-16T11:35:34Z",
-   "master_head": "9c5f1b8 2026-11-14T23:20:02+01:00"
+   "dev_head": "fcbc36b 2026-11-18T07:47:24Z",
+   "master_head": "b480b89 2026-11-17T17:06:50+01:00"
   },
   "commits": [
+   {
+    "sha": "fcbc36b",
+    "date": "2026-11-18T07:47:24Z",
+    "author": "Cursor Agent",
+    "subject": "ci: Check-Push und Auto-Promote-Zeitplan wieder an"
+   },
+   {
+    "sha": "daea6f6",
+    "date": "2026-11-18T07:46:59Z",
+    "author": "Cursor Agent",
+    "subject": "merge origin/master into dev"
+   },
+   {
+    "sha": "b480b89",
+    "date": "2026-11-17T17:06:50+01:00",
+    "author": "nimmsel23",
+    "subject": "org-bot: Workflow installieren (Org-Autonomie 16.11.2026)"
+   },
    {
     "sha": "1b5173c",
     "date": "2026-11-16T11:35:34Z",
@@ -126,31 +144,9 @@
     "date": "2026-11-09T22:22:21+01:00",
     "author": "Alpha",
     "subject": "chore(tooling): engines, Biome scripts-format, knip, smoke in Check"
-   },
-   {
-    "sha": "822d74a",
-    "date": "2026-11-09T20:55:02+01:00",
-    "author": "Alpha",
-    "subject": "merge origin/master (undiverge after rebase dropped merge)"
-   },
-   {
-    "sha": "bcd742f",
-    "date": "2026-11-09T20:47:48+01:00",
-    "author": "Alpha",
-    "subject": "ci: Auto-Promote wie Journal; master in dev gemergt"
-   },
-   {
-    "sha": "703edad",
-    "date": "2026-11-09T20:47:48+01:00",
-    "author": "Alpha",
-    "subject": "docs: auto-update RESULTS.md"
    }
   ],
   "activity": [
-   {
-    "day": "2026-10-28",
-    "n": 3
-   },
    {
     "day": "2026-10-29",
     "n": 9
@@ -229,19 +225,33 @@
    },
    {
     "day": "2026-11-17",
-    "n": 0
+    "n": 1
+   },
+   {
+    "day": "2026-11-18",
+    "n": 2
    }
   ],
   "workflows": [
+   {
+    "name": "Check (Habits)",
+    "branch": "dev",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": null,
+    "created_at": "2026-11-18T07:47:27Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/44261627375",
+    "sha": "fcbc36b"
+   },
    {
     "name": "Live Deploy (Habits master)",
     "branch": "master",
     "event": "push",
     "status": "completed",
     "conclusion": "success",
-    "created_at": "2026-11-14T22:21:24Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43647658227",
-    "sha": "9c5f1b8"
+    "created_at": "2026-11-17T16:06:53Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/44122023671",
+    "sha": "b480b89"
    },
    {
     "name": "Auto-Promote dev -> master (Check (Habits))",
@@ -271,16 +281,6 @@
     "conclusion": "success",
     "created_at": "2026-11-09T21:22:26Z",
     "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42701882219",
-    "sha": "6b97c4b"
-   },
-   {
-    "name": "Check (Habits)",
-    "branch": "dev",
-    "event": "push",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-09T21:22:26Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42701882159",
     "sha": "6b97c4b"
    },
    {
@@ -316,34 +316,46 @@
    {
     "level": "yellow",
     "key": "promote",
-    "text": "4 Commit(s) auf dev seit 2.6 Tagen nicht auf master promotet"
+    "text": "6 Commit(s) auf dev seit 3.4 Tagen nicht auf master promotet"
    }
   ],
   "ai": {
-   "headline": "4 dev-Commits unpromoted; Workflows für neue Commits fehlen",
-   "lage": "Der `dev`-Branch ist 4 Commits voraus, wobei der älteste unpromotete Commit `f19d72f` vom 2026-11-14 stammt. Es sind keine Workflow-Läufe für die 4 neuesten `dev`-Commits in der Evidenz vorhanden, was eine Promotion verhindert. Issue #17 \"Dashboard-Lage: rot\" ist nicht mehr in der Evidenz aufgeführt.",
+   "headline": "6 dev-Commits unpromoted; Workflow für Head läuft",
+   "lage": "Der `dev`-Branch ist 6 Commits voraus, wobei der älteste unpromotete Commit `f19d72f` vom 2026-11-14 stammt. Ein `Check (Habits)`-Workflow für den neuesten `dev`-Commit `fcbc36b` läuft aktuell, jedoch fehlen für 5 vorherige `dev`-Commits Workflow-Läufe in der Evidenz.",
    "auffaelligkeiten": [
     {
      "level": "hoch",
-     "text": "4 Commits auf `dev` seit 2.6 Tagen nicht auf `master` promotet, beginnend mit `f19d72f` vom 2026-11-14."
+     "text": "6 Commit(s) auf dev seit 3.4 Tagen nicht auf master promotet."
     },
     {
      "level": "mittel",
-     "text": "Keine Workflow-Läufe für die 4 neuesten `dev`-Commits (`1b5173c`, `382a515`, `5e2929d`, `f19d72f`) in der Evidenz."
+     "text": "5 dev-Commits (daea6f6, 1b5173c, 382a515, 5e2929d, f19d72f) haben keine zugehörigen Workflow-Läufe in der Evidenz, was eine Promotion verhindert."
+    },
+    {
+     "level": "info",
+     "text": "Der Check (Habits)-Workflow für den neuesten dev-Commit fcbc36b ist in_progress."
+    },
+    {
+     "level": "info",
+     "text": "Commit fcbc36b vom 2026-11-18 reaktiviert den Check-Push und Auto-Promote-Zeitplan."
+    },
+    {
+     "level": "info",
+     "text": "Issue #17 \"Dashboard-Lage: rot\" ist weiterhin nicht in der Evidenz aufgeführt."
     }
    ],
    "naechste_schritte": [
-    "Auslösen: Workflows für `dev`-Commits `1b5173c`, `382a515`, `5e2929d`, `f19d72f`.",
-    "Prüfen: `GEMINI_API_KEY` und `SYNC_TOKEN` gemäß `NEXT.md`.",
-    "Klären: Status von Issue #17, da es nicht mehr in der Evidenz ist."
+    "Prüfen: Abschluss des `Check (Habits)`-Workflows für `fcbc36b`.",
+    "Auslösen: Workflows für die 5 ungetesteten `dev`-Commits (daea6f6, 1b5173c, 382a515, 5e2929d, f19d72f).",
+    "Prüfen: `GEMINI_API_KEY` und `SYNC_TOKEN` gemäß `NEXT.md`."
    ],
-   "veraendert": "Im Gegensatz zur letzten Einschätzung sind Workflow-Läufe in der Evidenz vorhanden, jedoch fehlen spezifische Läufe für die neuen `dev`-Commits, und Issue #17 ist nicht mehr aufgeführt.",
+   "veraendert": "Die Anzahl der unpromoteten `dev`-Commits ist von 4 auf 6 gestiegen, und ein Workflow für den neuesten `dev`-Commit läuft aktuell.",
    "fragen": [
-    "Soll der `dev`-Branch nach erfolgreichen Workflow-Läufen manuell auf `master` promotet werden?",
-    "Ist Issue #17 \"Dashboard-Lage: rot\" geschlossen oder wurde es aus der Evidenz entfernt?"
+    "Soll der Status von Issue #17 geklärt werden, obwohl es nicht mehr in der Evidenz ist?",
+    "Ist die manuelle Auslösung von Workflows für ältere `dev`-Commits gewünscht, oder soll auf den Auto-Promote-Mechanismus gewartet werden, der mit `fcbc36b` reaktiviert wurde?"
    ],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-17T13:48:15+00:00"
+  "ai_at": "2026-11-18T07:47:46+00:00"
  }
 }
