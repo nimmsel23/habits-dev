@@ -2,8 +2,10 @@
 #   habits → journal-dev (apps/habits)
 #   learn  → fitness-dev
 # Release-Pfad bleibt an: Check auf dev, dieser Promote per workflow_run,
-# Push auf master und Zeitplan. Der Freeze hatte die Auslöser entfernt;
-# auf dem Default-Branch lief der Zeitplan deshalb nach dem 12.11.2026 nicht mehr.
+# Push auf dev und master und Zeitplan. Der Name "Check (Habits)" stimmt.
+# workflow_run und der Zeitplan feuern nur aus der Datei auf dem Default-Branch;
+# dort steht seit dem Freeze nur workflow_dispatch. Ein Push auf dev startet
+# deshalb den Promote aus dieser Datei und wartet selbst auf den Check.
 # Auto-Promote dev -> master (ersetzt den alten PR-basierten Auto-Merge).
 # Ziel: nichts bleibt auf dev liegen. Ablauf:
 #   Check auf dev gruen            -> master wird per Fast-Forward auf dev gezogen, Live-Deploy per Dispatch
@@ -20,7 +22,7 @@ on:
     workflows: ["Check (Habits)"]
     types: [completed]
   push:
-    branches: [master]
+    branches: [dev, master]
   schedule:
     - cron: '17,47 * * * *'   # Sicherungsnetz: haengende Faelle alle 30 Min abgleichen
   workflow_dispatch:
@@ -57,7 +59,7 @@ jobs:
           fetch-depth: 0
           ref: dev
       - name: Abgleichen
-        timeout-minutes: 10
+        timeout-minutes: 12
         run: |
           set -euo pipefail
           git fetch -q origin master dev
@@ -76,13 +78,28 @@ jobs:
           fi
 
           # Nur ein Check, den ein normaler Push ausgeloest hat, erfuellt den Branch-Schutz; per Dispatch gestartete Checks nicht.
-          res=$(gh api "repos/$REPO/commits/$dev/check-runs" --jq '[.check_runs[]|select(.name=="check")]|first|if .==null then "none" elif .status!="completed" then "pending" else .conclusion end')
-          case "$res" in
-            success)
-              echo "Check gruen auf $dev -> master per Fast-Forward, Live-Deploy per Dispatch."
-              git push origin "${dev}:refs/heads/master"
-              gh workflow run "$DEPLOY_FILE" -R "$REPO" --ref master
-              ;;
-            none|pending) echo "Check fuer $dev laeuft noch/fehlt -> naechster Lauf (workflow_run oder Zeitplan) uebernimmt." ;;
-            *) echo "Check auf $dev ist '$res' -> bleibt auf dev liegen (rot)." ;;
-          esac
+          # workflow_run/schedule laufen nicht, solange der Default-Branch den Freeze-Stand hat.
+          deadline=$((SECONDS + 480))
+          while true; do
+            res=$(gh api "repos/$REPO/commits/$dev/check-runs" --jq '[.check_runs[]|select(.name=="check")]|first|if .==null then "none" elif .status!="completed" then "pending" else .conclusion end')
+            case "$res" in
+              success)
+                echo "Check gruen auf $dev -> master per Fast-Forward, Live-Deploy per Dispatch."
+                git push origin "${dev}:refs/heads/master"
+                gh workflow run "$DEPLOY_FILE" -R "$REPO" --ref master
+                exit 0
+                ;;
+              none|pending)
+                if (( SECONDS >= deadline )); then
+                  echo "::error::Check fuer $dev ist nach 8 Minuten noch '$res'."
+                  exit 1
+                fi
+                echo "Check fuer $dev ist '$res', warte 15s."
+                sleep 15
+                ;;
+              *)
+                echo "Check auf $dev ist '$res' -> bleibt auf dev liegen (rot)."
+                exit 1
+                ;;
+            esac
+          done
