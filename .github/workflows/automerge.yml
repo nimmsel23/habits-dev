@@ -1,7 +1,9 @@
-# FROZEN (Owner 2026-11-07): Pflege an der Quelle
+# FROZEN (Owner 2026-11-07): keine Feature-Arbeit hier.
 #   habits → journal-dev (apps/habits)
 #   learn  → fitness-dev
-# Dieses Repo ist kein aktives Dev-Ziel mehr. Push-CI aus; nur workflow_dispatch.
+# Release-Pfad bleibt an: Check auf dev, dieser Promote per workflow_run,
+# Push auf master und Zeitplan. Der Freeze hatte die Auslöser entfernt;
+# auf dem Default-Branch lief der Zeitplan deshalb nach dem 12.11.2026 nicht mehr.
 # Auto-Promote dev -> master (ersetzt den alten PR-basierten Auto-Merge).
 # Ziel: nichts bleibt auf dev liegen. Ablauf:
 #   Check auf dev gruen            -> master wird per Fast-Forward auf dev gezogen, Live-Deploy per Dispatch
@@ -14,12 +16,19 @@
 name: Auto-Promote dev -> master (Check (Habits))
 
 on:
+  workflow_run:
+    workflows: ["Check (Habits)"]
+    types: [completed]
+  push:
+    branches: [master]
+  schedule:
+    - cron: '17,47 * * * *'   # Sicherungsnetz: haengende Faelle alle 30 Min abgleichen
   workflow_dispatch:
     inputs:
       reason:
-        description: 'Nur manuell — Repo ist eingefroren'
+        description: 'Optionaler Grund'
         required: false
-        default: 'frozen'
+        default: 'manual'
 permissions:
   contents: write
   actions: write
