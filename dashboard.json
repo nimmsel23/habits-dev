@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-20T13:32:00+00:00",
+  "generated_at": "2026-11-21T12:57:43+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-19T13:50:05Z",
+   "pushed_at": "2026-11-20T13:32:11Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -148,10 +148,6 @@
   ],
   "activity": [
    {
-    "day": "2026-10-31",
-    "n": 1
-   },
-   {
     "day": "2026-11-01",
     "n": 1
    },
@@ -230,6 +226,10 @@
    {
     "day": "2026-11-20",
     "n": 0
+   },
+   {
+    "day": "2026-11-21",
+    "n": 0
    }
   ],
   "workflows": [
@@ -239,8 +239,8 @@
     "event": "schedule",
     "status": "completed",
     "conclusion": "success",
-    "created_at": "2026-11-20T11:27:57Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/44727824038",
+    "created_at": "2026-11-21T08:15:05Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/44883982562",
     "sha": "55a4071"
    },
    {
@@ -314,18 +314,18 @@
   "status": "green",
   "signals": [],
   "ai": {
-   "headline": "Branches synchronisiert; Auto-Promote weiterhin erfolgreich",
-   "lage": "Die Branches `dev` und `master` sind weiterhin auf Commit `55a4071` synchronisiert. Ein geplanter `Auto-Promote dev -> master (Check (Habits))` Workflow wurde am 20.11.2026 erneut erfolgreich ausgeführt.",
+   "headline": "Branches synchronisiert; Auto-Promote erneut erfolgreich ausgeführt",
+   "lage": "Die Branches `dev` und `master` sind weiterhin auf Commit `55a4071` synchronisiert. Der `Auto-Promote dev -> master (Check (Habits))` Workflow wurde am 21.11.2026 um 08:15:05Z erneut erfolgreich ausgeführt.",
    "auffaelligkeiten": [],
    "naechste_schritte": [
     "Prüfen: `GEMINI_API_KEY` als Actions-Secret einrichten/prüfen gemäß `NEXT.md`.",
     "Beobachten: Ersten echten Fehler→Reparatur→grünen Check→Deploy-Rundlauf gemäß `NEXT.md`.",
     "Prüfen: Funktionalität der Live-Site unter `https://habit-vos.web.app`."
    ],
-   "veraendert": "Gegenüber der letzten Einschätzung wurde ein weiterer geplanter `Auto-Promote dev -> master (Check (Habits))` Workflow für Commit `55a4071` erfolgreich ausgeführt.",
+   "veraendert": "Der `Auto-Promote dev -> master (Check (Habits))` Workflow wurde am 21.11.2026 erneut erfolgreich ausgeführt.",
    "fragen": [],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-20T13:32:02+00:00"
+  "ai_at": "2026-11-21T12:57:45+00:00"
  }
 }
