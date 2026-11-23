@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-23T15:16:12+00:00",
+  "generated_at": "2026-11-23T17:58:03+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-22T12:49:59Z",
+   "pushed_at": "2026-11-23T15:16:42Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -314,12 +314,16 @@
   "status": "green",
   "signals": [],
   "ai": {
-   "headline": "Branches synchronisiert; Auto-Promote erneut erfolgreich ausgeführt",
-   "lage": "Die Branches `dev` und `master` sind unverändert auf Commit `55a4071` synchronisiert. Der `Auto-Promote dev -> master (Check (Habits))` Workflow wurde am 23.11.2026 um 12:24:30Z erneut erfolgreich ausgeführt.",
+   "headline": "Branches synchronisiert; keine neuen Commits seit 18. November",
+   "lage": "Die Branches `dev` und `master` sind weiterhin auf Commit `55a4071` synchronisiert. Seit dem 18. November 2026 gab es keine neuen Commits in diesen Branches.",
    "auffaelligkeiten": [
     {
      "level": "info",
-     "text": "Es wurden keine neuen Commits seit dem 18.11.2026 auf die Branches `dev` oder `master` gepusht (letzter Commit `55a4071`)."
+     "text": "Keine neuen Commits in `dev` oder `master` seit dem 18.11.2026 (Commit `55a4071`)."
+    },
+    {
+     "level": "info",
+     "text": "Der `Auto-Promote dev -> master (Check (Habits))` Workflow wurde am 23.11.2026 um 12:24:30Z erfolgreich ausgeführt."
     }
    ],
    "naechste_schritte": [
@@ -327,10 +331,10 @@
     "Beobachten: Ersten echten Fehler→Reparatur→grünen Check→Deploy-Rundlauf gemäß `NEXT.md`.",
     "Prüfen: Funktionalität der Live-Site unter `https://habit-vos.web.app`."
    ],
-   "veraendert": "Der `Auto-Promote dev -> master (Check (Habits))` Workflow wurde seit der letzten Einschätzung erneut erfolgreich ausgeführt.",
+   "veraendert": "",
    "fragen": [],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-23T15:16:29+00:00"
+  "ai_at": "2026-11-23T17:58:05+00:00"
  }
 }
