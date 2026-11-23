@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-22T12:49:46+00:00",
+  "generated_at": "2026-11-23T15:16:12+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-21T20:08:42Z",
+   "pushed_at": "2026-11-22T12:49:59Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -148,12 +148,8 @@
   ],
   "activity": [
    {
-    "day": "2026-11-02",
-    "n": 2
-   },
-   {
     "day": "2026-11-03",
-    "n": 7
+    "n": 1
    },
    {
     "day": "2026-11-04",
@@ -230,6 +226,10 @@
    {
     "day": "2026-11-22",
     "n": 0
+   },
+   {
+    "day": "2026-11-23",
+    "n": 0
    }
   ],
   "workflows": [
@@ -239,8 +239,8 @@
     "event": "schedule",
     "status": "completed",
     "conclusion": "success",
-    "created_at": "2026-11-22T08:49:39Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45004607282",
+    "created_at": "2026-11-23T12:24:30Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45174007095",
     "sha": "55a4071"
    },
    {
@@ -315,15 +315,11 @@
   "signals": [],
   "ai": {
    "headline": "Branches synchronisiert; Auto-Promote erneut erfolgreich ausgeführt",
-   "lage": "Die Branches `dev` und `master` sind weiterhin auf Commit `55a4071` synchronisiert. Der `Auto-Promote dev -> master (Check (Habits))` Workflow wurde am 22.11.2026 um 08:49:39Z erneut erfolgreich ausgeführt.",
+   "lage": "Die Branches `dev` und `master` sind unverändert auf Commit `55a4071` synchronisiert. Der `Auto-Promote dev -> master (Check (Habits))` Workflow wurde am 23.11.2026 um 12:24:30Z erneut erfolgreich ausgeführt.",
    "auffaelligkeiten": [
     {
      "level": "info",
-     "text": "Es gab keine neuen Commits auf den Branches `dev` und `master` seit dem 18.11.2026."
-    },
-    {
-     "level": "info",
-     "text": "Die in `NEXT.md` genannten Aufgaben, wie die Einrichtung des `GEMINI_API_KEY` und die Beobachtung eines Fehler-Reparatur-Deploy-Zyklus, sind weiterhin offen."
+     "text": "Es wurden keine neuen Commits seit dem 18.11.2026 auf die Branches `dev` oder `master` gepusht (letzter Commit `55a4071`)."
     }
    ],
    "naechste_schritte": [
@@ -335,6 +331,6 @@
    "fragen": [],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-22T12:49:49+00:00"
+  "ai_at": "2026-11-23T15:16:29+00:00"
  }
 }
