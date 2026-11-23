@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-23T17:58:03+00:00",
+  "generated_at": "2026-11-23T18:01:56+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-23T15:16:42Z",
+   "pushed_at": "2026-11-23T17:58:20Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -314,16 +314,16 @@
   "status": "green",
   "signals": [],
   "ai": {
-   "headline": "Branches synchronisiert; keine neuen Commits seit 18. November",
-   "lage": "Die Branches `dev` und `master` sind weiterhin auf Commit `55a4071` synchronisiert. Seit dem 18. November 2026 gab es keine neuen Commits in diesen Branches.",
+   "headline": "Branches synchronisiert; Auto-Promote Workflow erfolgreich ausgeführt",
+   "lage": "Die Branches `dev` und `master` sind weiterhin auf Commit `55a4071` synchronisiert. Der `Auto-Promote dev -> master (Check (Habits))` Workflow wurde am 23. November 2026 erfolgreich ausgeführt.",
    "auffaelligkeiten": [
     {
      "level": "info",
-     "text": "Keine neuen Commits in `dev` oder `master` seit dem 18.11.2026 (Commit `55a4071`)."
+     "text": "Der `Auto-Promote dev -> master (Check (Habits))` Workflow lief am 23. November 2026 erfolgreich für Commit `55a4071`."
     },
     {
      "level": "info",
-     "text": "Der `Auto-Promote dev -> master (Check (Habits))` Workflow wurde am 23.11.2026 um 12:24:30Z erfolgreich ausgeführt."
+     "text": "Es gab keine neuen Commits in den Branches `dev` oder `master` seit dem 18. November 2026."
     }
    ],
    "naechste_schritte": [
@@ -331,10 +331,10 @@
     "Beobachten: Ersten echten Fehler→Reparatur→grünen Check→Deploy-Rundlauf gemäß `NEXT.md`.",
     "Prüfen: Funktionalität der Live-Site unter `https://habit-vos.web.app`."
    ],
-   "veraendert": "",
+   "veraendert": "Der Repository-Zeitstempel `pushed_at` wurde am 23. November 2026 aktualisiert, was auf eine erfolgreiche Workflow-Ausführung hinweist, obwohl keine neuen Commits in `dev` oder `master` erfolgten.",
    "fragen": [],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-23T17:58:05+00:00"
+  "ai_at": "2026-11-23T18:01:57+00:00"
  }
 }
