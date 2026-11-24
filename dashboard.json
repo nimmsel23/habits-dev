@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-24T05:10:02+00:00",
+  "generated_at": "2026-11-24T15:13:02+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-23T18:13:09Z",
+   "pushed_at": "2026-11-24T09:41:24Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -21,14 +21,62 @@
    "dev_behind": 0,
    "dev_ahead": 0,
    "oldest_unpromoted": null,
-   "dev_head": "f615228 2026-11-23T19:11:51+01:00",
-   "master_head": "f615228 2026-11-23T19:11:51+01:00"
+   "dev_head": "d78df58 2026-11-24T10:39:23+01:00",
+   "master_head": "d78df58 2026-11-24T10:39:23+01:00"
   },
   "work": {
    "branch": "master",
-   "sha": "f6152280562d6aa4497dd3e83c476c1893f01ec3"
+   "sha": "d78df589065289e0fbbb6bf77404cbfb61cda4cc"
   },
   "commits": [
+   {
+    "sha": "d78df58",
+    "date": "2026-11-24T10:39:23+01:00",
+    "author": "nimmsel23",
+    "subject": "ci: Merge nur mit --match-head-commit des geprüften Heads"
+   },
+   {
+    "sha": "a097ac2",
+    "date": "2026-11-24T10:38:20+01:00",
+    "author": "nimmsel23",
+    "subject": "ci: keine Zweitfreigabe mehr, Merge sobald Checks grün (Owner Daniel 24.11.2026 10:33)"
+   },
+   {
+    "sha": "5a07eef",
+    "date": "2026-11-24T10:26:07+01:00",
+    "author": "nimmsel23",
+    "subject": "fix(ci): Approval zählt nicht bei offenem Security-Befund HIGH/CRITICAL"
+   },
+   {
+    "sha": "72c8ffe",
+    "date": "2026-11-24T10:18:53+01:00",
+    "author": "nimmsel23",
+    "subject": "fix(ci): Org-Bot fail-closed, Merge-Logik ist Klasse B (Security Review vos#125)"
+   },
+   {
+    "sha": "7925c44",
+    "date": "2026-11-24T10:11:22+01:00",
+    "author": "nimmsel23",
+    "subject": "ci: Approval-Agent-Freigabe zählt als peer-ok (Daniel 24.11.2026 10:08)"
+   },
+   {
+    "sha": "e30c0c8",
+    "date": "2026-11-24T08:46:22+01:00",
+    "author": "nimmsel23",
+    "subject": "ci: Org-Bot/ci-heal mit zwei Zeitplan-Slots abseits der vollen Stunde + repository_dispatch"
+   },
+   {
+    "sha": "318c08e",
+    "date": "2026-11-24T08:41:00+01:00",
+    "author": "nimmsel23",
+    "subject": "ci(org-bot): v2 wartet auf PR-Events auf angemeldete Checks"
+   },
+   {
+    "sha": "8d70fd1",
+    "date": "2026-11-24T08:38:58+01:00",
+    "author": "nimmsel23",
+    "subject": "ci: Live-Deploy robust gegen fehlenden Nachbar-Branch, Org-Bot v2, CI-Heilung"
+   },
    {
     "sha": "f615228",
     "date": "2026-11-23T19:11:51+01:00",
@@ -100,60 +148,12 @@
     "date": "2026-11-16T11:26:36Z",
     "author": "Cursor Agent",
     "subject": "dashboard: master-Push baut ebenfalls dev"
-   },
-   {
-    "sha": "f19d72f",
-    "date": "2026-11-14T23:29:38+01:00",
-    "author": "Alpha",
-    "subject": "chore(portal): Registry nach Release aktualisiert (vos-portal)"
-   },
-   {
-    "sha": "9c5f1b8",
-    "date": "2026-11-14T23:20:02+01:00",
-    "author": "Alpha",
-    "subject": "fix(habits): Live-Build — authDomain exportieren, Precache-Limit 6 MiB"
-   },
-   {
-    "sha": "c325de1",
-    "date": "2026-11-14T23:14:02+01:00",
-    "author": "Alpha",
-    "subject": "chore(portal): apps.html aus vos-portal aktualisiert"
-   },
-   {
-    "sha": "ec5d418",
-    "date": "2026-11-13T01:12:15+01:00",
-    "author": "Alpha",
-    "subject": "chore(habits): Vite-Aliase an Shell-Layout angepasst, Portal-Dateien aufgenommen"
-   },
-   {
-    "sha": "349895e",
-    "date": "2026-11-13T01:08:39+01:00",
-    "author": "Alpha",
-    "subject": "feat(ci): Living Dashboard als GitHub Page"
-   },
-   {
-    "sha": "0bf7d47",
-    "date": "2026-11-12T11:19:14+01:00",
-    "author": "Alpha",
-    "subject": "fix(habits): Starter ignoriert versteckte Habits"
-   },
-   {
-    "sha": "87cf30e",
-    "date": "2026-11-12T11:18:28+01:00",
-    "author": "Alpha",
-    "subject": "refactor(habits): IS_STORE_BUILD per Einzelvergleich (Bundler faltet Zweig)"
-   },
-   {
-    "sha": "262133a",
-    "date": "2026-11-12T11:14:58+01:00",
-    "author": "Alpha",
-    "subject": "feat(habits): Store-Build Dein Tag deutsch, ohne 4B/Core4, Ein-Klick-Start mit vier Gewohnheiten"
    }
   ],
   "activity": [
    {
     "day": "2026-11-04",
-    "n": 14
+    "n": 6
    },
    {
     "day": "2026-11-05",
@@ -233,7 +233,7 @@
    },
    {
     "day": "2026-11-24",
-    "n": 0
+    "n": 8
    }
   ],
   "workflows": [
@@ -243,29 +243,29 @@
     "event": "schedule",
     "status": "completed",
     "conclusion": "success",
-    "created_at": "2026-11-24T00:21:26Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45296489187",
-    "sha": "f615228"
+    "created_at": "2026-11-24T10:25:50Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45374717386",
+    "sha": "d78df58"
    },
    {
     "name": "Live Deploy (Habits master)",
     "branch": "master",
     "event": "workflow_dispatch",
     "status": "completed",
-    "conclusion": "failure",
-    "created_at": "2026-11-23T18:13:10Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45236007273",
-    "sha": "f615228"
+    "conclusion": "success",
+    "created_at": "2026-11-24T09:41:26Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45367570992",
+    "sha": "d78df58"
    },
    {
     "name": "Auto-Promote dev -> master (Check (Habits))",
     "branch": "dev",
     "event": "push",
     "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-23T18:11:54Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45235784224",
-    "sha": "f615228"
+    "conclusion": "cancelled",
+    "created_at": "2026-11-24T09:39:27Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45367264513",
+    "sha": "d78df58"
    },
    {
     "name": "Check (Habits)",
@@ -273,9 +273,9 @@
     "event": "push",
     "status": "completed",
     "conclusion": "success",
-    "created_at": "2026-11-23T18:11:54Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45235784204",
-    "sha": "f615228"
+    "created_at": "2026-11-24T09:39:26Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45367264135",
+    "sha": "d78df58"
    },
    {
     "name": "PR-AutoMerge (Dependabot -> dev)",
@@ -286,66 +286,51 @@
     "created_at": "2026-11-12T04:05:00Z",
     "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43152420225",
     "sha": "6b97c4b"
-   },
-   {
-    "name": "Preview (Habits dev)",
-    "branch": "dev",
-    "event": "push",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-09T21:22:26Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42701882219",
-    "sha": "6b97c4b"
-   },
-   {
-    "name": "Auto-Merge (grüner Check Habits)",
-    "branch": "master",
-    "event": "workflow_run",
-    "status": "completed",
-    "conclusion": "skipped",
-    "created_at": "2026-11-09T19:57:21Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/42688278174",
-    "sha": "1995f1a"
    }
   ],
-  "issues": [],
+  "issues": [
+   {
+    "number": 18,
+    "title": "Dashboard-Lage: rot",
+    "created_at": "2026-11-24T05:10:17Z",
+    "updated_at": "2026-11-24T05:58:56Z",
+    "labels": [
+     "dashboard"
+    ],
+    "url": "https://github.com/nimmsel23/habits-dev/issues/18",
+    "author": "github-actions[bot]"
+   }
+  ],
   "pulls": [],
   "live_sites": [
    "https://habit-vos.web.app"
   ]
  },
  "assessment": {
-  "status": "red",
-  "signals": [
-   {
-    "level": "red",
-    "key": "ci:Live Deploy (Habits master):master",
-    "text": "„Live Deploy (Habits master)“ auf master ist rot (failure, f615228)",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45236007273"
-   }
-  ],
+  "status": "green",
+  "signals": [],
   "ai": {
-   "headline": "Live Deploy auf Master fehlgeschlagen; Branches synchronisiert",
-   "lage": "Der `master`-Branch ist mit Commit `f615228` aktuell. Der Workflow „Live Deploy (Habits master)“ für diesen Commit ist fehlgeschlagen. Der `dev`-Branch ist nun mit `master` synchron.",
+   "headline": "Master-Deploy erfolgreich; Dashboard-Lage rot gemeldet",
+   "lage": "Der `master`-Branch ist mit Commit `d78df58` aktuell und mit `dev` synchron. Der Workflow „Live Deploy (Habits master)“ für diesen Commit war erfolgreich. Ein neues Issue #18 meldet jedoch eine rote Dashboard-Lage.",
    "auffaelligkeiten": [
     {
      "level": "hoch",
-     "text": "Der Workflow „Live Deploy (Habits master)“ auf master ist mit Commit `f615228` fehlgeschlagen. (Regel-Signal: https://github.com/nimmsel23/habits-dev/actions/runs/45236007273)"
+     "text": "Issue #18 'Dashboard-Lage: rot' wurde durch `github-actions[bot]` erstellt, obwohl der Workflow „Live Deploy (Habits master)“ für Commit `d78df58` erfolgreich abgeschlossen wurde."
     },
     {
      "level": "info",
-     "text": "Der `dev`-Branch ist nun mit dem `master`-Branch synchron (beide auf `f615228`)."
+     "text": "Mehrere CI-Workflows, darunter 'Auto-Promote dev -> master (Check (Habits))' und 'Check (Habits)', wurden am 24.11.2026 erfolgreich abgeschlossen."
     }
    ],
    "naechste_schritte": [
     "Prüfen: `GEMINI_API_KEY` als Actions-Secret einrichten/prüfen gemäß `NEXT.md`.",
-    "Analysieren: Ursache des fehlgeschlagenen Workflows „Live Deploy (Habits master)“ für Commit `f615228`.",
+    "Analysieren: Ursache für Issue #18 'Dashboard-Lage: rot' trotz erfolgreichem Live Deploy.",
     "Beobachten: Ersten echten Fehler→Reparatur→grünen Check→Deploy-Rundlauf gemäß `NEXT.md`."
    ],
-   "veraendert": "Der `dev`-Branch ist nicht mehr vor `master`, sondern beide Branches sind mit Commit `f615228` synchronisiert.",
+   "veraendert": "Der Workflow „Live Deploy (Habits master)“ für den aktuellen Commit `d78df58` war erfolgreich, im Gegensatz zum vorherigen fehlgeschlagenen Deploy für `f615228`, und Issue #18 'Dashboard-Lage: rot' wurde neu erstellt.",
    "fragen": [],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-24T05:10:05+00:00"
+  "ai_at": "2026-11-24T15:13:05+00:00"
  }
 }
