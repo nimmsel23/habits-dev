@@ -50,9 +50,12 @@ jobs:
       - name: Checkout Nachbarn (${{ env.NEIGHBOR_REF }})
         run: |
           set -euo pipefail
-          # fitness-dev@dev: Bulk/vendor-Fix noch nicht auf master (Check dort rot).
-          git clone --depth 1 --branch dev "https://github.com/nimmsel23/fitness-dev.git" fitness-dev
-          echo "fitness-dev @ $(git -C fitness-dev rev-parse --short HEAD) (dev)"
+          # fitness-dev wie die anderen Nachbarn auf $NEIGHBOR_REF. Fehlt der Branch
+          # (z. B. dev kurz nach einem Promote-PR gelöscht, 23.11.), auf master ausweichen
+          # statt den Deploy rot zu machen.
+          git clone --depth 1 --branch "$NEIGHBOR_REF" "https://github.com/nimmsel23/fitness-dev.git" fitness-dev \
+            || git clone --depth 1 --branch master "https://github.com/nimmsel23/fitness-dev.git" fitness-dev
+          echo "fitness-dev @ $(git -C fitness-dev rev-parse --short HEAD)"
           git clone --depth 1 --branch "$NEIGHBOR_REF" "https://github.com/nimmsel23/fuel-dev.git" fuel-dev
           echo "fuel-dev @ $(git -C fuel-dev rev-parse --short HEAD)"
           # fitness Views SixPack|Plan nur via miniAppSubmodulePlugin (wie journal-dev).
