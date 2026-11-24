@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-23T18:12:40+00:00",
+  "generated_at": "2026-11-24T05:10:02+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-23T18:11:52Z",
+   "pushed_at": "2026-11-23T18:13:09Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -19,16 +19,22 @@
    "main": "master",
    "has_dev": true,
    "dev_behind": 0,
-   "dev_ahead": 1,
-   "oldest_unpromoted": "2026-11-23T19:11:51+01:00",
+   "dev_ahead": 0,
+   "oldest_unpromoted": null,
    "dev_head": "f615228 2026-11-23T19:11:51+01:00",
-   "master_head": "55a4071 2026-11-18T08:09:38Z"
+   "master_head": "f615228 2026-11-23T19:11:51+01:00"
   },
   "work": {
    "branch": "master",
-   "sha": "55a40710e33bf3fef17bc086b6ed59f5efc48cb1"
+   "sha": "f6152280562d6aa4497dd3e83c476c1893f01ec3"
   },
   "commits": [
+   {
+    "sha": "f615228",
+    "date": "2026-11-23T19:11:51+01:00",
+    "author": "nimmsel23",
+    "subject": "ci(dashboard): Board baut master, Push-Trigger master (Daniel 23.11.)"
+   },
    {
     "sha": "55a4071",
     "date": "2026-11-18T08:09:38Z",
@@ -142,19 +148,9 @@
     "date": "2026-11-12T11:14:58+01:00",
     "author": "Alpha",
     "subject": "feat(habits): Store-Build Dein Tag deutsch, ohne 4B/Core4, Ein-Klick-Start mit vier Gewohnheiten"
-   },
-   {
-    "sha": "6448337",
-    "date": "2026-11-12T02:19:52+01:00",
-    "author": "Alpha",
-    "subject": "ci: restore Gemini repair + Merge-Agent (full automation)"
    }
   ],
   "activity": [
-   {
-    "day": "2026-11-03",
-    "n": 1
-   },
    {
     "day": "2026-11-04",
     "n": 14
@@ -233,16 +229,40 @@
    },
    {
     "day": "2026-11-23",
+    "n": 1
+   },
+   {
+    "day": "2026-11-24",
     "n": 0
    }
   ],
   "workflows": [
    {
     "name": "Auto-Promote dev -> master (Check (Habits))",
+    "branch": "master",
+    "event": "schedule",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-24T00:21:26Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45296489187",
+    "sha": "f615228"
+   },
+   {
+    "name": "Live Deploy (Habits master)",
+    "branch": "master",
+    "event": "workflow_dispatch",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-11-23T18:13:10Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45236007273",
+    "sha": "f615228"
+   },
+   {
+    "name": "Auto-Promote dev -> master (Check (Habits))",
     "branch": "dev",
     "event": "push",
-    "status": "in_progress",
-    "conclusion": null,
+    "status": "completed",
+    "conclusion": "success",
     "created_at": "2026-11-23T18:11:54Z",
     "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45235784224",
     "sha": "f615228"
@@ -251,31 +271,11 @@
     "name": "Check (Habits)",
     "branch": "dev",
     "event": "push",
-    "status": "in_progress",
-    "conclusion": null,
+    "status": "completed",
+    "conclusion": "success",
     "created_at": "2026-11-23T18:11:54Z",
     "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45235784204",
     "sha": "f615228"
-   },
-   {
-    "name": "Auto-Promote dev -> master (Check (Habits))",
-    "branch": "master",
-    "event": "schedule",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-23T12:24:30Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45174007095",
-    "sha": "55a4071"
-   },
-   {
-    "name": "Live Deploy (Habits master)",
-    "branch": "master",
-    "event": "workflow_dispatch",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-18T08:11:08Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/44264819178",
-    "sha": "55a4071"
    },
    {
     "name": "PR-AutoMerge (Dependabot -> dev)",
@@ -315,30 +315,37 @@
   ]
  },
  "assessment": {
-  "status": "green",
-  "signals": [],
+  "status": "red",
+  "signals": [
+   {
+    "level": "red",
+    "key": "ci:Live Deploy (Habits master):master",
+    "text": "„Live Deploy (Habits master)“ auf master ist rot (failure, f615228)",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45236007273"
+   }
+  ],
   "ai": {
-   "headline": "Dev-Branch vor Master; Auto-Promote und Check aktiv",
-   "lage": "Der `dev`-Branch ist mit Commit `f615228` einen Commit vor dem `master`-Branch. Für diesen neuen Commit laufen aktuell die Workflows `Auto-Promote dev -> master (Check (Habits))` und `Check (Habits)`.",
+   "headline": "Live Deploy auf Master fehlgeschlagen; Branches synchronisiert",
+   "lage": "Der `master`-Branch ist mit Commit `f615228` aktuell. Der Workflow „Live Deploy (Habits master)“ für diesen Commit ist fehlgeschlagen. Der `dev`-Branch ist nun mit `master` synchron.",
    "auffaelligkeiten": [
     {
-     "level": "info",
-     "text": "Der `dev`-Branch ist mit Commit `f615228` einen Commit vor dem `master`-Branch."
+     "level": "hoch",
+     "text": "Der Workflow „Live Deploy (Habits master)“ auf master ist mit Commit `f615228` fehlgeschlagen. (Regel-Signal: https://github.com/nimmsel23/habits-dev/actions/runs/45236007273)"
     },
     {
      "level": "info",
-     "text": "Die Workflows `Auto-Promote dev -> master (Check (Habits))` und `Check (Habits)` sind für Commit `f615228` auf `dev` im Status `in_progress`."
+     "text": "Der `dev`-Branch ist nun mit dem `master`-Branch synchron (beide auf `f615228`)."
     }
    ],
    "naechste_schritte": [
     "Prüfen: `GEMINI_API_KEY` als Actions-Secret einrichten/prüfen gemäß `NEXT.md`.",
-    "Beobachten: Ersten echten Fehler→Reparatur→grünen Check→Deploy-Rundlauf gemäß `NEXT.md`.",
-    "Beobachten: Abschluss der aktuell laufenden Workflows für Commit `f615228`."
+    "Analysieren: Ursache des fehlgeschlagenen Workflows „Live Deploy (Habits master)“ für Commit `f615228`.",
+    "Beobachten: Ersten echten Fehler→Reparatur→grünen Check→Deploy-Rundlauf gemäß `NEXT.md`."
    ],
-   "veraendert": "Gegenüber der letzten Einschätzung ist der `dev`-Branch nun einen Commit vor `master`, und es laufen neue Workflows für diesen Commit.",
+   "veraendert": "Der `dev`-Branch ist nicht mehr vor `master`, sondern beide Branches sind mit Commit `f615228` synchronisiert.",
    "fragen": [],
    "model": "gemini-2.5-flash"
   },
-  "ai_at": "2026-11-23T18:12:42+00:00"
+  "ai_at": "2026-11-24T05:10:05+00:00"
  }
 }
