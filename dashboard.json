@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-24T15:13:02+00:00",
+  "generated_at": "2026-11-25T14:52:47+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-24T09:41:24Z",
+   "pushed_at": "2026-11-24T15:13:19Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -152,12 +152,8 @@
   ],
   "activity": [
    {
-    "day": "2026-11-04",
-    "n": 6
-   },
-   {
     "day": "2026-11-05",
-    "n": 18
+    "n": 13
    },
    {
     "day": "2026-11-06",
@@ -234,6 +230,10 @@
    {
     "day": "2026-11-24",
     "n": 8
+   },
+   {
+    "day": "2026-11-25",
+    "n": 0
    }
   ],
   "workflows": [
@@ -243,8 +243,28 @@
     "event": "schedule",
     "status": "completed",
     "conclusion": "success",
-    "created_at": "2026-11-24T10:25:50Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45374717386",
+    "created_at": "2026-11-25T14:15:12Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45632023982",
+    "sha": "d78df58"
+   },
+   {
+    "name": "CI-Heilung (rote Läufe wiederholen)",
+    "branch": "master",
+    "event": "schedule",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-25T13:28:18Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45623914120",
+    "sha": "d78df58"
+   },
+   {
+    "name": "Org-Bot (PR anlegen & mergen)",
+    "branch": "master",
+    "event": "schedule",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-25T13:03:45Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45619776230",
     "sha": "d78df58"
    },
    {
@@ -276,31 +296,9 @@
     "created_at": "2026-11-24T09:39:26Z",
     "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45367264135",
     "sha": "d78df58"
-   },
-   {
-    "name": "PR-AutoMerge (Dependabot -> dev)",
-    "branch": "master",
-    "event": "schedule",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-12T04:05:00Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/43152420225",
-    "sha": "6b97c4b"
    }
   ],
-  "issues": [
-   {
-    "number": 18,
-    "title": "Dashboard-Lage: rot",
-    "created_at": "2026-11-24T05:10:17Z",
-    "updated_at": "2026-11-24T05:58:56Z",
-    "labels": [
-     "dashboard"
-    ],
-    "url": "https://github.com/nimmsel23/habits-dev/issues/18",
-    "author": "github-actions[bot]"
-   }
-  ],
+  "issues": [],
   "pulls": [],
   "live_sites": [
    "https://habit-vos.web.app"
@@ -309,28 +307,7 @@
  "assessment": {
   "status": "green",
   "signals": [],
-  "ai": {
-   "headline": "Master-Deploy erfolgreich; Dashboard-Lage rot gemeldet",
-   "lage": "Der `master`-Branch ist mit Commit `d78df58` aktuell und mit `dev` synchron. Der Workflow „Live Deploy (Habits master)“ für diesen Commit war erfolgreich. Ein neues Issue #18 meldet jedoch eine rote Dashboard-Lage.",
-   "auffaelligkeiten": [
-    {
-     "level": "hoch",
-     "text": "Issue #18 'Dashboard-Lage: rot' wurde durch `github-actions[bot]` erstellt, obwohl der Workflow „Live Deploy (Habits master)“ für Commit `d78df58` erfolgreich abgeschlossen wurde."
-    },
-    {
-     "level": "info",
-     "text": "Mehrere CI-Workflows, darunter 'Auto-Promote dev -> master (Check (Habits))' und 'Check (Habits)', wurden am 24.11.2026 erfolgreich abgeschlossen."
-    }
-   ],
-   "naechste_schritte": [
-    "Prüfen: `GEMINI_API_KEY` als Actions-Secret einrichten/prüfen gemäß `NEXT.md`.",
-    "Analysieren: Ursache für Issue #18 'Dashboard-Lage: rot' trotz erfolgreichem Live Deploy.",
-    "Beobachten: Ersten echten Fehler→Reparatur→grünen Check→Deploy-Rundlauf gemäß `NEXT.md`."
-   ],
-   "veraendert": "Der Workflow „Live Deploy (Habits master)“ für den aktuellen Commit `d78df58` war erfolgreich, im Gegensatz zum vorherigen fehlgeschlagenen Deploy für `f615228`, und Issue #18 'Dashboard-Lage: rot' wurde neu erstellt.",
-   "fragen": [],
-   "model": "gemini-2.5-flash"
-  },
-  "ai_at": "2026-11-24T15:13:05+00:00"
+  "ai": null,
+  "ai_at": null
  }
 }
