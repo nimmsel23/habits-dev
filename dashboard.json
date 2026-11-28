@@ -1,12 +1,12 @@
 {
  "evidence": {
-  "generated_at": "2026-11-27T14:15:57+00:00",
+  "generated_at": "2026-11-28T13:31:19+00:00",
   "repo": "nimmsel23/habits-dev",
   "meta": {
    "name": "habits-dev",
    "description": "VOS Habits PWA",
    "html_url": "https://github.com/nimmsel23/habits-dev",
-   "pushed_at": "2026-11-26T14:21:07Z",
+   "pushed_at": "2026-11-28T10:47:58Z",
    "default_branch": "master",
    "visibility": "public",
    "pages_url": "https://nimmsel23.github.io/habits-dev/"
@@ -19,9 +19,9 @@
    "main": "master",
    "has_dev": true,
    "dev_behind": 0,
-   "dev_ahead": 0,
-   "oldest_unpromoted": null,
-   "dev_head": "d78df58 2026-11-24T10:39:23+01:00",
+   "dev_ahead": 2,
+   "oldest_unpromoted": "2026-11-21T19:31:17+01:00",
+   "dev_head": "b0ceae5 2026-11-28T11:47:31+01:00",
    "master_head": "d78df58 2026-11-24T10:39:23+01:00"
   },
   "work": {
@@ -152,12 +152,8 @@
   ],
   "activity": [
    {
-    "day": "2026-11-07",
-    "n": 4
-   },
-   {
     "day": "2026-11-08",
-    "n": 4
+    "n": 0
    },
    {
     "day": "2026-11-09",
@@ -234,18 +230,42 @@
    {
     "day": "2026-11-27",
     "n": 0
+   },
+   {
+    "day": "2026-11-28",
+    "n": 0
    }
   ],
   "workflows": [
    {
     "name": "Auto-Promote dev -> master (Check (Habits))",
     "branch": "master",
-    "event": "schedule",
+    "event": "workflow_run",
     "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-27T08:19:06Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45964728687",
+    "conclusion": "skipped",
+    "created_at": "2026-11-28T10:48:49Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/46136926593",
     "sha": "d78df58"
+   },
+   {
+    "name": "Auto-Promote dev -> master (Check (Habits))",
+    "branch": "dev",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-11-28T10:48:00Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/46136864288",
+    "sha": "b0ceae5"
+   },
+   {
+    "name": "Check (Habits)",
+    "branch": "dev",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-11-28T10:48:00Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/46136864269",
+    "sha": "b0ceae5"
    },
    {
     "name": "CI-Heilung (rote Läufe wiederholen)",
@@ -253,8 +273,8 @@
     "event": "schedule",
     "status": "completed",
     "conclusion": "success",
-    "created_at": "2026-11-27T08:16:52Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45964448448",
+    "created_at": "2026-11-28T10:17:07Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/46134439841",
     "sha": "d78df58"
    },
    {
@@ -263,8 +283,8 @@
     "event": "schedule",
     "status": "completed",
     "conclusion": "success",
-    "created_at": "2026-11-27T05:24:35Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45945630948",
+    "created_at": "2026-11-28T05:01:02Z",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/46110154484",
     "sha": "d78df58"
    },
    {
@@ -276,26 +296,6 @@
     "created_at": "2026-11-24T09:41:26Z",
     "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45367570992",
     "sha": "d78df58"
-   },
-   {
-    "name": "Auto-Promote dev -> master (Check (Habits))",
-    "branch": "dev",
-    "event": "push",
-    "status": "completed",
-    "conclusion": "cancelled",
-    "created_at": "2026-11-24T09:39:27Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45367264513",
-    "sha": "d78df58"
-   },
-   {
-    "name": "Check (Habits)",
-    "branch": "dev",
-    "event": "push",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-24T09:39:26Z",
-    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/45367264135",
-    "sha": "d78df58"
    }
   ],
   "issues": [],
@@ -305,8 +305,26 @@
   ]
  },
  "assessment": {
-  "status": "green",
-  "signals": [],
+  "status": "red",
+  "signals": [
+   {
+    "level": "red",
+    "key": "ci:Auto-Promote dev -> master (Check (Habits)):dev",
+    "text": "„Auto-Promote dev -> master (Check (Habits))“ auf dev ist rot (failure, b0ceae5)",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/46136864288"
+   },
+   {
+    "level": "red",
+    "key": "ci:Check (Habits):dev",
+    "text": "„Check (Habits)“ auf dev ist rot (failure, b0ceae5)",
+    "url": "https://github.com/nimmsel23/habits-dev/actions/runs/46136864269"
+   },
+   {
+    "level": "yellow",
+    "key": "promote",
+    "text": "2 Commit(s) auf dev seit 6.8 Tagen nicht auf master promotet"
+   }
+  ],
   "ai": null,
   "ai_at": null
  }
